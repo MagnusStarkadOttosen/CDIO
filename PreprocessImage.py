@@ -8,11 +8,11 @@ Created on Tue Feb  6 16:18:10 2024
 import cv2
 import numpy as np
 
-input_folder_path = 'C:/Users/MagnusStarkadOttosen/opencv/image/'
+input_folder_path = 'images/'
 
-output_folder_path = 'C:/Users/MagnusStarkadOttosen/opencv/image/'
+output_folder_path = 'images/'
 
-image_name = 'IMG_3613.jpg'
+image_name = '1.jpg'
 
 input_image_path = input_folder_path + image_name
 
