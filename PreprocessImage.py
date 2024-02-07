@@ -33,6 +33,34 @@ if image is not None:
     #Edge detection
     canny = cv2.Canny(gray, lower_thresh, upper_thresh, 10)
     
+    print("After Canny")
+    
+    #circles = cv2.HoughCircles(canny,cv2.HOUGH_GRADIENT,1,20,param1=50,param2=30,minRadius=5,maxRadius=0)
+    
+    median = cv2.medianBlur(gray,5)
+    blurred = cv2.GaussianBlur(median, (5, 5), 0)
+    
+    
+    rows = gray.shape[0]
+    circles = cv2.HoughCircles(median, cv2.HOUGH_GRADIENT, 1, rows / 8,param1=100, param2=30,minRadius=10, maxRadius=100)
+
+    print("Before If")
+
+    if circles is not None:
+        circles = np.uint16(np.around(circles))
+        for i in circles[0, :]:
+            center = (i[0], i[1])
+            # circle center
+            cv2.circle(image, center, 1, (0, 100, 100), 3)
+            # circle outline
+            radius = i[2]
+            cv2.circle(image, center, radius, (255, 0, 255), 3)
+    
+    print("After if")
+    
+
+
+    
     
     #median = cv2.medianBlur(gray,5)
     #blurred = cv2.GaussianBlur(median, (5, 5), 0)
@@ -42,7 +70,7 @@ if image is not None:
     #Name the output image and saved to the output folder
     output_image_name = 'processed_' + image_name
     output_image_path = output_folder_path + output_image_name
-    cv2.imwrite(output_image_path, canny)
+    cv2.imwrite(output_image_path, image)
     print(f"Processed image saved at: {output_image_path}")
 else:
     print("Error: Image not found. Please check the input folder path and image name.")
