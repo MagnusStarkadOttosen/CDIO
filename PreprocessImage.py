@@ -42,7 +42,7 @@ if image is not None:
     
     
     rows = gray.shape[0]
-    circles = cv2.HoughCircles(median, cv2.HOUGH_GRADIENT, 1, rows / 8,param1=100, param2=30,minRadius=10, maxRadius=100)
+    circles = cv2.HoughCircles(blurred, cv2.HOUGH_GRADIENT, 1, rows / 8,param1=100, param2=30,minRadius=10, maxRadius=100)
 
     print("Before If")
 
@@ -59,8 +59,11 @@ if image is not None:
     print("After if")
     
 
-
-    
+    linesP = cv2.HoughLinesP(canny, 1, np.pi / 180, 50, None, 50, 10)
+    if linesP is not None:
+        for i in range(0, len(linesP)):
+            l = linesP[i][0]
+            cv2.line(image, (l[0], l[1]), (l[2], l[3]), (0,0,255), 3, cv2.LINE_AA)
     
     #median = cv2.medianBlur(gray,5)
     #blurred = cv2.GaussianBlur(median, (5, 5), 0)
