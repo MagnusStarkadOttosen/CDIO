@@ -9,7 +9,7 @@ class Shapes:
       self.circles = None
       self.lines = None
 
-   def detect_balls(self): #IMAGE NEEDS TO BE FILTERS GRAY
+   def detect_balls(self):
       rows = self.image.shape[0]
       blurred = apply_blur(self.image)
       self.circles = cv2.HoughCircles(blurred, cv2.HOUGH_GRADIENT, 1, rows / 8,param1=100, param2=30,minRadius=10, maxRadius=100)
