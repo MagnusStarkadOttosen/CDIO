@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-from filters import apply_gray, apply_canny, apply_blur
+from src.camera.filters import apply_canny, apply_blur
 
 def detect_balls(image): #IMAGE NEEDS TO BE FILTERS GRAY
   rows = image.shape[0]
