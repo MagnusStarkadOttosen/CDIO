@@ -27,9 +27,3 @@ def apply_blur(image):
   print("after blurred")
 
   return blurred
-
-def save_image(image_name, output_folder_path, image):
-    output_image_name = 'processed_' + image_name
-    output_image_path = output_folder_path + output_image_name
-    print(output_image_path)
-    cv2.imwrite(output_image_path, image)
