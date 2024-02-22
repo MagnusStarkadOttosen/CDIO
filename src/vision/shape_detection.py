@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-from src.camera.filters import apply_gray, apply_canny, apply_blur
+from src.vision.filters import apply_gray, apply_canny, apply_blur
 
 class Shapes:
    def __init__(self, image):
