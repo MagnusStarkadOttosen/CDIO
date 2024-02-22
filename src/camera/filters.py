@@ -16,7 +16,7 @@ def apply_canny(image):
       
     #Edge detection
     canny = cv2.Canny(image, lower_thresh, upper_thresh, 10)
-    
+    print("After canny")
     return canny
 
 def apply_blur(image):
