@@ -1,14 +1,6 @@
 import cv2
 import numpy as np
 
-def filter_image(input_image_path, ):
-  image = cv2.imread(input_image_path)
-  #Only proceed if an image is found
-  if image is not None:
-    pass
-  else:
-    print("Error: Image not found. Please check the input folder path and image name.")
-
 def apply_gray(image):
    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
    print("After gray")
