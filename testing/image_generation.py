@@ -3,6 +3,7 @@ import numpy as np
 
 from src.vision.shape_detection import Shapes
 from testing.visualization import draw_shapes
+from src.vision.measurment import calculate_image_size, convert_px_to_cm
 
 #Path from where images comes from and path where the processed images are stored
 input_folder_path = 'images/'
@@ -12,6 +13,10 @@ output_folder_path = 'images/'
 image_name = '2.jpg'
 input_image_path = input_folder_path + image_name
 image = cv2.imread(input_image_path)
+image_size_in_px = calculate_image_size(image)
+image_width_in_cm , image_hight_in_cm = convert_px_to_cm(image)
+
+
 
 if image is not None:
   shape_detector = Shapes(image)
