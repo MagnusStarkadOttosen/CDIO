@@ -10,13 +10,16 @@ def draw_circles(circles, image):
   #circles = detect_balls(image)
   if circles is not None:
     circles = np.uint16(np.around(circles))
+    ball_num = 0
     for i in circles[0, :]:
         center = (i[0], i[1])
         # circle center
         cv2.circle(image, center, 1, (0, 100, 100), 3)
         # circle outline
         radius = i[2]
-        cv2.circle(image, center, radius, (255, 0, 255), 3)
+        cv2.circle(image, center, radius, (255, 0, 255), 3) 
+        cv2.putText(image, str(ball_num), center, fontFace = cv2.FONT_HERSHEY_COMPLEX, fontScale = 1.5, color = (255, 0, 255))
+        ball_num += 1
   else:
      print("Circles are empty.")
   
