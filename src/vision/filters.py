@@ -27,3 +27,7 @@ def apply_blur(image):
   print("after blurred")
 
   return blurred
+
+def convert_hsv(image):
+   hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+   return hsv

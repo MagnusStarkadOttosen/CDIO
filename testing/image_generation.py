@@ -16,13 +16,19 @@ image = cv2.imread(input_image_path)
 if image is not None:
   shape_detector = Shapes(image)
   shape_detector.detect_balls()
-  shape_detector.detect_walls()
+  #shape_detector.detect_walls()
+  shape_detector.detect_red_walls()
 
   draw_shapes(shape_detector.circles, shape_detector.lines, image)
 
   output_image_name = 'processed_' + image_name
   output_image_path = output_folder_path + output_image_name
+
+  output_image_name_red = "Processed_img_red" + image_name
+  output_image_path_red = output_folder_path + output_image_name_red
+
   cv2.imwrite(output_image_path, image)
+  cv2.imwrite(output_image_path_red, shape_detector.image)
   print(f"Processed image saved at: {output_image_path}") 
 
 else:
