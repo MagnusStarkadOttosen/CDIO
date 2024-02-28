@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-from src.camera.shape_detection import Shapes
+from src.vision.shape_detection import Shapes
 from testing.visualization import draw_shapes
 
 #Path from where images comes from and path where the processed images are stored
