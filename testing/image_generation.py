@@ -3,7 +3,7 @@ import numpy as np
 
 from src.vision.shape_detection import Shapes
 from testing.visualization import draw_shapes
-from src.vision.measurment import calculate_image_size, convert_px_to_cm
+from src.vision.image_measurment import calculate_image_size, convert_px_to_cm
 
 #Path from where images comes from and path where the processed images are stored
 input_folder_path = 'images/'
