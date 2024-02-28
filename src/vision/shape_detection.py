@@ -13,9 +13,18 @@ class Shapes:
       self.lines = None
 
    def detect_balls(self):
+      balls = 0
       rows = self.image.shape[0]
       blurred = apply_blur(self.image)
       self.circles = cv2.HoughCircles(blurred, cv2.HOUGH_GRADIENT, 1, rows / 8,param1=100, param2=30,minRadius=10, maxRadius=100)
+      if self.circles is not None:
+         circles = np.round(self.circles[0, :]).astype("int")
+         for (x, y, z) in circles:
+            print('Ball:', str(balls))
+            print('X:', x)
+            print('Y:', y)
+            print('Radius:', z)
+            balls += 1
 
    def detect_walls(self): 
       canny = apply_canny(self.image)
