@@ -6,6 +6,37 @@ public class CommandProcessor : MonoBehaviour
 {
 
     public GameObject robot;
+    private Vector3 targetPosition;
+    private Quaternion targetRotation;
+    private bool isMoving = false;
+    private bool isRotating = false;
+    public float moveSpeed = 5.0f;
+    public float rotateSpeed = 90.0f;
+
+    void Start()
+    {
+        targetPosition = robot.transform.position;
+    }
+
+    void Update()
+    {
+        if (isMoving)
+        {
+            robot.transform.position = Vector3.MoveTowards(robot.transform.position, targetPosition, moveSpeed * Time.deltaTime);
+            if(robot.transform.position == targetPosition)
+            {
+                isMoving = false;
+            }
+        }
+        if (isRotating)
+        {
+            robot.transform.rotation = Quaternion.RotateTowards(robot.transform.rotation, targetRotation, rotateSpeed * Time.deltaTime);
+            if (robot.transform.rotation == targetRotation)
+            {
+                isRotating = false;
+            }
+        }
+    }
 
     public void ProcessCommand(string command)
     {
@@ -19,6 +50,9 @@ public class CommandProcessor : MonoBehaviour
             {
                 case "move":
                     Move(value);
+                    break;
+                case "rotate":
+                    Rotate(value);
                     break;
                 //add more robot commands here
                 default:
@@ -34,8 +68,14 @@ public class CommandProcessor : MonoBehaviour
 
     public void Move(float distance)
     {
-        Vector3 direction = robot.transform.forward * distance;
-        robot.transform.position += direction;
+        targetPosition = robot.transform.position + robot.transform.forward * distance;
+        isMoving = true;
         Debug.Log($"Moved robot forward by {distance} units.");
+    }
+
+    public void Rotate(float degrees)
+    {
+        targetRotation = Quaternion.Euler(robot.transform.eulerAngles + new Vector3(0, degrees, 0));
+        isRotating = true;
     }
 }
