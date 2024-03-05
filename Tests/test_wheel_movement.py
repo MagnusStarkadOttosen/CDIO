@@ -17,13 +17,11 @@ class TestWheel(unittest.TestCase):
 class TestDistanceCalculator(unittest.TestCase):
     def test_distance_to_move(self):
         expected_distance = 8.1
-        pos_robot = Pos(3, 4)
+        pos_robot = Pos(3, 2)
         pos_ball = Pos(7, 9)
         actual_distance = get_distance_to_move(pos_robot, pos_ball)
         self.assertAlmostEqual(actual_distance, expected_distance)
-        print('Expected distance: ', expected_distance,
-              'Actual distance: ', actual_distance
-              )
+
 
 
 if __name__ == '__main__':
