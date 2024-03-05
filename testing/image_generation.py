@@ -9,7 +9,7 @@ input_folder_path = 'images/'
 output_folder_path = 'images/'
 
 #Name of the image to be used
-image_name = '1.jpg'
+image_name = 'IMG_3629.jpg'
 input_image_path = input_folder_path + image_name
 image = cv2.imread(input_image_path)
 
