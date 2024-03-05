@@ -1,7 +1,6 @@
 import math
 
 WHEEL_DIMENSION = 80
-DISTANCE_TO_MOVE = 70  # For test
 WHEEL_CIRCUMF_CM = WHEEL_DIMENSION * math.pi
 
 

@@ -1,6 +1,5 @@
 import unittest
-from src.vision.wheel_movement import wheel_rotation, WHEEL_DIMENSION, DISTANCE_TO_MOVE
-from src.vision.wheel_movement import get_distance_to_move, Pos
+from src.vision.wheel_movement import get_distance_to_move, Pos, WHEEL_CIRCUMF_CM, get_wheel_rotation
 import math
 import sys
 
@@ -9,8 +8,9 @@ sys.path.append('../src')
 
 class TestWheel(unittest.TestCase):
     def test_wheel_rotation(self):
-        expected_degrees = (DISTANCE_TO_MOVE / (math.pi * WHEEL_DIMENSION)) * 360
-        self.assertAlmostEqual(wheel_rotation(), expected_degrees)
+        distance_to_move = 70  # For test
+        expected_degrees = (distance_to_move / WHEEL_CIRCUMF_CM) * 360
+        self.assertAlmostEqual(get_wheel_rotation(distance_to_move), expected_degrees)
         print('Expectet degree: ', expected_degrees)
 
 
