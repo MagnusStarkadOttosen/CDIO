@@ -3,18 +3,18 @@ import numpy as np
 
 from src.vision.shape_detection import Shapes
 from testing.visualization import draw_shapes
-from src.vision.image_measurment import calculate_image_size, convert_px_to_cm
+from src.vision.image_measurement import calculate_image_size, convert_image_size_to_cm
 
 #Path from where images comes from and path where the processed images are stored
 input_folder_path = 'images/'
 output_folder_path = 'images/'
 
 #Name of the image to be used
-image_name = '2.jpg'
+image_name = '1.jpg'
 input_image_path = input_folder_path + image_name
 image = cv2.imread(input_image_path)
 image_size_in_px = calculate_image_size(image)
-image_width_in_cm , image_hight_in_cm = convert_px_to_cm(image)
+image_width_in_cm , image_hight_in_cm = convert_image_size_to_cm(image)
 
 
 
@@ -38,3 +38,4 @@ if image is not None:
 
 else:
   print("Error: Image not found. Please check the input folder path and image name.")
+

@@ -13,7 +13,7 @@ def calculate_image_size(image):
 #     print(f"The image resolution is: {dpi} DPI")
 
 
-def convert_px_to_cm(image):
+def convert_image_size_to_cm(image):
     width_px, height_px = calculate_image_size(image)
     width_cm, height_cm = convert_px_cm(width_px, height_px)
     print(f'Width in cm: {width_cm}, Height in cm: {height_cm}')
