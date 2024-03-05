@@ -19,10 +19,10 @@ def wheel_rotation():
 
 
 def get_distance_to_move(robot_pos: Pos, target_pos: Pos):
-    return math.sqrt(
-        abs(robot_pos.x - target_pos.x) ** 2 +
-        abs(robot_pos.y - target_pos.y) ** 2
-    )
+    dist_x = abs(robot_pos.x - target_pos.x)
+    dist_y = abs(robot_pos.y - target_pos.y)
+    distance = round(math.sqrt(dist_x ** 2 + dist_y ** 2), 1)
+    return distance
 
 
 def get_wheel_rotation(distance_to_move):
