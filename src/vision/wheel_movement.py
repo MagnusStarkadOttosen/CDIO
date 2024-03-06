@@ -26,3 +26,6 @@ def get_distance_to_move(robot_pos: Pos, target_pos: Pos):
     distance = round(math.sqrt(dist_x ** 2 + dist_y ** 2), 1)
     return distance
 
+def move_robot_distance(distance_to_move_cm):
+    degrees_to_move = get_wheel_rotation(distance_to_move_cm)
+    return degrees_to_move
