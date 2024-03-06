@@ -17,7 +17,7 @@ def draw_circles(circles, image):
         cv2.circle(image, center, 1, (0, 100, 100), 3)
         # circle outline
         radius = i[2]
-        cv2.circle(image, center, radius, (255, 0, 255), 3) 
+        cv2.circle(image, center, radius, (255, 0, 255), 3)
         cv2.putText(image, str(ball_num), center, fontFace = cv2.FONT_HERSHEY_COMPLEX, fontScale = 1.5, color = (255, 0, 255))
         ball_num += 1
   else:
