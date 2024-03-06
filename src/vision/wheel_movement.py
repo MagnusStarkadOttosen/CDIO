@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import math
 
 WHEEL_DIMENSION = 80
@@ -23,3 +25,4 @@ def get_distance_to_move(robot_pos: Pos, target_pos: Pos):
     dist_y = abs(robot_pos.y - target_pos.y)
     distance = round(math.sqrt(dist_x ** 2 + dist_y ** 2), 1)
     return distance
+
