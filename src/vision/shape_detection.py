@@ -17,7 +17,7 @@ class Robot:
 
     def __init__(self):
         self.position = Pos(ROBOT_START_X, ROBOT_START_Y)
-        self.rotation = 0
+        self.pivot = 0
 
 
 class Shapes:

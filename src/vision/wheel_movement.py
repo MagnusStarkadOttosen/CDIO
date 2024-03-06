@@ -6,7 +6,8 @@ WHEEL_DIMENSION = 80
 WHEEL_CIRCUMF_CM = WHEEL_DIMENSION * math.pi
 
 
-# def move_robot
+#def get_degrees_to_pivot(current_robot_orientation):
+    #current_robot_orientation
 
 def get_wheel_rotation(distance_to_move):
     rotations = distance_to_move / WHEEL_CIRCUMF_CM
@@ -19,3 +20,4 @@ def get_distance_to_move(robot_pos: Pos, target_pos: Pos):
     dist_y = robot_pos.y - target_pos.y
     distance = round(math.sqrt(dist_x ** 2 + dist_y ** 2), 1)
     return distance
+

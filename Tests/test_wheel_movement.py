@@ -1,6 +1,6 @@
 import unittest
 from src.vision.wheel_movement import get_distance_to_move, WHEEL_CIRCUMF_CM, get_wheel_rotation
-from src.vision.shape_detection import Pos
+from src.vision.shape_detection import Pos, Robot
 
 import sys
 
@@ -33,10 +33,10 @@ class TestDistanceCalculator(unittest.TestCase):
 
 class TestRobotRotationCalculator(unittest.TestCase):
     def test_robot_rotation(self):
+        robot = Robot()
         expected_degrees = 3
-        #rot_robot = get_robot_rotation()
         pos_ball = Pos(7, 9)
-        #actual_degrees = get_degrees_to_rotate(rot_robot, pos_ball)
+        actual_degrees = get_degrees_to_pivot(robot.pivot, pos_ball)
 
 
 if __name__ == '__main__':
