@@ -20,6 +20,7 @@ class Robot:
         self.pivot = 0
 
 
+
 class Shapes:
     def __init__(self, image):
         self.original_image = image
