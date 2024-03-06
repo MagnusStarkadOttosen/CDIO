@@ -15,7 +15,7 @@ class Shapes:
    def detect_balls(self):
       rows = self.image.shape[0]
       blurred = apply_blur(self.image)
-      self.circles = cv2.HoughCircles(blurred, cv2.HOUGH_GRADIENT, 1, max(10, rows / 16),param1=30, param2=30,minRadius=10, maxRadius=100)
+      self.circles = cv2.HoughCircles(blurred, cv2.HOUGH_GRADIENT, 1, max(5, rows / 32),param1=30, param2=30,minRadius=10, maxRadius=100)
 
    def detect_walls(self): 
       canny = apply_canny(self.image)
