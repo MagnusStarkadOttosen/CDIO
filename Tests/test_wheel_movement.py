@@ -31,12 +31,12 @@ class TestDistanceCalculator(unittest.TestCase):
         self.assertAlmostEqual(actual_distance, expected_distance)
 
 
+# NOT DONE!
 class TestRobotRotationCalculator(unittest.TestCase):
     def test_robot_rotation(self):
         robot = Robot()
         expected_degrees = 3
         pos_ball = Pos(7, 9)
-        actual_degrees = get_degrees_to_pivot(robot.pivot, pos_ball)
 
 
 if __name__ == '__main__':
