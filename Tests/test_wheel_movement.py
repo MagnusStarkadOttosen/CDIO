@@ -1,6 +1,6 @@
 import unittest
-from src.vision.wheel_movement import get_distance_to_move, WHEEL_CIRCUMF_CM, get_wheel_revolutions
-from src.vision.shape_detection import Pos, Robot
+from src.vision.wheel_movement import get_distance_to_move
+from src.server.robot import Pos, Robot, get_wheel_revolutions, WHEEL_CIRCUMF_CM
 
 import sys
 
@@ -11,8 +11,9 @@ class TestWheel(unittest.TestCase):
     def test_wheel_rotation(self):
         distance_to_move = 70  # For test
         expected_degrees = (distance_to_move / WHEEL_CIRCUMF_CM) * 360
-        self.assertAlmostEqual(get_wheel_revolutions(distance_to_move), expected_degrees)
-        print('Expected degree: ', expected_degrees)
+        actual_degrees = get_wheel_revolutions(distance_to_move)
+        self.assertAlmostEqual(expected_degrees, actual_degrees)
+        print('Expected degree: ', expected_degrees, 'Actual: ', actual_degrees)
 
 
 class TestDistanceCalculator(unittest.TestCase):
