@@ -31,5 +31,7 @@ class CommandProcessor:
 
         if action == "move":
             drive(value)
+            self.isMoving = True
         elif action == "rotate":
             turn(value)
+            self.isRotating = True
