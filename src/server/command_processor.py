@@ -7,22 +7,20 @@ class CommandProcessor:
 
     def __init__(self):
         self.robot = Robot()
-        self.isMoving = False
-        self.isRotating = False
-        self.targetPosition = None
-        self.targetRotation = None
+        self.is_moving = False
+        self.is_rotating = False
+        self.target_position = None
+        self.target_rotation = None
 
     def start(self, x, y):
-        self.targetPosition = np.array([x, y], dtype=int)
+        self.target_position = np.array([x, y], dtype=int)
 
-    def update(self, x, y):
-        self.targetPosition = np.array([x, y], dtype=int)
-        # something missing here
-        if self.robot.position == self.targetPosition:
-            self.isMoving = False
+    def update(self):
+        if self.robot.position == self.target_position:
+            self.is_moving = False
 
-        if self.robot.pivot == self.targetRotation:
-            self.isRotating = False
+        if self.robot.pivot == self.target_rotation:
+            self.is_rotating = False
 
     def process_command(self, command):
         command_list = command.split(" ")
@@ -31,7 +29,7 @@ class CommandProcessor:
 
         if action == "move":
             drive(value)
-            self.isMoving = True
+            self.is_moving = True
         elif action == "rotate":
             turn(value)
-            self.isRotating = True
+            self.is_rotating = True
