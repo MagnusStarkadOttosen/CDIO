@@ -1,6 +1,6 @@
 import numpy as np
 
-from src.server.robot import Robot
+from src.server.robot import Robot, drive, turn
 
 
 class CommandProcessor:
@@ -29,11 +29,7 @@ class CommandProcessor:
         action = command_list[0].toLower()
         value = command_list[1].toFloat()
 
-        """if action == "move":
-            drive(value)"""
-
-    # elseif action == "rotate"
-
-    def drive(self, value):
-
-        target_position = self.targetPosition
+        if action == "move":
+            drive(value)
+        elif action == "rotate":
+            turn(value)
