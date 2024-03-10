@@ -1,9 +1,8 @@
 import socket
-import sys
 
-from command_processor import CommandProcessor
+from src.server.command_processor import CommandProcessor
 
-command_processor = CommandProcessor()
+cp = CommandProcessor()
 
 # Set up the server
 server_address = ('', 10000)
@@ -21,12 +20,12 @@ print("EV3 Server listening for commands...")
 try:
     # Wait for a connection
     connection, client_address = sock.accept()
-    print ("Connection from", client_address)
+    print("Connection from", client_address)
 
     while True:
         data = connection.recv(buffer_size)
         if data:
-            command_processor.process_command(data)
+            cp.process_command(data)
             command = data.decode('utf-8').strip()
             print("Received command:", command)
 

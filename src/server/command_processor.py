@@ -1,7 +1,6 @@
 import numpy as np
 
-from src.vision.shape_detection import Robot
-from src.vision.wheel_movement import get_distance_to_move, get_wheel_revolutions
+from src.server.robot import Robot
 
 
 class CommandProcessor:
@@ -30,8 +29,8 @@ class CommandProcessor:
         action = command_list[0].toLower()
         value = command_list[1].toFloat()
 
-        if action == "move":
-            drive(value)
+        """if action == "move":
+            drive(value)"""
 
     # elseif action == "rotate"
 
