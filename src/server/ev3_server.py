@@ -1,6 +1,10 @@
 import socket
 import sys
 
+from command_processor import CommandProcessor
+
+command_processor = CommandProcessor()
+
 # Set up the server
 server_address = ('', 10000)
 buffer_size = 1024
@@ -22,16 +26,17 @@ try:
     while True:
         data = connection.recv(buffer_size)
         if data:
+            command_processor.process_command(data)
             command = data.decode('utf-8').strip()
-            print ("Received command:", command)
+            print("Received command:", command)
 
-            if command == "exit":
-                print ("Exiting server.")
+            """if command == "exit":
+                print("Exiting server.")
                 break
             elif command == "forward":
                 print ("Moving forward" ) # Placeholder
             else:
-                print ("Unknown command:", command)
+                print ("Unknown command:", command)"""
         else:
             break
 finally:
