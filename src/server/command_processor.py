@@ -1,6 +1,7 @@
 import numpy as np
 
 from src.vision.shape_detection import Robot
+from src.vision.wheel_movement import get_distance_to_move, get_wheel_revolutions
 
 
 class CommandProcessor:
@@ -27,4 +28,13 @@ class CommandProcessor:
     def process_command(self, command):
         command_list = command.split(" ")
         action = command_list[0].toLower()
+        value = command_list[1].toFloat()
 
+        if action == "move":
+            drive(value)
+
+    # elseif action == "rotate"
+
+    def drive(self, value):
+
+        target_position = self.targetPosition
