@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-
+from src.client.pathFinder import *
 from src.vision.shape_detection import Shapes
 from testing.visualization import draw_shapes
 from src.vision.image_measurement import calculate_image_size, convert_image_size_to_cm
@@ -24,7 +24,14 @@ if image is not None:
   #shape_detector.detect_walls()
   shape_detector.detect_red_walls()
 
+
   draw_shapes(shape_detector.circles, shape_detector.lines, image)
+  pro=Pos(0,0)
+  route= Route(0,0,0,0,"")
+  m=roboDrive(route,pro,shape_detector)
+  print(m.x)
+  print(m.drivingmode)
+
 
   output_image_name = 'processed_' + image_name
   output_image_path = output_folder_path + output_image_name
@@ -34,7 +41,7 @@ if image is not None:
 
   cv2.imwrite(output_image_path, image)
   cv2.imwrite(output_image_path_red, shape_detector.image)
-  print(f"Processed image saved at: {output_image_path}") 
+  print(f"Processed image saved at: {output_image_path}")
 
 else:
   print("Error: Image not found. Please check the input folder path and image name.")
