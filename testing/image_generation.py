@@ -26,11 +26,6 @@ if image is not None:
 
 
   draw_shapes(shape_detector.circles, shape_detector.lines, image)
-  pro=Pos(0,0)
-  route= Route(0,0,0,0,"")
-  m=roboDrive(route,pro,shape_detector)
-  print(m.x)
-  print(m.drivingmode)
 
 
   output_image_name = 'processed_' + image_name
