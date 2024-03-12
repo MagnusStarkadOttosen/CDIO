@@ -1,11 +1,13 @@
 import socket
+import sys
 
 from src.server.command_processor import CommandProcessor
 
 cp = CommandProcessor()
 
 # Set up the server
-server_address = ('', 10000)
+# server_address = ('', 10000)
+server_address = ('127.0.0.1', 10000)
 buffer_size = 1024
 
 # Create a TCP/IP socket
@@ -25,8 +27,8 @@ try:
     while True:
         data = connection.recv(buffer_size)
         if data:
-            cp.process_command(data)
             command = data.decode('utf-8').strip()
+            cp.process_command(command)
             print("Received command:", command)
 
             """if command == "exit":

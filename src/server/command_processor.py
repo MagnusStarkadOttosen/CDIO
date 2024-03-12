@@ -24,12 +24,21 @@ class CommandProcessor:
 
     def process_command(self, command):
         command_list = command.split(" ")
-        action = command_list[0].toLower()
-        value = command_list[1].toFloat()
+        try:
+            action = command_list[0].lower()
+            if action == "exit":
+                print("Client closing connection.")
+                return
 
-        if action == "move":
-            drive(value)
-            self.is_moving = True
-        elif action == "rotate":
-            turn(value)
-            self.is_rotating = True
+            value = float(command_list[1])
+
+            if action == "move":
+                drive(value)
+                self.is_moving = True
+            elif action == "rotate":
+                turn(value)
+                self.is_rotating = True
+            else:
+                print('Invalid command')
+        except IndexError as e:
+            print(f"Command should be in the format 'command int': {e} ")
