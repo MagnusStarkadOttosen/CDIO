@@ -1,8 +1,8 @@
 import socket
 from ev3dev2.motor import MoveTank, OUTPUT_A, OUTPUT_D, SpeedPercent
-from src.server.command_processor import CommandProcessor
+# from src.server.command_processor import CommandProcessor
 
-cp = CommandProcessor()
+# cp = CommandProcessor()
 
 # Set up the server
 server_address = ('', 10000)
@@ -31,7 +31,7 @@ try:
         data = connection.recv(buffer_size)
         if data:
             command = data.decode('utf-8').strip()
-            cp.process_command(command)
+            # cp.process_command(command)
             print("Received command:", command)
 
             """if command == "exit":
