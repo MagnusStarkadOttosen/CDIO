@@ -1,8 +1,13 @@
 import socket
 import sys
 
+from src.server.command_processor import CommandProcessor
+
+cp = CommandProcessor()
+
 # Set up the server
-server_address = ('', 10000)
+# server_address = ('', 10000)
+server_address = ('127.0.0.1', 10000)
 buffer_size = 1024
 
 # Create a TCP/IP socket
@@ -17,21 +22,22 @@ print("EV3 Server listening for commands...")
 try:
     # Wait for a connection
     connection, client_address = sock.accept()
-    print ("Connection from", client_address)
+    print("Connection from", client_address)
 
     while True:
         data = connection.recv(buffer_size)
         if data:
             command = data.decode('utf-8').strip()
-            print ("Received command:", command)
+            cp.process_command(command)
+            print("Received command:", command)
 
-            if command == "exit":
-                print ("Exiting server.")
+            """if command == "exit":
+                print("Exiting server.")
                 break
             elif command == "forward":
                 print ("Moving forward" ) # Placeholder
             else:
-                print ("Unknown command:", command)
+                print ("Unknown command:", command)"""
         else:
             break
 finally:
