@@ -1,9 +1,9 @@
 import socket
 import sys
 
-from src.server.command_processor import CommandProcessor
+from src.server.command_processor import process_command
 
-cp = CommandProcessor()
+# cp = CommandProcessor()
 
 # Set up the server
 # server_address = ('', 10000)
@@ -28,7 +28,7 @@ try:
         data = connection.recv(buffer_size)
         if data:
             command = data.decode('utf-8').strip()
-            cp.process_command(command)
+            process_command(command)
             print("Received command:", command)
 
             """if command == "exit":
