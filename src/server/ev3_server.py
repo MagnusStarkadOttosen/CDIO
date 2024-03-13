@@ -1,5 +1,4 @@
 import socket
-from src.server.robot import move
 from ev3dev2.motor import MoveTank, OUTPUT_A, OUTPUT_D, SpeedPercent
 from src.server.command_processor import CommandProcessor
 
