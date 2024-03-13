@@ -1,7 +1,7 @@
 # from src.vision.shape_detection import Shapes,Pos
 import numpy as np
 
-from src.vision.image_measurement import convert_px_cm
+from src.vision.image_measurement import convert_px_to_cm
 from src.vision.shape_detection import Shapes
 from src.vision.wheel_movement import get_distance_to_move
 
@@ -38,10 +38,10 @@ def findNearestBall(robotpostition, shape:Shapes):
             if(dist<nearest):
                 ball_route.x=x
                 ball_route.y=y
-                ball_route.d=dist
+                ball_route.d=convert_px_to_cm(dist)
                 print("dist: ", dist)
                 nearest=dist
-        print(ball_route.d)
+
         return ball_route
     else:
         return 0
@@ -51,7 +51,7 @@ def findNearestWall(robotpostition:Pos,shape:Shapes,route:Route):
     lines = np.round(shape.lines[0, :]).astype("int")
 
     for (x, y,z) in lines:
-        width_cm, height_cm = convert_px_cm(x, y)
+        width_cm, height_cm = convert_px_cm_temp(x, y)
         ball= Pos(width_cm,height_cm)
         dist=get_distance_to_move(robotpostition,ball)
         if(dist<nearest):
