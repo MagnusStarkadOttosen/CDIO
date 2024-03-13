@@ -10,7 +10,7 @@ input_folder_path = 'images/'
 output_folder_path = 'images/'
 
 #Name of the image to be used
-image_name = '1.jpg'
+image_name = 'full_course1.jpg'
 input_image_path = input_folder_path + image_name
 image = cv2.imread(input_image_path)
 image_size_in_px = calculate_image_size(image)
@@ -23,8 +23,11 @@ if image is not None:
   shape_detector.detect_balls()
   #shape_detector.detect_walls()
   shape_detector.detect_red_walls()
+  shape_detector.draw_corners_debug(image)
+  shape_detector.draw_coordinate_system(image)
 
-  draw_shapes(shape_detector.circles, shape_detector.lines, image)
+  if shape_detector.circles is not None or shape_detector.lines is not None:
+    draw_shapes(shape_detector.circles, shape_detector.lines, image)
 
   output_image_name = 'processed_' + image_name
   output_image_path = output_folder_path + output_image_name
