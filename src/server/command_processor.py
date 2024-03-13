@@ -41,4 +41,4 @@ class CommandProcessor:
             else:
                 print('Invalid command')
         except IndexError as e:
-            print(f"Command should be in the format 'command int': {e} ")
+            print(e)
