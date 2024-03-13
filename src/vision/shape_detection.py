@@ -47,7 +47,8 @@ class Shapes:
 
     def detect_walls(self):
         canny = apply_canny(self.image)
-        self.lines = cv2.HoughLinesP(canny, 1, np.pi / 180, 50, None, 50, 10)
+        self.lines =\
+            cv2.HoughLinesP(canny, 1, np.pi / 180, 50, None, 50, 10)
 
     def detect_red_walls(self):
         hsv = convert_hsv(self.original_image)
