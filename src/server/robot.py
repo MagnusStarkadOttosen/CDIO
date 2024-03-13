@@ -19,7 +19,6 @@ class Robot:
     def get_position(self):
         return self.position
 
-
 def move(distance_to_move, tank_drive):
     revs = get_wheel_revolutions(distance_to_move)
     print('Wheel motor turning this many degrees: ', revs)  # Placeholder

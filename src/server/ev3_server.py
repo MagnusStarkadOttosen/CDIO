@@ -20,7 +20,9 @@ sock.listen(1)
 print("EV3 Server listening for commands...")
 
 try:
-    move(20, MoveTank)
+    tank_drive = MoveTank
+    tank_drive.on_for_degrees(SpeedPercent(30), SpeedPercent(30), 100)
+    tank_drive.stop()
     # Wait for a connection
     connection, client_address = sock.accept()
     print("Connection from", client_address)
