@@ -1,6 +1,9 @@
 import socket
-import sys
+import cv2
+import numpy as np
+from src.vision.shape_detection import Shapes
 
+from src.client.pathFinder import findNearestBall
 # Set up the connection
 # ev3_address = ('ev3dev', 10000)
 ev3_address = ('127.0.0.1', 10000)
@@ -14,14 +17,25 @@ try:
     print("Connected to EV3. Type 'exit' to quit.")
 
     while True:
-        command = input("Enter command: ")
-        if command:
-            sock.sendall(command.encode('utf-8'))
-
+        image = cv2.imread('images/1.jpg')
+        shapes = Shapes(image)
+        shapes.detect_balls()
+        nearest = findNearestBall(np.array([7, 9], dtype=int), shapes)
+        # WHEN DETECT ROBOT FUNCTION DONE, SWITCH OUT HARD CODED ROBOT POSITION
+        if not nearest == 0:
+            x = nearest.x
+            y = nearest.y
+            d = nearest.d
+            command = f"move {d}"
+            print(command)
+            # command = input("Enter command: ")
+            if command:
+                sock.sendall(command.encode('utf-8'))
+                break # TEMP FOR TESTING
             if command == "exit":
                 break
-        else:
-            print("Please enter a command.")
+            else:
+                print("Please enter a command.")
 except socket.gaierror as e:
     print(f"Error connecting to EV3: {e}")
 finally:
