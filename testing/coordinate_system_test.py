@@ -5,6 +5,7 @@ from src.vision.shape_detection import Shapes
 from testing.visualization import draw_shapes
 from src.vision.coordinate_system import *
 from src.vision.filters import *
+from src.vision.buffer_zone import draw_center_and_lines
 from sklearn.cluster import KMeans
 
 #Manually placed corners on original image
@@ -30,7 +31,6 @@ image = cv2.imread(input_image_path)
 
 
 
-
 if image is not None:
     
     warped_image = warp_perspective(image, corners, dst_size)
@@ -39,12 +39,21 @@ if image is not None:
     warped_image_path = output_folder_path + warped_image_name
     cv2.imwrite(warped_image_path, warped_image)
 
+    lines_image = warped_image.copy()
+    draw_center_and_lines(lines_image)
+
+    # Save the image with lines
+    line_image_name = 'lines_' + image_name
+    line_image_path = output_folder_path + line_image_name
+    cv2.imwrite(line_image_path, lines_image)
+
     grid_image = draw_grid(warped_image, real_world_size, grid_spacing_cm=10)
 
     grid_image_name = 'grid_' + image_name
     grid_image_path = output_folder_path + grid_image_name
     cv2.imwrite(grid_image_path, grid_image)
-    
+
+
     red_image = detect_red(image)
     
     red_image_name = 'red_' + image_name
