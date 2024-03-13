@@ -28,7 +28,7 @@ try:
             if command == "exit":
                 print ("Exiting server.")
                 break
-            elif command == "forward":
+            elif command == "forward ":
                 print ("Moving forward" ) # Placeholder
             else:
                 print ("Unknown command:", command)
