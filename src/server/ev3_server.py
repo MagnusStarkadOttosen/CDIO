@@ -1,6 +1,6 @@
 import socket
-import sys
-
+from src.server.robot import move
+from ev3dev2.motor import MoveTank, OUTPUT_A, OUTPUT_D, SpeedPercent
 from src.server.command_processor import CommandProcessor
 
 cp = CommandProcessor()
@@ -20,11 +20,13 @@ sock.listen(1)
 print("EV3 Server listening for commands...")
 
 try:
+    move(20, MoveTank)
     # Wait for a connection
     connection, client_address = sock.accept()
     print("Connection from", client_address)
 
     while True:
+
         data = connection.recv(buffer_size)
         if data:
             command = data.decode('utf-8').strip()

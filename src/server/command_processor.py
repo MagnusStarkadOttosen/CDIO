@@ -1,5 +1,4 @@
 import numpy as np
-
 from src.server.robot import Robot, move, turn
 
 
