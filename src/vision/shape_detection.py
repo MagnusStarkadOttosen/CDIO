@@ -52,10 +52,7 @@ class Shapes:
                 print('Y:', y)
                 print('Radius:', z)
                 balls += 1
-
-    
-
-
+        return balls
 
     def detect_walls(self):
         canny = apply_canny(self.image)

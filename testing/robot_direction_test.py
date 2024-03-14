@@ -1,11 +1,17 @@
 import cv2
 import numpy as np
+import sys
+import os
+
+# Add the parent directory of 'src' to the Python path
+base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(base_path)
 from src.vision.detector_robot import *
 from src.vision.shape_detection import Shapes
 from testing.visualization import draw_shapes
 from src.vision.coordinate_system import *
 from src.vision.filters import *
-from sklearn.cluster import KMeans
+
 
 
 #Manually placed corners on original image
@@ -47,12 +53,17 @@ if image is not None:
     red_point = detect_ball(red_image)
     green_point = detect_ball(green_image)
 
-    print("Red point:", red_point)
-    print("Green point:", green_point)
+    if red_image is not None:
+        if red_point is not None:
+            red_point_coordinates = (red_point[0], red_point[1])  # Extract x and y coordinates
+        else:
+            red_point_coordinates = None
 
-    
+    if green_image is not None:
+        if green_point is not None:
+            green_point_coordinates = (green_point[0], green_point[1])  # Extract x and y coordinates
+        else:
+            green_point_coordinates = None
 
-    print(f"Processed image done!") 
-else:
-    print("Error: Image not found. Please check the input folder path and image name.")
-
+        print("Red point coordinates:", red_point_coordinates)
+        print("Green point coordinates:", green_point_coordinates)

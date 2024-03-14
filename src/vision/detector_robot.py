@@ -12,11 +12,10 @@ def detect_ball(image):
     # edges = cv2.Canny(image, 50, 150, apertureSize=3)
     circles = cv2.HoughCircles(gray_blurred, cv2.HOUGH_GRADIENT, 1, 50, param1=100, param2=40, minRadius=0, maxRadius=0)
     if circles is not None:
- 
         circles = np.uint16(np.around(circles))
         for i in circles[0, :]:
-            print(f"circle center: x={i[0]}, y={i[1]}")
-        return circles[0,0]
+            # print(f"circle center: x={i[0]}, y={i[1]}")
+            return circles[0,0]
     else:
         print("No ball detected")
         return None
