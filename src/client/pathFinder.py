@@ -24,7 +24,7 @@ def balls_are_remaining(shapes):
         return False
 
 
-def findNearestBall(robotpostition, shape:Shapes):
+def findNearestBall(robotpostition:Pos, shape:Shapes):
     ball_route = Route(0, 0, 0, 0, " ")
     circles = np.round(shape.circles[0, :]).astype("int")
     if balls_are_remaining:
