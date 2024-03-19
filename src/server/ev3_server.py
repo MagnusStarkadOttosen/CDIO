@@ -28,9 +28,9 @@ try:
         data = connection.recv(buffer_size)
         if data:
             command = data.decode('utf-8').strip()
-            process_command(command)
+            response = process_command(command)
             print("Received command:", command)
-
+            connection.sendall(response.encode('utf-8'))
             """if command == "exit":
                 print("Exiting server.")
                 break
