@@ -1,4 +1,4 @@
-import numpy as np
+import time
 
 from src.server.robot import drive, turn
 
@@ -25,7 +25,7 @@ class CommandProcessor:
 
 
 def process_command(command):
-    response = "0"
+    response = 0
     command_list = command.split(" ")
     try:
         action = command_list[0].lower()
@@ -37,13 +37,14 @@ def process_command(command):
 
         if action == "move":
             drive(value)
+            time.sleep(3)  # simulate robot moving for 3 seconds before responding to client
             # self.is_moving = True
         elif action == "rotate":
             turn(value)
+            time.sleep(1)  # simulate robot rotating for 1 second before responding to client
+
             # self.is_rotating = True
         else:
-            print('Invalid command')
+            print('Invalid command')  # perhaps remove this and handle command formatting errors client-side
     except IndexError as e:
         print(f"Command should be in the format 'command int': {e} ")
-        response = "-1"
-    return response

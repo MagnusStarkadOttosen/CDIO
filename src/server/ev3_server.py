@@ -29,9 +29,8 @@ try:
         if data:
             command = data.decode('utf-8').strip()
             print("Received command:", command)
-            response = process_command(command)
-            print("Response:", response)
-            connection.sendall(response.encode('utf-8'))
+            process_command(command)
+            connection.sendall("OK".encode('utf-8'))
             """if command == "exit":
                 print("Exiting server.")
                 break
