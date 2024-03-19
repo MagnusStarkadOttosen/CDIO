@@ -5,6 +5,7 @@ from ev3dev2.motor import SpeedPercent
 from ev3dev2.sensor.lego import ColorSensor
 from src.vision.wheel_movement import get_wheel_rotation, get_distance_to_move, move_robot_distance
 from src.vision.robot_controls import drive, tank_drive
+from src.vision.buffer_zone import draw_center_and_lines
 
 # tank_drive = MoveTank(OUTPUT_A, OUTPUT_D)
 cs = ColorSensor(INPUT_2)
