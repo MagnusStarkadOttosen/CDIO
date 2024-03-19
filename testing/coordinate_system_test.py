@@ -95,8 +95,37 @@ if image is not None:
     clean_image_path = output_folder_path + clean_image_name
     cv2.imwrite(clean_image_path, clean_image)
     
-
+    height, width, _ = image.shape
+    center_x, center_y = width // 2, height // 2
         
+    quadrants = {1: [], 2: [], 3: [], 4: []}
+
+    # Categorize points into quadrants
+    for point in intersection_points:
+        x, y = point
+        if x > center_x and y < center_y:
+            quadrants[1].append(point)  # Quadrant I
+        elif x < center_x and y < center_y:
+            quadrants[2].append(point)  # Quadrant II
+        elif x < center_x and y > center_y:
+            quadrants[3].append(point)  # Quadrant III
+        elif x > center_x and y > center_y:
+            quadrants[4].append(point)  # Quadrant IV
+
+    # Find the closest point to the center in each quadrant
+    closest_points = []
+    for q in quadrants:
+        if quadrants[q]:  # Check if the list is not empty
+            closest_point = min(quadrants[q], key=lambda point: distance(point, (center_x, center_y)))
+            closest_points.append(closest_point)
+
+    new_image = image.copy
+
+    for point in closest_points:
+        print(f"Closest point in Quadrant to center: {point}")
+        cv2.circle(image, point, radius=5, color=(0, 0, 255), thickness=-1)
+
+
 
     edge_image_name = 'edge_' + image_name
     edge_image_path = output_folder_path + edge_image_name

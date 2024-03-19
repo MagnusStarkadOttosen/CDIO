@@ -130,3 +130,6 @@ def is_near_90_degrees(slope1, slope2, tolerance=5):
     angle = np.abs(np.arctan((slope2 - slope1) / (1 + slope1 * slope2)))
     angle_deg = np.degrees(angle)
     return 85 <= angle_deg <= 95
+
+def distance_between_points(p1, p2):
+    return np.sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2)
