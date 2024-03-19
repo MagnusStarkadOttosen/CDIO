@@ -7,6 +7,7 @@ ROBOT_START_X = 10
 ROBOT_START_Y = 20
 
 
+"""
 class Robot:
 
     def __init__(self):
@@ -15,7 +16,7 @@ class Robot:
 
     def get_position(self):
         return self.position
-
+"""
 
 def drive(distance_to_move):
     revs = get_wheel_revolutions(distance_to_move)

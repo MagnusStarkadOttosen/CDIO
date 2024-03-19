@@ -2,6 +2,31 @@ import cv2
 import numpy as np
 
 from src.vision.filters import apply_gray, apply_canny, apply_blur, convert_hsv
+from src.vision.coordinate_system import find_corners
+
+
+ROBOT_START_X = 10
+ROBOT_START_Y = 20
+
+
+class Pos:
+    def __init__(self, pos_x, pos_y):
+        self.x = pos_x
+        self.y = pos_y
+
+
+class Robot:
+
+    def __init__(self):
+        self.position = Pos(ROBOT_START_X, ROBOT_START_Y)
+        self.pivot = 0
+        seft.red_point = Pos(0, 0)
+        seft.green_point = Pos(0, 0)
+
+    def update_position(self, new_position):
+        self.position = new_position
+        
+
 
 
 class Shapes:
@@ -27,6 +52,7 @@ class Shapes:
                 print('Y:', y)
                 print('Radius:', z)
                 balls += 1
+        return balls
 
     def detect_walls(self):
         canny = apply_canny(self.image)
@@ -44,3 +70,33 @@ class Shapes:
         mask = cv2.bitwise_or(mask1, mask2)
 
         self.image = cv2.bitwise_and(self.original_image, self.original_image, mask=mask)
+
+    def draw_coordinate_system(self, image):
+        corners = find_corners(image)  # Assuming this returns the corners as (x, y) tuples
+        if corners is not None and len(corners) >= 4:
+            # Assuming top-left and bottom-right corners are what we need
+            # This might need adjustment based on how corners are ordered
+            top_left = tuple(corners[0].ravel())
+            bottom_right = tuple(corners[2].ravel())
+            
+            # Determine the number of lines in the grid (you can adjust this)
+            num_lines = 10
+            
+            # Draw horizontal lines
+            for i in range(num_lines + 1):
+                start_point = (top_left[0], top_left[1] + i * ((bottom_right[1] - top_left[1]) // num_lines))
+                end_point = (bottom_right[0], top_left[1] + i * ((bottom_right[1] - top_left[1]) // num_lines))
+                cv2.line(image, start_point, end_point, (255, 255, 0), 2)  # Using yellow for visibility
+            
+            # Draw vertical lines
+            for i in range(num_lines + 1):
+                start_point = (top_left[0] + i * ((bottom_right[0] - top_left[0]) // num_lines), top_left[1])
+                end_point = (top_left[0] + i * ((bottom_right[0] - top_left[0]) // num_lines), bottom_right[1])
+                cv2.line(image, start_point, end_point, (255, 255, 0), 2)  # Using yellow for visibility
+    
+    def draw_corners_debug(self, image_to_draw_on):
+        corners = find_corners(image_to_draw_on)
+        if corners is not None:
+            for corner in corners:
+                x, y = tuple(corner.ravel())
+                cv2.circle(image_to_draw_on, (x, y), 5, (0, 255, 0), -1)  # Draw green circles at each corner

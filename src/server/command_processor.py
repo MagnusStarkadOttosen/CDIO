@@ -1,8 +1,8 @@
 import numpy as np
 
-from src.server.robot import Robot, drive, turn
+from src.server.robot import drive, turn
 
-
+"""
 class CommandProcessor:
 
     def __init__(self):
@@ -21,24 +21,26 @@ class CommandProcessor:
 
         if self.robot.pivot == self.target_rotation:
             self.is_rotating = False
+"""
 
-    def process_command(self, command):
-        command_list = command.split(" ")
-        try:
-            action = command_list[0].lower()
-            if action == "exit":
-                print("Client closing connection.")
-                return
 
-            value = float(command_list[1])
+def process_command(command):
+    command_list = command.split(" ")
+    try:
+        action = command_list[0].lower()
+        if action == "exit":
+            print("Client closing connection.")
+            return
 
-            if action == "move":
-                drive(value)
-                self.is_moving = True
-            elif action == "rotate":
-                turn(value)
-                self.is_rotating = True
-            else:
-                print('Invalid command')
-        except IndexError as e:
-            print(f"Command should be in the format 'command int': {e} ")
+        value = float(command_list[1])
+
+        if action == "move":
+            drive(value)
+            # self.is_moving = True
+        elif action == "rotate":
+            turn(value)
+            # self.is_rotating = True
+        else:
+            print('Invalid command')
+    except IndexError as e:
+        print(f"Command should be in the format 'command int': {e} ")
