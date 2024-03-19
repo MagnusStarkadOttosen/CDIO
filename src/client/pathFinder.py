@@ -3,7 +3,7 @@ import numpy as np
 
 from src.vision.image_measurement import convert_px_to_cm
 from src.vision.shape_detection import Shapes
-from src.vision.wheel_movement import get_distance_to_move
+from src.vision.wheel_movement import get_distance_to_move,get_degrees_toturn
 
 class Pos:
     def __init__(self):
@@ -65,8 +65,7 @@ def roboDrive(route:Route,pos:Pos,shape:Shapes):
    return route
 
 def straightDrive(route:Route,pos:Pos,shape:Shapes):
-    #angele=findAngle(robotPos,ballPos)
-    #route.newAngle=angle
+    route.newAngle=  findNearestWall(pos,Pos(route.x,route.y))
     findNearestBall(pos,shape,route)
     route.drivingmode="straightDrive"
     return route
@@ -74,8 +73,8 @@ def straightDrive(route:Route,pos:Pos,shape:Shapes):
 
 
 def sendRoute(route:Route,pos:Pos,shape:Shapes,minWallDistance):
-    wallPositon= Route(0,0,0,0,"")
-    findNearestWall(wallPositon)
+   # wallPositon= Route(0,0,0,0,"")
+  #  findNearestWall(wallPositon)
    # if(wallPositon.d>=minWallDistance):
    #     roboDrive(route,pos,shape)
 

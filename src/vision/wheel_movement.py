@@ -1,4 +1,5 @@
 import math
+from  src.vision.shape_detection import Pos
 
 WHEEL_DIMENSION = 80
 WHEEL_CIRCUMF_CM = WHEEL_DIMENSION * math.pi
@@ -18,7 +19,7 @@ def get_degrees_to_pivot(robot_pos: Pos, target_pos: Pos):
     return angle
 
 
-def get_distance_to_move(self, target_pos):
+def get_distance_to_move2(self, target_pos):
         b = math.sqrt((target_pos[0] - self.M[0]) ** 2 + (target_pos[1] - self.M[1]) ** 2)
         return b
 
