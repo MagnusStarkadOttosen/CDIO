@@ -24,7 +24,7 @@ input_folder_path = 'images/'
 output_folder_path = 'images/'
 
 #Name of the image to be used
-image_name = 'full_course2.jpg'
+image_name = 'Course_X2.jpg'
 input_image_path = input_folder_path + image_name
 image = cv2.imread(input_image_path)
 
@@ -114,23 +114,37 @@ if image is not None:
 
     # Find the closest point to the center in each quadrant
     closest_points = []
-    for q in quadrants:
+    for q in [2, 1, 4, 3]:
         if quadrants[q]:  # Check if the list is not empty
-            closest_point = min(quadrants[q], key=lambda point: distance(point, (center_x, center_y)))
+            closest_point = min(quadrants[q], key=lambda point: distance_between_points(point, (center_x, center_y)))
             closest_points.append(closest_point)
 
-    new_image = image.copy
+    new_image = image
 
     for point in closest_points:
         print(f"Closest point in Quadrant to center: {point}")
-        cv2.circle(image, point, radius=5, color=(0, 0, 255), thickness=-1)
+        cv2.circle(new_image, point, radius=5, color=(255, 0, 0), thickness=-1)
 
-
+    new_image_name = 'new_' + image_name
+    new_image_path = output_folder_path + new_image_name
+    cv2.imwrite(new_image_path, new_image)
 
     edge_image_name = 'edge_' + image_name
     edge_image_path = output_folder_path + edge_image_name
     cv2.imwrite(edge_image_path, edge_image)
+
+    print(corners)
+    print(closest_points)
+
+    final_points = np.array(closest_points, dtype="float32")
+    print(final_points)
+
+
+    gen_warped_image = warp_perspective(image, final_points, dst_size)
     
+    gen_warped_image_name = 'gen_warped_' + image_name
+    gen_warped_image_path = output_folder_path + gen_warped_image_name
+    cv2.imwrite(gen_warped_image_path, gen_warped_image)
 
     print(f"Processed image done!") 
 else:
