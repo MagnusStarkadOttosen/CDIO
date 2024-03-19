@@ -32,48 +32,38 @@ image = cv2.imread(input_image_path)
 
 
 if image is not None:
-    
+    #Warped perspective for manual placed points.
     warped_image = warp_perspective(image, corners, dst_size)
-    
     warped_image_name = 'warped_' + image_name
     warped_image_path = output_folder_path + warped_image_name
     cv2.imwrite(warped_image_path, warped_image)
 
+    #Add a grid to the warped image.
     grid_image = draw_grid(warped_image, real_world_size, grid_spacing_cm=10)
-
     grid_image_name = 'grid_' + image_name
     grid_image_path = output_folder_path + grid_image_name
     cv2.imwrite(grid_image_path, grid_image)
     
+    #Filter to only show the red walls from the original image.
     red_image = detect_red(image)
-    
     red_image_name = 'red_' + image_name
     red_image_path = output_folder_path + red_image_name
     cv2.imwrite(red_image_path, red_image)
 
+    #Filter to sharpen the edges on the red image
     sharp_image = sharpen_image(red_image)
-
     sharp_image_name = 'sharp_' + image_name
     sharp_image_path = output_folder_path + sharp_image_name
     cv2.imwrite(sharp_image_path, sharp_image)
     
     clean_image = clean_image(red_image)
-    
-    # clean_image = erode_image(clean_image, 4)
-    
-    edge_image, lines = find_line_intersections(clean_image)
+    edge_image, lines = find_lines(clean_image)
     
     arr = np.array(lines)
     
     print(arr.shape)
     arr = arr.reshape(-1, 4)
     print(arr.shape)
-    # kmeans = KMeans(n_clusters=4, random_state=0).fit(arr)
-    # centroids = kmeans.cluster_centers_
-    # sorted_centroids = sorted(centroids, key=lambda x: (x[0], x[1]))
-    # for i, centroid in enumerate(sorted_centroids, start=1):
-    #     print(f"Centroid {i}: (x={centroid[0]}, y={centroid[1]})")
-    #     cv2.circle(edge_image, (int(centroid[0]), int(centroid[1])), radius=5, color=(255, 0, 0), thickness=-1)
 
     
     lines = np.array(lines)
@@ -138,6 +128,8 @@ if image is not None:
 
     final_points = np.array(closest_points, dtype="float32")
     print(final_points)
+
+    print(find_corner_points(image))
 
 
     gen_warped_image = warp_perspective(image, final_points, dst_size)
