@@ -25,7 +25,7 @@ class CommandProcessor:
 
 
 def process_command(command):
-    response = 0
+    response = "0"
     command_list = command.split(" ")
     try:
         action = command_list[0].lower()
@@ -45,5 +45,5 @@ def process_command(command):
             print('Invalid command')
     except IndexError as e:
         print(f"Command should be in the format 'command int': {e} ")
-        response = -1
+        response = "-1"
     return response
