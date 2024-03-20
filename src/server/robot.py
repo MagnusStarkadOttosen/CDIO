@@ -2,7 +2,7 @@ import math
 import time
 
 from ev3dev2.motor import (OUTPUT_A, OUTPUT_D, MoveTank, SpeedPercent)
-from ev3dev2.sensor.lego import GyroSensor
+
 
 WHEEL_DIMENSION = 5.5
 DIST_BETWEEN_WHEELS = 12.5
@@ -11,15 +11,6 @@ WHEEL_CIRCUMF_CM = WHEEL_DIMENSION * math.pi
 ROBOT_START_X = 10
 ROBOT_START_Y = 20
 tank_drive = MoveTank(OUTPUT_A, OUTPUT_D)
-# Initialize the tank's gyro sensor
-tank_drive.gyro = GyroSensor()
-tank_drive.gyro.mode = 'GYRO-ANG'
-time.sleep(1)
-
-# Calibrate the gyro to eliminate drift, and to initialize the current angle as 0
-tank_drive.gyro.reset()
-
-# Pivot 30 degrees
 
 """
 class Robot:
