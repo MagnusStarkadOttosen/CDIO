@@ -29,9 +29,6 @@ class Robot:
     def get_position(self):
         return self.position
 """
-from ev3dev2.motor import MoveTank, OUTPUT_A, OUTPUT_B, SpeedPercent
-from ev3dev2.sensor.lego import GyroSensor
-import time
 
 
 # Function to turn the robot by x degrees
