@@ -10,12 +10,12 @@ ROBOT_START_X = 10
 ROBOT_START_Y = 20
 tank_drive = MoveTank(OUTPUT_A, OUTPUT_D)
 # Initialize the tank's gyro sensor
-gyro = GyroSensor()
-gyro.mode = 'GYRO-ANG'
+tank_drive.gyro = GyroSensor()
+tank_drive.gyro.mode = 'GYRO-ANG'
 time.sleep(1)
 
 # Calibrate the gyro to eliminate drift, and to initialize the current angle as 0
-gyro.reset()
+tank_drive.gyro.reset()
 
 # Pivot 30 degrees
 
@@ -34,7 +34,7 @@ class Robot:
 # Function to turn the robot by x degrees
 def turn_by_x_degrees(x):
     # Record the starting angle
-    start_angle = gyro.angle
+    start_angle = tank_drive.gyro.angle
     speed = 25
     # Determine the direction of rotation
     if x > 0:
@@ -45,7 +45,7 @@ def turn_by_x_degrees(x):
         tank_drive.on(left_speed=-speed, right_speed=speed)
 
     # Wait until the robot has turned x degrees
-    while abs(gyro.angle - start_angle) < abs(x):
+    while abs(tank_drive.gyro.angle - start_angle) < abs(x):
         time.sleep(0.1)
 
     # Stop the motors once the turn is complete
