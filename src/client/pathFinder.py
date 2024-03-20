@@ -64,10 +64,10 @@ def roboDrive(route:Route,pos:Pos,shape:Shapes):
    route.drivingmode="roboDrive"
    return route
 
-def straightDrive(pos:Pos,target,shape:Shapes):
-    route=findNearestBall(pos,shape)
+def straightDrive(robotPostion,shape:Shapes):
+    route=findNearestBall(robotPostion,shape)
     route.drivingmode="straightDrive"
-    route.newAngle=get_degrees_toturn(target,(route.x,route.y))
+    route.newAngle=get_degrees_toturn(robotPostion,(route.x,route.y))
     return route
 
 

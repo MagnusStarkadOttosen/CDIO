@@ -19,7 +19,7 @@ WHEEL_CIRCUMF_CM = WHEEL_DIMENSION * math.pi
 # the robot's position is updated after the robot moves
 
 class Robot:
-    def __init__(self,image):
+    def __init__(self):
         self.A = None # red point's coordinates
         self.B = None # green point's coordinates
         self.M = None # the robot's position
