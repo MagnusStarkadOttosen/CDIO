@@ -1,10 +1,12 @@
 import math
 import time
 
-from ev3dev2.motor import (MoveTank, OUTPUT_A, OUTPUT_D, SpeedPercent)
+from ev3dev2.motor import (OUTPUT_A, OUTPUT_D, MoveTank, SpeedPercent)
 from ev3dev2.sensor.lego import GyroSensor
 
 WHEEL_DIMENSION = 5.5
+DIST_BETWEEN_WHEELS = 12.5
+
 WHEEL_CIRCUMF_CM = WHEEL_DIMENSION * math.pi
 ROBOT_START_X = 10
 ROBOT_START_Y = 20
@@ -32,24 +34,10 @@ class Robot:
 
 
 # Function to turn the robot by x degrees
-def turn_by_x_degrees(x):
-    # Record the starting angle
-    start_angle = tank_drive.gyro.angle
-    speed = 25
-    # Determine the direction of rotation
-    if x > 0:
-        # Positive x, turn right
-        tank_drive.on(left_speed=speed, right_speed=-speed)
-    else:
-        # Negative x, turn left
-        tank_drive.on(left_speed=-speed, right_speed=speed)
+def turn_by_x_degrees(degrees):
+    degrees_to_turn = (degrees * DIST_BETWEEN_WHEELS) / WHEEL_DIMENSION
+    tank_drive.on_for_degrees(SpeedPercent(25), SpeedPercent(-25), degrees_to_turn)
 
-    # Wait until the robot has turned x degrees
-    while abs(tank_drive.gyro.angle - start_angle) < abs(x):
-        time.sleep(0.1)
-
-    # Stop the motors once the turn is complete
-    tank_drive.off()
 
 def drive(distance_to_move):
     # revs = get_wheel_revolutions(distance_to_move)
