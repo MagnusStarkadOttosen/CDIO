@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-
+from src.client.pathFinder import *
 from src.vision.shape_detection import Shapes
 from testing.visualization import draw_shapes
 from src.vision.image_measurement import calculate_image_size, convert_image_size_to_cm
@@ -10,7 +10,7 @@ input_folder_path = 'images/'
 output_folder_path = 'images/'
 
 #Name of the image to be used
-image_name = 'full_course1.jpg'
+image_name = '1.jpg'
 input_image_path = input_folder_path + image_name
 image = cv2.imread(input_image_path)
 image_size_in_px = calculate_image_size(image)
@@ -37,7 +37,7 @@ if image is not None:
 
   cv2.imwrite(output_image_path, image)
   cv2.imwrite(output_image_path_red, shape_detector.image)
-  print(f"Processed image saved at: {output_image_path}") 
+  print(f"Processed image saved at: {output_image_path}")
 
 else:
   print("Error: Image not found. Please check the input folder path and image name.")
