@@ -1,11 +1,13 @@
 import math
 from ev3dev2.motor import (MoveTank, OUTPUT_A, OUTPUT_D, SpeedPercent)
 
+
 WHEEL_DIMENSION = 5.5
 WHEEL_CIRCUMF_CM = WHEEL_DIMENSION * math.pi
 ROBOT_START_X = 10
 ROBOT_START_Y = 20
 tank_drive = MoveTank(OUTPUT_A, OUTPUT_D)
+
 """
 class Robot:
 
@@ -26,7 +28,7 @@ def drive(distance_to_move):
 
 
 def turn(degrees_to_rotate):
-    tank_drive.turn_left(SpeedPercent(30), degrees_to_rotate)
+    # tank_drive.turn_left(SpeedPercent(30), degrees_to_rotate)
     print('Turning this many degrees: ', degrees_to_rotate)  # Placeholder
 
 
