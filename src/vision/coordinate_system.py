@@ -1,11 +1,12 @@
-
 import cv2
 import numpy as np
+
 
 def find_corners(masked_image):
     corners = cv2.goodFeaturesToTrack(cv2.cvtColor(masked_image, cv2.COLOR_BGR2GRAY), 4, 0.01, 10)
     corners = np.int0(corners)
     return corners
+
 
 def map_to_coordinate_system(image, point, origin, scale):
     # Convert a point from image coordinates to your defined coordinate system
@@ -14,6 +15,7 @@ def map_to_coordinate_system(image, point, origin, scale):
     mapped_x = (x - origin_x) * scale
     mapped_y = (y - origin_y) * scale
     return mapped_x, mapped_y
+
 
 def warp_perspective(image, src_points, dst_size):
     height, width = dst_size
@@ -25,6 +27,7 @@ def warp_perspective(image, src_points, dst_size):
     warped_image = cv2.warpPerspective(image, M, (width, height))
     
     return warped_image
+
 
 def draw_grid(image, real_world_size, grid_spacing_cm):
     height, width = image.shape[:2]
@@ -47,6 +50,7 @@ def draw_grid(image, real_world_size, grid_spacing_cm):
 
     return image_with_grid
 
+
 def detect_red(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     lower_red1 = np.array([0, 70, 50])
@@ -61,6 +65,7 @@ def detect_red(image):
     red_image = cv2.bitwise_and(image, image, mask=mask)
         
     return red_image
+
 
 def detect_green(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
@@ -79,7 +84,6 @@ def detect_green(image):
     return green_image
 
 
-
 def sharpen_image(image):
     kernel = np.array([[-1, -1, -1],
                        [-1, 9, -1],
@@ -87,6 +91,7 @@ def sharpen_image(image):
 
     sharpened_image = cv2.filter2D(image, -1, kernel)
     return sharpened_image
+
 
 def clean_image(image):
 
@@ -106,6 +111,7 @@ def erode_image(image, i=1):
     
     return img_erosion
 
+
 def find_line_intersections(image):
     
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -117,6 +123,5 @@ def find_line_intersections(image):
             x1, y1, x2, y2 = line[0]
             cv2.line(image, (x1, y1), (x2, y2), (0, 255, 0), 2)
             print(f"Line from ({x1}, {y1}) to ({x2}, {y2})")
-            
 
     return image, lines

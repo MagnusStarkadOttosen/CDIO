@@ -40,6 +40,12 @@ try:
                     break
                 else:
                     print("Please enter a command.")
+    print("Connected to EV3.")
+    test_commands = ["move 20"]
+    for command in test_commands:
+        sock.sendall(command.encode('utf-8'))
+        print(f"Sent: {command}")
+        server_response = sock.recv(buffer_size)
 except socket.gaierror as e:
     print(f"Error connecting to EV3: {e}")
 finally:
