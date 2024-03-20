@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 
 from src.vision.wheel_movement import get_distance_to_move
-from src.server.robot import Robot, get_wheel_revolutions, WHEEL_CIRCUMF_CM
+from src.server.robot import Robot, convert_distance_to_degrees, WHEEL_CIRCUMF_CM
 
 import sys
 
@@ -13,7 +13,7 @@ class TestWheel(unittest.TestCase):
     def test_wheel_rotation(self):
         distance_to_move = 70  # For test
         expected_degrees = (distance_to_move / WHEEL_CIRCUMF_CM) * 360
-        actual_degrees = get_wheel_revolutions(distance_to_move)
+        actual_degrees = convert_distance_to_degrees(distance_to_move)
         self.assertAlmostEqual(expected_degrees, actual_degrees)
         print('Expected degree: ', expected_degrees, 'Actual: ', actual_degrees)
 

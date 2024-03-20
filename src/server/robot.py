@@ -29,12 +29,8 @@ def turn(degrees_to_rotate):
     print('Turning this many degrees: ', degrees_to_rotate)  # Placeholder
 
 
-def get_wheel_revolutions(distance_to_move):
+def convert_distance_to_degrees(distance_to_move):
     revolutions = distance_to_move / WHEEL_CIRCUMF_CM
     revolution_degrees = revolutions * 360
     return revolution_degrees
 
-
-def convert_distance_to_degrees(distance_to_move):
-    degrees = distance_to_move / WHEEL_CIRCUMF_CM
-    return degrees
