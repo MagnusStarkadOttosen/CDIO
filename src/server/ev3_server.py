@@ -26,6 +26,7 @@ try:
 
     while True:
         data = connection.recv(buffer_size)
+        print("Data received:", data)
         if data:
             command = data.decode('utf-8').strip()
             print("Received command:", command)
