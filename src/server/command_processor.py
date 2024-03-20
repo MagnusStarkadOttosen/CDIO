@@ -47,4 +47,4 @@ def process_command(command):
         else:
             print('Invalid command')  # perhaps remove this and handle command formatting errors client-side
     except IndexError as e:
-        print(f"Command should be in the format 'command int': {e} ")
+        print("Command should be in the format 'command int':", e)
