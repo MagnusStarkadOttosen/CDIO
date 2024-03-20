@@ -34,11 +34,9 @@ def process_command(command):
 
         if action == "move":
             drive(value)
-            time.sleep(3)  # simulate robot moving for 3 seconds before responding to client
             # self.is_moving = True
         elif action == "rotate":
             turn(value)
-            time.sleep(1)  # simulate robot rotating for 1 second before responding to client
 
             # self.is_rotating = True
         else:
