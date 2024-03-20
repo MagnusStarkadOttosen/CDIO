@@ -4,6 +4,7 @@ import numpy as np
 from src.vision.filters import apply_gray, apply_canny, apply_blur, convert_hsv
 from src.vision.coordinate_system import find_corners
 
+
 ROBOT_START_X = 10
 ROBOT_START_Y = 20
 
@@ -19,6 +20,13 @@ class Robot:
     def __init__(self):
         self.position = Pos(ROBOT_START_X, ROBOT_START_Y)
         self.pivot = 0
+        seft.red_point = Pos(0, 0)
+        seft.green_point = Pos(0, 0)
+
+    def update_position(self, new_position):
+        self.position = new_position
+        
+
 
 
 class Shapes:
@@ -44,6 +52,7 @@ class Shapes:
                 print('Y:', y)
                 print('Radius:', z)
                 balls += 1
+        return balls
 
     def detect_walls(self):
         canny = apply_canny(self.image)
