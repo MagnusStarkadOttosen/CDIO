@@ -13,7 +13,7 @@ try:
     sock.connect(ev3_address)
     print("Connected to EV3.")
     test_commands = ["move 5", "rotate 90", "move 8", "rotate 20", "exit"]
-    for command in test_commands:
+    while True:
         sock.sendall(command.encode('utf-8'))
         print(f"Sent: {command}")
         server_response = sock.recv(buffer_size)
