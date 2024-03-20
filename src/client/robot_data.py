@@ -1,8 +1,8 @@
 import math
 import numpy as np
 from src.vision.detector_robot import detect_ball
-from src.vision.detector_robot import detect_red
-from src.vision.detector_robot import detect_green
+from src.vision.coordinate_system import detect_red
+from src.vision.coordinate_system import detect_green
 from src.vision.wheel_movement import get_degrees_toturn
 from src.vision.wheel_movement import get_distance_to_move
 WHEEL_DIMENSION = 80

@@ -5,6 +5,8 @@ from src.vision.shape_detection import Shapes
 from testing.visualization import draw_shapes
 from src.vision.image_measurement import calculate_image_size, convert_image_size_to_cm
 
+from src.client.robot_data import Robot
+
 #Path from where images comes from and path where the processed images are stored
 input_folder_path = 'images/'
 output_folder_path = 'images/'
@@ -19,6 +21,8 @@ image_width_in_cm , image_hight_in_cm = convert_image_size_to_cm(image)
 
 
 if image is not None:
+  robot= Robot()
+  robot.update_AB_andM_from_image(image)
   shape_detector = Shapes(image)
   shape_detector.detect_balls()
   #shape_detector.detect_walls()
