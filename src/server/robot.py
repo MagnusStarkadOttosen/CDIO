@@ -26,6 +26,7 @@ def drive(distance_to_move):
 
 
 def turn(degrees_to_rotate):
+    tank_drive.turn_left(SpeedPercent(30), degrees_to_rotate)
     print('Turning this many degrees: ', degrees_to_rotate)  # Placeholder
 
 

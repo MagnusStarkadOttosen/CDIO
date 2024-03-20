@@ -45,7 +45,7 @@ class Robot:
              distance = math.sqrt((self.B[0] - self.A[0]) ** 2 + (self.B[1] - self.A[1]) ** 2)
          # distance from A to M :a
              a = 10
-             self.M = (red_point[0]+ a/(distance*(green_point[0]-red_point[0])), red_point[1]+ a/(distance*(green_point[1]-red_point[1])))
+             self.M = (red_point[0]+ a/(distance*(green_point[0]-red_point[0])), red_point[1] + a/(distance*(green_point[1]-red_point[1])))
         return self.A, self.B, self.M
 
     def update_pivot_from_image(self, target_pos):
