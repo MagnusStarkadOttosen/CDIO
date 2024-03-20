@@ -1,8 +1,6 @@
 import math
 from ev3dev2.motor import (MoveTank, OUTPUT_A, OUTPUT_D, SpeedPercent)
 
-import numpy as np
-
 WHEEL_DIMENSION = 80
 WHEEL_CIRCUMF_CM = WHEEL_DIMENSION * math.pi
 ROBOT_START_X = 10
