@@ -15,7 +15,7 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 try:
     sock.connect(ev3_address)
     print("Connected to EV3. Type 'exit' to quit.")
-    balls_remain = True
+    """balls_remain = True
     while balls_remain:
         image = cv2.imread('images/3.jpg')
         shapes = Shapes(image)
@@ -40,7 +40,7 @@ try:
                     break
                 else:
                     print("Please enter a command.")
-    print("Connected to EV3.")
+    print("Connected to EV3.")"""
     test_commands = ["move 20"]
     for command in test_commands:
         sock.sendall(command.encode('utf-8'))
