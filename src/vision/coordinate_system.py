@@ -113,7 +113,7 @@ def calculate_slope(line):
 
 def find_intersection(l1, l2):
     x1, y1, x2, y2 = l1
-    x3, y3, x4, y4 = l2
+    (x3, y3, x4, y4) = l2
     den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
     if den == 0:
         return None 

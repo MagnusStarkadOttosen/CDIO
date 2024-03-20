@@ -8,7 +8,7 @@ from src.vision.robot_controls import stop
 
 WIDTH= 180
 HIGHT = 120
-SAFE_DISTANCE = 20
+SAFE_DISTANCE = 10
 
 try:
     ultrasonic_sensor = UltrasonicSensor(INPUT_2)
