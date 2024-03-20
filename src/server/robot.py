@@ -1,7 +1,7 @@
 import math
 from ev3dev2.motor import (MoveTank, OUTPUT_A, OUTPUT_D, SpeedPercent)
 
-WHEEL_DIMENSION = 6
+WHEEL_DIMENSION = 5.5
 WHEEL_CIRCUMF_CM = WHEEL_DIMENSION * math.pi
 ROBOT_START_X = 10
 ROBOT_START_Y = 20
