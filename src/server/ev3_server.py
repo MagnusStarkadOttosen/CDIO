@@ -31,7 +31,6 @@ try:
             command = data.decode('utf-8').strip()
             print("Received command:", command)
             if command == "exit":
-                print("Exiting server.")
                 break
             process_command(command)
             connection.sendall("OK".encode('utf-8'))
@@ -43,5 +42,6 @@ try:
         else:
             break"""
 finally:
+    print("Exiting server.")
     connection.close()
     sock.close()
