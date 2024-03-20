@@ -33,7 +33,8 @@ def findNearestBall(robotpostition:Pos, shape:Shapes):
             # width_cm, height_cm = convert_px_cm(circle.x, circle.y)
             # ball = np.array([width_cm, height_cm])
             # print(f"width : {width_cm} heigth: {height_cm}")
-            dist=get_distance_to_move(robotpostition, np.array([x, y]))
+            print
+            dist=get_distance_to_move((robotpostition.M[0],robotpostition.M[1]), np.array([x, y]))
             print("dist before if: ", dist)
             if(dist<nearest):
                 ball_route.x=x
@@ -63,12 +64,13 @@ def roboDrive(route:Route,pos:Pos,shape:Shapes):
    findNearestBall(pos,shape,route)
    route.drivingmode="roboDrive"
    return route
-
 def straightDrive(robotPostion,shape:Shapes):
     route=findNearestBall(robotPostion,shape)
     route.drivingmode="straightDrive"
     route.newAngle=get_degrees_toturn(robotPostion,(route.x,route.y))
-    return route
+
+
+    return str(route.drivingmode) +" " + str(route.d)  +" Rotate "+str(route.newAngle)
 
 
 
