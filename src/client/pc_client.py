@@ -41,7 +41,7 @@ try:
                 else:
                     print("Please enter a command.")
     print("Connected to EV3.")"""
-    test_commands = ["move 20"]
+    test_commands = ["move 20", "exit"]
     for command in test_commands:
         sock.sendall(command.encode('utf-8'))
         print(f"Sent: {command}")

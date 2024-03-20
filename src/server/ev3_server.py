@@ -30,17 +30,18 @@ try:
         if data:
             command = data.decode('utf-8').strip()
             print("Received command:", command)
-            process_command(command)
-            connection.sendall("OK".encode('utf-8'))
-            """if command == "exit":
+            if command == "exit":
                 print("Exiting server.")
                 break
+            process_command(command)
+            connection.sendall("OK".encode('utf-8'))
+            """
             elif command == "forward":
                 print ("Moving forward" ) # Placeholder
             else:
-                print ("Unknown command:", command)"""
+                print ("Unknown command:", command)
         else:
-            break
+            break"""
 finally:
     connection.close()
     sock.close()

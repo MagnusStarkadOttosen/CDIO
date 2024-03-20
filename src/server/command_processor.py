@@ -29,9 +29,6 @@ def process_command(command):
     command_list = command.split(" ")
     try:
         action = command_list[0].lower()
-        if action == "exit":
-            print("Client closing connection.")
-            return
 
         value = float(command_list[1])
 
