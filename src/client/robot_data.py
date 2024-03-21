@@ -1,8 +1,8 @@
 import math
 import numpy as np
 from src.vision.detector_robot import detect_ball
-from src.vision.detector_robot import detect_red
-from src.vision.detector_robot import detect_green
+from src.vision.coordinate_system import detect_red
+from src.vision.coordinate_system import detect_green
 from src.vision.wheel_movement import get_degrees_toturn
 from src.vision.wheel_movement import get_distance_to_move
 WHEEL_DIMENSION = 80
@@ -44,7 +44,7 @@ class Robot:
          # distance from A to B
              distance = math.sqrt((self.B[0] - self.A[0]) ** 2 + (self.B[1] - self.A[1]) ** 2)
          # distance from A to M :a
-             a = 10
+             a = 8.5
              self.M = (red_point[0]+ a/(distance*(green_point[0]-red_point[0])), red_point[1]+ a/(distance*(green_point[1]-red_point[1])))
         return self.A, self.B, self.M
 
@@ -60,4 +60,5 @@ class Robot:
         self.M = target_pos
         return self.M
 
+   
    
