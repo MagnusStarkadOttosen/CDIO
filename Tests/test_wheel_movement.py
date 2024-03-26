@@ -7,7 +7,6 @@ from src.vision.wheel_movement import get_distance_to_move
 from src.vision.shape_detection import Pos, Robot
 from src.vision.wheel_movement import get_degrees_to_rotation
 
-
 # test get_distance_to_move
 class TestDistanceCalculator(unittest.TestCase):
     def test_distance_to_move(self):
