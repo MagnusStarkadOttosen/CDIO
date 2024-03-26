@@ -30,12 +30,28 @@ class Shapes:
         self.circles = None
         self.lines = None
 
+    def detect_ball(self):
+        if len(self.image.shape) == 3 and self.image.shape[2] == 3:
+            gray = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
+        else:
+            gray = self.image  # The image is already in grayscale
+
+        gray_blurred = cv2.GaussianBlur(gray, (9, 9), 2, 2)
+        circles = cv2.HoughCircles(gray_blurred, cv2.HOUGH_GRADIENT, 1, 50, param1=100, param2=40, minRadius=0, maxRadius=0)
+        if circles is not None:
+            circles = np.uint16(np.around(circles))
+            for i in circles[0, :]:
+                return circles[0, 0]
+        else:
+            print("No ball detected")
+            return None
+
     def detect_balls(self):
         balls = 0
         rows = self.image.shape[0]
         blurred = apply_blur(self.image)
-        self.circles = cv2.HoughCircles(blurred, cv2.HOUGH_GRADIENT, 1, rows / 8, param1=100, param2=30, minRadius=10,
-                                        maxRadius=100)
+        self.circles = cv2.HoughCircles(blurred, cv2.HOUGH_GRADIENT, 1.5, rows / 5, param1=30, param2=35, minRadius=10,
+                                        maxRadius=30)
         if self.circles is not None:
             circles = np.round(self.circles[0, :]).astype("int")
             for (x, y, z) in circles:

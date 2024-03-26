@@ -11,7 +11,7 @@ real_world_size = (120, 180)  # height, width in cm
 dst_size = (1200, 1800)  # width, height in pixels
 input_folder_path = 'images/'
 output_folder_path = 'images/'  # Make sure this directory exists
-image_name = '5.jpg'
+image_name = '7.jpg'
 
 # Construct the full input and output image paths
 input_image_path = input_folder_path + image_name
@@ -42,8 +42,8 @@ lines_image = warped_image.copy()
 draw_center_and_lines(lines_image)  # Drawing center and lines on the warped image
 
 # Save processed images
-#cv2.imwrite(output_image_path_base + '_original_debug.jpg', image)  # Original image with debug drawings
-#cv2.imwrite(output_image_path_base + '_warped.jpg', warped_image)  # Warped image
+cv2.imwrite(output_image_path_base + '_original_debug.jpg', image)  # Original image with debug drawings
+cv2.imwrite(output_image_path_base + '_warped.jpg', warped_image)  # Warped image
 cv2.imwrite(output_image_path_base + '_lines.jpg', lines_image)  # Warped image with lines
 
 print(f"Processed images have been saved to {output_folder_path}")
