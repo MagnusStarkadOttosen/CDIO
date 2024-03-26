@@ -11,13 +11,8 @@ import sys
 sys.path.append('../src')
 
 
-class TestWheel(unittest.TestCase):
-    def test_wheel_rotation(self):
-        distance_to_move = 70  # For test
-        expected_degrees = (distance_to_move / WHEEL_CIRCUMF_CM) * 360
-        self.assertAlmostEqual(get_wheel_rotation(distance_to_move), expected_degrees)
-        print('Expected degree: ', expected_degrees)
 
+# test get_distance_to_move
 
 class TestDistanceCalculator(unittest.TestCase):
     def test_distance_to_move(self):
@@ -40,8 +35,13 @@ class TestDistanceCalculator(unittest.TestCase):
 class TestRobotRotationCalculator(unittest.TestCase):
     def test_robot_rotation(self):
         robot = Robot()
-        expected_degrees = 3
-        pos_ball = Pos(7, 9)
+        robot.M = (0, 0)
+        robot.B = (0, 5)
+        pos_ball = Pos(5, 5)
+        expected_rotation = -45
+        actual_rotation = get_wheel_rotation(robot, pos_ball)
+        self.assertAlmostEqual(actual_rotation, expected_rotation)
+        print('Expected rotation: ', expected_rotation)
 
 
 if __name__ == '__main__':
