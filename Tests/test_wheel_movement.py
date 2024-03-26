@@ -11,7 +11,6 @@ import sys
 sys.path.append('../src')
 
 
-
 # test get_distance_to_move
 
 class TestDistanceCalculator(unittest.TestCase):
