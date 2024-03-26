@@ -3,7 +3,7 @@ import os
 base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(base_path)
 import unittest
-from src.vision.wheel_movement import get_distance_to_move, WHEEL_CIRCUMF_CM, get_wheel_rotation
+from src.vision.wheel_movement import get_distance_to_move, get_degrees_to_rotation
 from src.vision.shape_detection import Pos, Robot
 
 import sys
@@ -38,7 +38,7 @@ class TestRobotRotationCalculator(unittest.TestCase):
         robot.B = (0, 5)
         pos_ball = Pos(5, 5)
         expected_rotation = -45
-        actual_rotation = get_wheel_rotation(robot, pos_ball)
+        actual_rotation = get_degrees_to_rotation(robot, pos_ball)
         self.assertAlmostEqual(actual_rotation, expected_rotation)
         print('Expected rotation: ', expected_rotation)
 
