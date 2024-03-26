@@ -35,7 +35,9 @@ def get_distance_to_move(self, target_pos):
 
 
 # calculate the degrees between the vector MB and the vector MC
-def get_degrees_toturn(self, target_pos):
+# determine the robot's rotation direction relative to the target position ( turn left or turn right)
+# the robot's position is updated after the robot turns
+def get_degrees_to_rotation(self, target_pos):
          # distance MB = a
         a = math.sqrt((self.B[0] - self.M[0]) ** 2 + (self.B[1] - self.M[1]) ** 2)
         # distance MC = b
@@ -46,4 +48,20 @@ def get_degrees_toturn(self, target_pos):
         radian = math.acos((a ** 2 + b ** 2 - c ** 2) / (2 * a * b))
         #degrees of angle between vector MB and vector MC
         degrees = math.degrees(radian)
-        return degrees
+        # determine the robot's rotation direction relative to the target position
+        # turn left or turn right
+        # Calculate direction vectors
+        MB = (self.B[0] - self.M[0], self.B[1] - self.M[1])
+        MTarget = (target_pos[0] - self.M[0], target_pos[1] - self.M[1])
+
+     # Calculate the cross product's Z component
+        cross_product_z = MB[0] * MTarget[1] - MB[1] * MTarget[0]
+
+    # Determine direction based on the cross product's sign
+        if cross_product_z > 0:
+            return degrees
+        elif cross_product_z < 0:
+            return -degrees
+        else: 
+            return 0
+

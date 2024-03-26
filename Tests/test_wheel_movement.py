@@ -1,12 +1,17 @@
+import sys
+import os
+base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(base_path)
 import unittest
 from src.vision.wheel_movement import get_distance_to_move, WHEEL_CIRCUMF_CM, get_wheel_rotation
 from src.vision.shape_detection import Pos, Robot
-
-import sys
-
-sys.path.append('../src')
+from src.vision.wheel_movement import get_degrees_to_rotation
 
 
+
+
+
+""""
 class TestWheel(unittest.TestCase):
     def test_wheel_rotation(self):
         distance_to_move = 70  # For test
@@ -30,14 +35,18 @@ class TestDistanceCalculator(unittest.TestCase):
         actual_distance = get_distance_to_move(pos_robot, pos_ball)
         self.assertAlmostEqual(actual_distance, expected_distance)
 
-
-# NOT DONE!
+"""
+# test get_degrees_to_rotation
 class TestRobotRotationCalculator(unittest.TestCase):
     def test_robot_rotation(self):
         robot = Robot()
-        expected_degrees = 3
-        pos_ball = Pos(7, 9)
-
+        robot.M = (0, 0)
+        robot.B = (5,5 )
+        target_pos = (0, 14)
+        expected_degrees = 45
+        actual_degrees = get_degrees_to_rotation(robot,target_pos)
+        self.assertAlmostEqual(actual_degrees, expected_degrees)
+        print('Expected degree: ', expected_degrees)
 
 if __name__ == '__main__':
     unittest.main()

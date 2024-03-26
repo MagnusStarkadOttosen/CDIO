@@ -19,8 +19,8 @@ class Robot:
     def __init__(self):
         self.position = Pos(ROBOT_START_X, ROBOT_START_Y)
         self.pivot = 0
-        seft.red_point = Pos(0, 0)
-        seft.green_point = Pos(0, 0)
+        self.red_point = Pos(0, 0)
+        self.green_point = Pos(0, 0)
 
     def update_position(self, new_position):
         self.position = new_position
