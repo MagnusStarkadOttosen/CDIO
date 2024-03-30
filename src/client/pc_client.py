@@ -3,7 +3,8 @@ import cv2
 import numpy as np
 from src.vision.shape_detection import Shapes
 from src.client.robot_data import *
-from src.client.pathFinder import findNearestBall, balls_are_remaining,straightDrive
+from src.client.pathFinder import Pos, findNearestBall, balls_are_remaining,straightDrive
+from src.vision.wheel_movement import get_distance_to_move, get_degrees_to_rotation, generate_turn_command
 # Set up the connection
 # ev3_address = ('ev3dev', 10000)
 ev3_address = ('127.0.0.1', 10000)
@@ -20,29 +21,39 @@ try:
         image = cv2.imread('images/3.jpg')
         robot=Robot()
         robot.update_AB_andM_from_image(robot,image)
-
+        robotPosition = robot.M
         shapes = Shapes(image)
         shapes.detect_balls()
         balls_remain = balls_are_remaining(shapes)
+
         if not balls_remain:
             command = "exit"
-        else:
-            nearest = straightDrive(robot.M,shapes)
-            # WHEN DETECT ROBOT FUNCTION DONE, SWITCH OUT HARD CODED ROBOT POSITION
-            if not nearest == 0:
-                x = nearest.x
-                y = nearest.y
-                d = nearest.d
-                command = f"move {d}"
-                print(command)
-                # command = input("Enter command: ")
-                if command:
-                    sock.sendall(command.encode('utf-8'))
-                    break # TEMP FOR TESTING
-                if command == "exit":
-                    break
-                else:
-                    print("Please enter a command.")
+            break
+
+        route, target_pos =straightDrive(robot.M,shapes)
+        if route:
+            target_pos = Pos(route.x,route.y)
+            command = robot.generate_turn_command(target_pos)
+            print(command)
+        sock.sendall(command.encode('utf-8'))
+        
+        #  else:
+        #     nearest = straightDrive(robot.M,shapes)
+        #     # WHEN DETECT ROBOT FUNCTION DONE, SWITCH OUT HARD CODED ROBOT POSITION
+        #     if not nearest == 0:
+        #         x = nearest.x
+        #         y = nearest.y
+        #         d = nearest.d
+        #         command = f"move {d}"
+        #         print(command)
+        #         # command = input("Enter command: ")
+        #         if command:
+        #             sock.sendall(command.encode('utf-8'))
+        #             break # TEMP FOR TESTING
+        #         if command == "exit":
+        #             break
+        #         else:
+        #             print("Please enter a command.")
 except socket.gaierror as e:
     print(f"Error connecting to EV3: {e}")
 finally:

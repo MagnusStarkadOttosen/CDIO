@@ -43,3 +43,13 @@ def get_degrees_to_rotation(self, target_pos):
         else: 
             return 0
 
+def generate_turn_command(self, target_pos):
+    degrees = self.get_degrees_to_rotation(target_pos)
+    if degrees > 0:
+        command = f"turn left {abs(degrees)}"
+    elif degrees < 0:
+        command = f"turn right {abs(degrees)}"
+    else:
+        command = "straight"
+
+    return command

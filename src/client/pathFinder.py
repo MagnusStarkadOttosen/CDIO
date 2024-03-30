@@ -1,9 +1,9 @@
 # from src.vision.shape_detection import Shapes,Pos
 import numpy as np
 
-from src.vision.image_measurement import convert_px_to_cm
+from src.vision.image_measurement import convert_px_to_cm, convert_px_cm_temp
 from src.vision.shape_detection import Shapes
-from src.vision.wheel_movement import get_distance_to_move,get_degrees_toturn
+from src.vision.wheel_movement import get_distance_to_move,get_degrees_to_rotation
 
 class Pos:
     def __init__(self):
@@ -66,9 +66,11 @@ def roboDrive(route:Route,pos:Pos,shape:Shapes):
 
 def straightDrive(robotPostion,shape:Shapes):
     route=findNearestBall(robotPostion,shape)
-    route.drivingmode="straightDrive"
-    route.newAngle=get_degrees_toturn(robotPostion,(route.x,route.y))
-    return route
+    if route:
+     target_pos= Pos(route.x,route.y)
+     route.drivingmode="straightDrive"
+     route.newAngle=get_degrees_to_rotation(robotPostion,(route.x,route.y))
+    return route,target_pos
 
 
 
