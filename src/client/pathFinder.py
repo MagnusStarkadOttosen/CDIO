@@ -70,7 +70,7 @@ def straightDrive(robotPostion,shape:Shapes):
     route.newAngle=get_degrees_toturn(robotPostion,(route.x,route.y))
 
 
-    return "Move " + str(route.d)  +" Rotate "+str(route.newAngle)
+    return "Rotate " + str(route.newAngle)+" Move " + str(route.d)
 
 
 
