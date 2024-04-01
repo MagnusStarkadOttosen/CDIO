@@ -43,6 +43,7 @@ def process_command(command):
                 # self.is_rotating = True
             elif action=="deliver":
                 #reversGrapperHere
+                turn(value)
             else:
                 print('Invalid command')
         except IndexError as e:

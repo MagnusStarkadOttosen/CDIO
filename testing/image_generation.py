@@ -22,11 +22,10 @@ image_width_in_cm , image_hight_in_cm = convert_image_size_to_cm(image)
 
 if image is not None:
   robot= Robot()
-  robot.M=(0,0)
-  robot.A=(6,0)
-  robot.B=(3,0)
+  robot.M=(9,15)
+  robot.A=(9,20)
+  robot.B=(9,25)
   shape_detector = Shapes(image)
-  shape_detector.detect_balls()
   #shape_detector.detect_walls()
   shape_detector.detect_red_walls()
   shape_detector.draw_corners_debug(image)
@@ -44,9 +43,10 @@ if image is not None:
   cv2.imwrite(output_image_path, image)
   cv2.imwrite(output_image_path_red, shape_detector.image)
   print(f"Processed image saved at: {output_image_path}")
+  driveToGoalA(robot)
 
 
-  print("robot commands test",straightDrive(robot,shape_detector))
+  print("robot commands test",robot.B[0],robot.B[1])
 
 else:
   print("Error: Image not found. Please check the input folder path and image name.")

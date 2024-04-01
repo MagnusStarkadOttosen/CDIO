@@ -75,30 +75,15 @@ def straightDrive(robotPostion,shape:Shapes):
     return "Rotate " + str(route.newAngle)+" Move " + str(route.d)
 
 
-
-def sendRoute(,robotPostion:Pos,shape:Shapes,):
-   # wallPositon= Route(0,0,0,0,"")
-  #  findNearestWall(wallPositon)
-   # if(wallPositon.d>=minWallDistance):
-   #     roboDrive(route,pos,shape)
-
-   # else:
-   if(ro)
-    straightDrive(robotPostion,shape)
-
-
-
-
 def driveToGoalA(robotPostion:Pos):
     newAngle=get_degrees_to_rotation(robotPostion,(60,robotPostion.M[1]))
     dist=robotPostion.B[0]-60
     distABS= abs(dist)
     if(dist>0):
-        return "Rotate " + newAngle+" Move " + str(dist)\
+        return "Rotate " + newAngle+" Move " + str(distABS)\
                +" Rotate " + str(90)+" Move " + str(robotPostion.B[1])
     else:
-        return "Rotate " + newAngle+" Move " \
-               + str(dist)+" Rotate " + str(-90)+" Move " + str(robotPostion.B[1]+"deliver balls")
+        return "Rotate "
 
 
 
