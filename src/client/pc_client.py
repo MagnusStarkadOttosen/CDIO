@@ -30,7 +30,7 @@ try:
         if not balls_remain:
             command = "exit"
         else:
-            commands.put( straightDrive(robot.M,shapes))
+            commands.put(straightDrive(robot.M,shapes))
             nextCommand= commands.get()
             # WHEN DETECT ROBOT FUNCTION DONE, SWITCH OUT HARD CODED ROBOT POSITION
             if not nextCommand == 0:

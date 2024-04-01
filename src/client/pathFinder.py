@@ -10,12 +10,14 @@ class Pos:
         self.x = 0
         self.y = 0
 class Route:
-    def __init__(self, x, y,d,newAngle,drivingMode):
+    def __init__(self, x, y,d,newAngle,drivingMode,ballNO):
         self.x = x
         self.y = y
         self.d = d
         self.newAngle = newAngle
         self.drivingMode = drivingMode
+        self.ballNo=ballNO
+
 
 def balls_are_remaining(shapes):
     if shapes.circles is not None:
@@ -26,6 +28,7 @@ def balls_are_remaining(shapes):
 
 def findNearestBall(robotpostition:Pos, shape:Shapes):
     ball_route = Route(0, 0, 0, 0, " ")
+    ball_route.ballNo = ball_route.ballNo+1
     circles = np.round(shape.circles[0, :]).astype("int")
     if balls_are_remaining:
         nearest = 300000
@@ -69,20 +72,42 @@ def straightDrive(robotPostion,shape:Shapes):
     route.drivingmode="straightDrive"
     route.newAngle=get_degrees_to_rotation(robotPostion,(route.x,route.y))
 
-
     return "Rotate " + str(route.newAngle)+" Move " + str(route.d)
 
 
 
-def sendRoute(route:Route,pos:Pos,shape:Shapes,):
+def sendRoute(,robotPostion:Pos,shape:Shapes,):
    # wallPositon= Route(0,0,0,0,"")
   #  findNearestWall(wallPositon)
    # if(wallPositon.d>=minWallDistance):
    #     roboDrive(route,pos,shape)
 
    # else:
-    straightDrive(route,pos,shape)
-    return route
+   if(ro)
+    straightDrive(robotPostion,shape)
+
+
+
+
+def driveToGoalA(robotPostion:Pos):
+    newAngle=get_degrees_to_rotation(robotPostion,(60,robotPostion.M[1]))
+    dist=robotPostion.B[0]-60
+    distABS= abs(dist)
+    if(dist>0):
+        return "Rotate " + newAngle+" Move " + str(dist)\
+               +" Rotate " + str(90)+" Move " + str(robotPostion.B[1])
+    else:
+        return "Rotate " + newAngle+" Move " \
+               + str(dist)+" Rotate " + str(-90)+" Move " + str(robotPostion.B[1]+"deliver balls")
+
+
+
+
+
+
+
+
+
 
 
 
