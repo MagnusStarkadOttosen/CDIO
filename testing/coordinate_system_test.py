@@ -8,11 +8,13 @@ from src.vision.filters import *
 from src.vision.buffer_zone import draw_center_and_lines
 from sklearn.cluster import KMeans
 
+from testing.warp_detect_balls import corners
+
 #Manually placed corners on original image
 #corners = np.array([[417, 73], [1650, 66], [1689, 987], [403, 985]], dtype="float32") #Top left, top right, buttom right, buttom left
 # corners = np.array([[393, 49], [1678, 42], [1723, 1005], [378, 1000]], dtype="float32")
 #corners = np.array([[455, 58], [1656, 65], [1650, 933], [444, 945]], dtype="float32")
-#corners = np.array([[377,44], [1382,50], [1377,779], [368,791]], dtype="float32")
+corners = np.array([[377,44], [1382,50], [1377,779], [368,791]], dtype="float32")
 
 #Real world dimensions in cm
 real_world_size = (120, 180)  # height, width
@@ -25,7 +27,7 @@ input_folder_path = 'images/'
 output_folder_path = 'images/'
 
 #Name of the image to be used
-image_name = '4.jpg'
+image_name = '9.jpg'
 input_image_path = input_folder_path + image_name
 image = cv2.imread(input_image_path)
 

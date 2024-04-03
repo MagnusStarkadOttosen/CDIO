@@ -11,7 +11,7 @@ real_world_size = (120, 180)  # height, width in cm
 dst_size = (1200, 1800)  # width, height in pixels
 input_folder_path = 'images/'
 output_folder_path = 'images/'  # Make sure this directory exists
-image_name = '8.jpg'
+image_name = '.jpg'
 
 # Construct the full input and output image paths
 input_image_path = input_folder_path + image_name
