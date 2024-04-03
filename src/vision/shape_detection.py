@@ -101,7 +101,7 @@ class Shapes:
 
         self.image = cv2.bitwise_and(self.original_image, self.original_image, mask=mask)
 
-    def draw_coordinate_system(self, image):
+    def draw_coordinate_system( image):
         corners = find_corners(image)  # Assuming this returns the corners as (x, y) tuples
         if corners is not None and len(corners) >= 4:
             # Assuming top-left and bottom-right corners are what we need
