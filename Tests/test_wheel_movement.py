@@ -1,46 +1,46 @@
+import sys
+import os
+base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(base_path)
 import unittest
-import numpy as np
-
-from src.vision.wheel_movement import get_distance_to_move
-from src.server.robot import Robot, get_wheel_revolutions, WHEEL_CIRCUMF_CM
+from src.vision.wheel_movement import get_distance_to_move, get_degrees_to_rotation
+from src.vision.shape_detection import Pos, Robot
 
 import sys
 
 sys.path.append('../src')
 
 
-class TestWheel(unittest.TestCase):
-    def test_wheel_rotation(self):
-        distance_to_move = 70  # For test
-        expected_degrees = (distance_to_move / WHEEL_CIRCUMF_CM) * 360
-        actual_degrees = get_wheel_revolutions(distance_to_move)
-        self.assertAlmostEqual(expected_degrees, actual_degrees)
-        print('Expected degree: ', expected_degrees, 'Actual: ', actual_degrees)
-
+# test get_distance_to_move
 
 class TestDistanceCalculator(unittest.TestCase):
-    def test_distance_to_move_negative_vector(self):
+    def test_distance_to_move(self):
         expected_distance = 8.1
-        pos_robot = np.array([3, 2], dtype=int)  # Pos(3, 2)
-        pos_ball = np.array([7, 9], dtype=int)  # Pos(7, 9)
+        pos_robot = Pos(3, 2)
+        pos_ball = Pos(7, 9)
         actual_distance = get_distance_to_move(pos_robot, pos_ball)
-        print(actual_distance)
         self.assertAlmostEqual(actual_distance, expected_distance)
+        print('Expected distance: ', expected_distance)
 
-    def test_distance_to_move_positive_vector(self):
-        expected_distance = 8.1
-        pos_robot = np.array([7, 9], dtype=int)  # Pos(5, 2)
-        pos_ball = np.array(([3, 2]), dtype=int)  # Pos(7, 9)
+    def test_distance_to_move_negative(self):
+        expected_distance = 7.3
+        pos_robot = Pos(5, 2)
+        pos_ball = Pos(7, 9)
         actual_distance = get_distance_to_move(pos_robot, pos_ball)
-        print(actual_distance)
         self.assertAlmostEqual(actual_distance, expected_distance)
+        print('Expected distance: ', expected_distance)
 
-
-# NOT DONE!
+# test get_degrees_to_rotation
 class TestRobotRotationCalculator(unittest.TestCase):
     def test_robot_rotation(self):
         robot = Robot()
-        expected_degrees = 3
+        robot.M = (0, 0)
+        robot.B = (0, 5)
+        pos_ball = Pos(5, 5)
+        expected_rotation = -45
+        actual_rotation = get_degrees_to_rotation(robot, pos_ball)
+        self.assertAlmostEqual(actual_rotation, expected_rotation)
+        print('Expected rotation: ', expected_rotation)
 
 
 if __name__ == '__main__':
