@@ -38,21 +38,21 @@ class Shapes:
         self.circles = None
         self.lines = None
 
-    def detect_balls(self):
-        balls = 0
-        rows = self.image.shape[0]
-        blurred = apply_blur(self.image)
-        self.circles = cv2.HoughCircles(blurred, cv2.HOUGH_GRADIENT, 1, rows / 8, param1=100, param2=30, minRadius=10,
-                                        maxRadius=100)
-        if self.circles is not None:
-            circles = np.round(self.circles[0, :]).astype("int")
-            for (x, y, z) in circles:
-                print('Ball:', str(balls))
-                print('X:', x)
-                print('Y:', y)
-                print('Radius:', z)
-                balls += 1
-        return balls
+    # def detect_balls(self):
+    #     balls = 0
+    #     rows = self.image.shape[0]
+    #     blurred = apply_blur(self.image)
+    #     self.circles = cv2.HoughCircles(blurred, cv2.HOUGH_GRADIENT, 1, rows / 8, param1=100, param2=30, minRadius=10,
+    #                                     maxRadius=100)
+    #     if self.circles is not None:
+    #         circles = np.round(self.circles[0, :]).astype("int")
+    #         for (x, y, z) in circles:
+    #             print('Ball:', str(balls))
+    #             print('X:', x)
+    #             print('Y:', y)
+    #             print('Radius:', z)
+    #             balls += 1
+    #     return balls
 
     def detect_walls(self):
         canny = apply_canny(self.image)
@@ -94,9 +94,9 @@ class Shapes:
                 end_point = (top_left[0] + i * ((bottom_right[0] - top_left[0]) // num_lines), bottom_right[1])
                 cv2.line(image, start_point, end_point, (255, 255, 0), 2)  # Using yellow for visibility
     
-    def draw_corners_debug(self, image_to_draw_on):
-        corners = find_corners(image_to_draw_on)
-        if corners is not None:
-            for corner in corners:
-                x, y = tuple(corner.ravel())
-                cv2.circle(image_to_draw_on, (x, y), 5, (0, 255, 0), -1)  # Draw green circles at each corner
+    # def draw_corners_debug(self, image_to_draw_on):
+    #     corners = find_corners(image_to_draw_on)
+    #     if corners is not None:
+    #         for corner in corners:
+    #             x, y = tuple(corner.ravel())
+    #             # cv2.circle(image_to_draw_on, (x, y), 5, (0, 255, 0), -1)  # Draw green circles at each corner
