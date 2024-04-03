@@ -37,7 +37,6 @@ def process_command(command):
             # self.is_moving = True
         elif action == "rotate":
             turn(value)
-
             # self.is_rotating = True
         else:
             print('Invalid command')  # perhaps remove this and handle command formatting errors client-side

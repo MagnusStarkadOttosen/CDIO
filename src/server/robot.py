@@ -1,8 +1,7 @@
 import math
 import time
 
-from ev3dev2.motor import (OUTPUT_A, OUTPUT_D, MoveTank, SpeedPercent)
-
+from ev3dev2.motor import (OUTPUT_A, OUTPUT_B, OUTPUT_D, MoveTank, SpeedPercent, MediumMotor)
 
 WHEEL_DIMENSION = 5.5
 DIST_BETWEEN_WHEELS = 13.5
@@ -12,6 +11,8 @@ ROBOT_START_X = 10
 ROBOT_START_Y = 20
 tank_drive = MoveTank(OUTPUT_A, OUTPUT_D)
 
+collector_motor = MediumMotor(OUTPUT_B)
+collector_motor.reset()
 """
 class Robot:
 
@@ -22,6 +23,12 @@ class Robot:
     def get_position(self):
         return self.position
 """
+
+
+def run_collector_clockwise(): collector_motor.on(30)
+
+
+def run_collector_counterclockwise(): collector_motor.on(-30)
 
 
 # Function to turn the robot by x degrees
@@ -46,4 +53,3 @@ def convert_distance_to_degrees(distance_to_move):
     revolutions = distance_to_move / WHEEL_CIRCUMF_CM
     revolution_degrees = revolutions * 360
     return revolution_degrees
-
