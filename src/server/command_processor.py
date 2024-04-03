@@ -1,31 +1,11 @@
 import time
 
-from src.server.robot import drive, turn
-
-"""
-class CommandProcessor:
-
-    def __init__(self):
-        self.robot = Robot()
-        self.is_moving = False
-        self.is_rotating = False
-        self.target_position = None
-        self.target_rotation = None
-
-    def start(self, x, y):
-        self.target_position = np.array([x, y], dtype=int)
-
-    def update(self):
-        if self.robot.position == self.target_position:
-            self.is_moving = False
-
-        if self.robot.pivot == self.target_rotation:
-            self.is_rotating = False
-"""
+from src.server.robot import Robot
+from src.server.robot_stub import RobotStub
+robot = RobotStub() #Robot()
 
 
 def process_command(command):
-    response = 0
     command_list = command.split(" ")
     try:
         action = command_list[0].lower()
@@ -33,12 +13,11 @@ def process_command(command):
         value = float(command_list[1])
 
         if action == "move":
-            drive(value)
-            # self.is_moving = True
+            robot.drive(value)
         elif action == "rotate":
-            turn(value)
-            # self.is_rotating = True
+            robot.turn_by_x_degrees(value)
         else:
             print('Invalid command')  # perhaps remove this and handle command formatting errors client-side
+
     except IndexError as e:
         print("Command should be in the format 'command int':", e)

@@ -2,7 +2,6 @@ import socket
 import sys
 
 from src.server.command_processor import process_command
-from src.server.robot import run_collector_clockwise, run_collector_counterclockwise, stop_motor
 # cp = CommandProcessor()
 
 # Set up the server
@@ -23,7 +22,6 @@ try:
     # Wait for a connection
     connection, client_address = sock.accept()
     print("Connection from", client_address)
-    stop_motor()
     while True:
         data = connection.recv(buffer_size)
         print("Data received:", data)
