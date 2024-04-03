@@ -87,5 +87,3 @@ def sendRoute(route:Route,pos:Pos,shape:Shapes,minWallDistance):
 
 
 
-
-
