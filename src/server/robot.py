@@ -27,6 +27,8 @@ class Robot:
 
 def run_collector_clockwise(): collector_motor.on(30)
 
+def stop_motor(): collector_motor.off()
+
 
 def run_collector_counterclockwise(): collector_motor.on(-30)
 
