@@ -17,7 +17,7 @@ sock.bind(server_address)
 sock.listen(1)
 
 print("EV3 Server listening for commands...")
-
+# connection = None
 try:
     # Wait for a connection
     connection, client_address = sock.accept()
@@ -31,14 +31,9 @@ try:
                 break
             process_command(command)
             connection.sendall("OK".encode('utf-8'))
-            """
-            elif command == "forward":
-                print ("Moving forward" ) # Placeholder
-            else:
-                print ("Unknown command:", command)
-        else:
-            break"""
 finally:
     print("Exiting server.")
     connection.close()
+    print("Connection closed.")
     sock.close()
+    print("Socket closed.")
