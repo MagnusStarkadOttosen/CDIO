@@ -6,6 +6,7 @@ from src.vision.shape_detection import Shapes
 from testing.visualization import draw_shapes
 from src.vision.coordinate_system import *
 from src.vision.filters import *
+from src.vision.detector_robot import detect_ball
 from sklearn.cluster import KMeans
 from src.vision.shape_detection import Shapes
 from testing.visualization import draw_shapes
@@ -35,10 +36,14 @@ image = cv2.imread(input_image_path)
 
 # Initialize shape detection
 shape_detector = Shapes(image)
-shape_detector.detect_balls()
+
+#shape_detector.detect_balls()
 shape_detector.detect_red_walls()
 
 if image is not None:
+
+    buffer_zone_image, circles = detect_ball(image)
+
     # Warped perspective for manual placed points.
     warped_image = warp_perspective(image, corners, dst_size)
     warped_image_name = 'warped_' + image_name
@@ -62,6 +67,8 @@ if image is not None:
     sharp_image_name = 'sharp_' + image_name
     sharp_image_path = output_folder_path + sharp_image_name
     cv2.imwrite(sharp_image_path, sharp_image)
+
+
 
     clean_image = clean_image(red_image)
     edge_image, lines = find_lines(clean_image)
@@ -142,7 +149,6 @@ if image is not None:
     gen_warped_image_path = output_folder_path + gen_warped_image_name
     cv2.imwrite(gen_warped_image_path, gen_warped_image)
 
-
     if shape_detector.circles is not None or shape_detector.lines is not None:
         draw_shapes(shape_detector.circles, shape_detector.lines, image)
 
@@ -151,6 +157,8 @@ if image is not None:
     buffer_zone_image_name=gen_warped_image.copy()
     draw_center_and_lines(buffer_zone_image_name)
     cv2.imwrite( buffer_zone_image_path, buffer_zone_image_name)
+
+
     print(f"Processed image done!")
 else:
     print("Error: Image not found. Please check the input folder path and image name.")
