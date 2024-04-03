@@ -72,7 +72,7 @@ def straightDrive(robotPostion,circles):
 
 
 
-def sendRoute(route:Route,pos:Pos,shape:Shapes,):
+"""def sendRoute(route:Route,pos:Pos):
    # wallPositon= Route(0,0,0,0,"")
   #  findNearestWall(wallPositon)
    # if(wallPositon.d>=minWallDistance):
@@ -80,7 +80,7 @@ def sendRoute(route:Route,pos:Pos,shape:Shapes,):
 
    # else:
     straightDrive(route,pos,shape)
-    return route
+    return route"""
 
 
 

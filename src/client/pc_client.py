@@ -2,8 +2,9 @@ import socket
 import cv2
 import queue
 import numpy as np
-from src.vision.shape_detection import Shapes
+#from src.vision.shape_detection import Shapes
 from src.client.robot_data import *
+from src.vision.detector_robot import detect_ball
 from src.client.pathFinder import findNearestBall, balls_are_remaining,straightDrive
 # Set up the connection
 # ev3_address = ('ev3dev', 10000)
@@ -24,13 +25,13 @@ try:
         robot=Robot()
         robot.update_AB_andM_from_image(image)
 
-        shapes = Shapes(image)
-        shapes.detect_balls()
-        balls_remain = balls_are_remaining(shapes)
+        #shapes = Shapes(image)
+        circles = detect_ball(image)
+        balls_remain = balls_are_remaining(circles)
         if not balls_remain:
             command = "exit"
         else:
-            commands.put( straightDrive(robot.M,shapes))
+            commands.put( straightDrive(robot.M,circles))
             nextCommand= commands.get()
             # WHEN DETECT ROBOT FUNCTION DONE, SWITCH OUT HARD CODED ROBOT POSITION
             if not nextCommand == 0:
