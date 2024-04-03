@@ -10,7 +10,7 @@ DIST_BETWEEN_WHEELS = 13.5
 WHEEL_CIRCUMF_CM = WHEEL_DIMENSION * math.pi
 ROBOT_START_X = 10
 ROBOT_START_Y = 20
-tank_drive = MoveTank(OUTPUT_A, OUTPUT_D)
+#tank_drive = MoveTank(OUTPUT_A, OUTPUT_D)
 
 """
 class Robot:
@@ -27,13 +27,13 @@ class Robot:
 # Function to turn the robot by x degrees
 def turn_by_x_degrees(degrees):
     degrees_to_turn = (degrees * DIST_BETWEEN_WHEELS) / WHEEL_DIMENSION
-    tank_drive.on_for_degrees(SpeedPercent(25), SpeedPercent(-25), degrees_to_turn)
+    #tank_drive.on_for_degrees(SpeedPercent(25), SpeedPercent(-25), degrees_to_turn)
 
 
 def drive(distance_to_move):
     # revs = get_wheel_revolutions(distance_to_move)
     degrees = convert_distance_to_degrees(distance_to_move)
-    tank_drive.on_for_degrees(SpeedPercent(30), SpeedPercent(30), degrees)
+    #tank_drive.on_for_degrees(SpeedPercent(30), SpeedPercent(30), degrees)
     print('Wheel motor turning this many degrees: ', degrees)  # Placeholder
 
 

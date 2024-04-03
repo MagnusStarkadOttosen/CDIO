@@ -20,9 +20,9 @@ try:
     commands = queue.Queue()
 
     while balls_remain:
-        image = cv2.imread('images/3.jpg')
+        image = cv2.imread('images/image_with_robot.jpeg')
         robot=Robot()
-        robot.update_AB_andM_from_image(robot,image)
+        robot.update_AB_andM_from_image(image)
 
         shapes = Shapes(image)
         shapes.detect_balls()
