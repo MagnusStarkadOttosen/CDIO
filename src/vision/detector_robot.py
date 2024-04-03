@@ -1,16 +1,20 @@
 import cv2
 import numpy as np
+from src.vision.filters import *
 
 def detect_ball(image):
     balls=0
     # Convert to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
+
     # Apply edge detection
     edges = cv2.Canny(gray, 100, 200)
 
+
+
     # Detect circles
-    circles = cv2.HoughCircles(edges, cv2.HOUGH_GRADIENT, dp=1.75, minDist=7, param1=30, param2=35, minRadius=10, maxRadius=30)
+    circles = cv2.HoughCircles(edges, cv2.HOUGH_GRADIENT, dp=1.75, minDist=14, param1=30, param2=35, minRadius=10, maxRadius=30)
     if circles is not None:
         circles = np.uint16(np.around(circles))
         for idx, (x, y, r) in enumerate(circles[0, :]):
@@ -31,58 +35,23 @@ def detect_ball(image):
         print("No balls detected.")
     return image, circles
 
-# import cv2
-# import numpy as np
-# from src.vision.filters import apply_blur
-#
-# def detect_ball(image):
-#         # from image_detection import detect_red and detect_green functions
-#         #give the robot position with red point's coordinates and green point's coordinates
-#
-#     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-#     gray_blurred = cv2.GaussianBlur(gray, (9, 9), 2,2)
-#     # center=(0,0)
-#     # edges = cv2.Canny(image, 50, 150, apertureSize=3)
-#     circles = cv2.HoughCircles(image, cv2.HOUGH_GRADIENT, 1, 50, param1=100, param2=40, minRadius=0, maxRadius=0)
-#     if circles is not None:
-#         circles = np.uint16(np.around(circles))
-#         for i in circles[0, :]:
-#             # print(f"circle center: x={i[0]}, y={i[1]}")
-#             return circles[0,0]
-#     else:
-#         print("No ball detected")
-#         return None
-#
-import cv2
-import numpy as np
 
 
-# def detect_ball(image):
-#     balls = 0
-#     # Convert to grayscale
-#     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-#
-#     # Apply edge detection
-#     edges = cv2.Canny(gray, 100, 200)
-#
-#     # Detect circles
-#     circles = cv2.HoughCircles(edges, cv2.HOUGH_GRADIENT, dp=1.75, minDist=7, param1=30, param2=35, minRadius=10,
-#                                maxRadius=30)
-#     if circles is not None:
-#         circles = np.uint16(np.around(circles))
-#         for i in circles[0, :]:
-#             # Draw the outer circle
-#             cv2.circle(image, (i[0], i[1]), i[2], (0, 255, 0), 2)
-#             # Draw the center of the circle
-#             cv2.circle(image, (i[0], i[1]), 2, (0, 0, 255), 3)
-#
-#         circles = np.round(circles[0, :]).astype("int")
-#         for (x, y, z) in circles:
-#             print('Ball:', str(balls))
-#             print('X:', x)
-#             print('Y:', y)
-#             print('Radius:', z)
-#             balls += 1
-#     return image, circles
-#
+def detect_ballsFirst(image):
+    balls = 0
+    rows = image.shape[0]
+    gray = apply_gray(image)
+    blurred = apply_blur(gray)
+    circles = cv2.HoughCircles(blurred, cv2.HOUGH_GRADIENT, 1, rows / 8, param1=100, param2=30, minRadius=10,
+                                    maxRadius=100)
+    if circles is not None:
+
+        circles = np.round(circles[0, :]).astype("int")
+        for (x, y, z) in circles:
+            print('Ball:', str(balls))
+            print('X:', x)
+            print('Y:', y)
+            print('Radius:', z)
+            balls += 1
+    return circles
 
