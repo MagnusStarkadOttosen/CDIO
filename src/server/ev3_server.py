@@ -5,8 +5,8 @@ from src.server.command_processor import process_command
 # cp = CommandProcessor()
 
 # Set up the server
-server_address = ('', 10000)
-# server_address = ('127.0.0.1', 10000)
+# server_address = ('', 10000)
+server_address = ('127.0.0.1', 10000)
 buffer_size = 1024
 
 # Create a TCP/IP socket
