@@ -3,6 +3,7 @@ import time
 
 from ev3dev2.motor import (OUTPUT_A, OUTPUT_B, OUTPUT_D, MoveTank, SpeedPercent, MediumMotor)
 from src.vision.wheel_movement import get_distance_to_move
+
 WHEEL_DIMENSION = 5.5
 DIST_BETWEEN_WHEELS = 13.5
 
@@ -30,7 +31,7 @@ class Robot:
 
     def drive(self, distance_to_move):
         # revs = get_wheel_revolutions(distance_to_move)
-        degrees = self.convert_distance_to_degrees(distance_to_move)
+        degrees = convert_distance_to_degrees(distance_to_move)
         self.tank_drive.on_for_degrees(SpeedPercent(30), SpeedPercent(30), degrees)
         print('Wheel motor turning this many degrees: ', degrees)  # Placeholder
 
@@ -38,7 +39,8 @@ class Robot:
     #     self.turn_by_x_degrees(degrees_to_rotate)
     #     print('Turning this many degrees: ', degrees_to_rotate)  # Placeholder
 
-    def convert_distance_to_degrees(self, distance_to_move):
-        revolutions = distance_to_move / WHEEL_CIRCUMF_CM
-        revolution_degrees = revolutions * 360
-        return revolution_degrees
+
+def convert_distance_to_degrees(distance_to_move):
+    revolutions = distance_to_move / WHEEL_CIRCUMF_CM
+    revolution_degrees = revolutions * 360
+    return revolution_degrees
