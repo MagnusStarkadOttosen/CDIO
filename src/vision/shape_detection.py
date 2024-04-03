@@ -26,7 +26,7 @@ class Robot:
         self.position = new_position
 
 
-
+# hej
 
 class Shapes:
     def __init__(self, image):
