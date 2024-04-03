@@ -1,5 +1,4 @@
 import math
-from  src.vision.shape_detection import Pos
 
 WHEEL_DIMENSION = 80
 WHEEL_CIRCUMF_CM = WHEEL_DIMENSION * math.pi
@@ -53,3 +52,9 @@ def generate_turn_command(self, target_pos):
         command = f"move {self.get_distance_to_move(target_pos)}"
 
     return command
+
+
+class Pos:
+    def __init__(self, pos_x, pos_y):
+        self.x = pos_x
+        self.y = pos_y

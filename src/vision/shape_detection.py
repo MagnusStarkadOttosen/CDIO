@@ -3,15 +3,10 @@ import numpy as np
 
 from src.vision.filters import apply_gray, apply_canny, apply_blur, convert_hsv
 from src.vision.coordinate_system import find_corners
+from src.vision.wheel_movement import Pos
 
 ROBOT_START_X = 10
 ROBOT_START_Y = 20
-
-
-class Pos:
-    def __init__(self, pos_x, pos_y):
-        self.x = pos_x
-        self.y = pos_y
 
 
 class Robot:
