@@ -13,7 +13,7 @@ input_folder_path = 'images/'
 output_folder_path = 'images/'
 
 #Name of the image to be used
-image_name = '2.jpg'
+image_name = '3.jpg'
 input_image_path = input_folder_path + image_name
 image = cv2.imread(input_image_path)
 image_size_in_px = calculate_image_size(image)
