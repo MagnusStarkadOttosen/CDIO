@@ -14,7 +14,7 @@ def process_command(command):
             value = float(command_list[1])
             if action == "move":
                 robot.drive(value)
-            elif action == "rotate":
+            elif action == "turn":
                 robot.turn_by_x_degrees(value)
             else:
                 print("Invalid")
