@@ -1,8 +1,8 @@
 import socket
 
 # Set up the connection
-ev3_address = ('ev3dev', 10000)
-#ev3_address = ('127.0.0.1', 10000)
+# ev3_address = ('ev3dev', 10000)
+ev3_address = ('127.0.0.1', 10000)
 buffer_size = 1024
 
 # Create a TCP/IP socket
