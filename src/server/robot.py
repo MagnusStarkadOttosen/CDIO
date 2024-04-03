@@ -1,7 +1,7 @@
 import math
 import time
 
-from ev3dev2.motor import (OUTPUT_A, OUTPUT_D, MoveTank, SpeedPercent)
+from ev3dev2.motor import (MediumMotor, OUTPUT_A, OUTPUT_B, OUTPUT_D, MoveTank, SpeedPercent, COMMAND_RUN_FOREVER )
 
 
 WHEEL_DIMENSION = 5.5
@@ -11,6 +11,7 @@ WHEEL_CIRCUMF_CM = WHEEL_DIMENSION * math.pi
 ROBOT_START_X = 10
 ROBOT_START_Y = 20
 tank_drive = MoveTank(OUTPUT_A, OUTPUT_D)
+collectMotor = MediumMotor(OUTPUT_B)
 
 """
 class Robot:
@@ -47,3 +48,5 @@ def convert_distance_to_degrees(distance_to_move):
     revolution_degrees = revolutions * 360
     return revolution_degrees
 
+def startCollectionMotor():
+    collectMotor.run_forever(speed_sp=SpeedPercent(50))

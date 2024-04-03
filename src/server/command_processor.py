@@ -1,6 +1,6 @@
 import numpy as np
 
-from src.server.robot import drive, turn
+from src.server.robot import *
 
 """
 class CommandProcessor:
@@ -41,6 +41,8 @@ def process_command(command):
             elif action == "rotate":
                 turn(value)
                 # self.is_rotating = True
+            elif action == "startCollectionMotor":
+                startCollectionMotor()
             else:
                 print('Invalid command')
         except IndexError as e:
