@@ -1,7 +1,7 @@
 import math
 import time
 
-from ev3dev2.motor import (MediumMotor, OUTPUT_A, OUTPUT_B, OUTPUT_D, MoveTank, SpeedPercent, COMMAND_RUN_FOREVER )
+from ev3dev2.motor import (MediumMotor, OUTPUT_A, OUTPUT_B, OUTPUT_D, MoveTank, SpeedPercent)
 
 
 WHEEL_DIMENSION = 5.5
