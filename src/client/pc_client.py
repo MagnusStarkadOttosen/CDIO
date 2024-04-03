@@ -12,7 +12,7 @@ try:
     sock.connect(ev3_address)
     print("Connected to EV3. Type 'exit' to quit.")
 
-    test_commands = ["move 50", "exit"]
+    test_commands = ["start_collect", "move 50", "turn 90", "deliver", "stop_collect", "exit"]
     for command in test_commands:
         if command:
             sock.sendall(command.encode('utf-8'))
