@@ -19,8 +19,8 @@ class RobotStub:
     # Function to turn the robot by x degrees
     @staticmethod
     def turn_by_x_degrees(degrees):
-        degrees_to_turn = (degrees * DIST_BETWEEN_WHEELS) / WHEEL_DIMENSION
-        print(f"Turning robot by {degrees_to_turn} degrees")
+        motor_revolutions = (degrees * DIST_BETWEEN_WHEELS) / WHEEL_DIMENSION
+        print(f"Turning robot by {motor_revolutions} degrees")
 
     @staticmethod
     def drive(distance_to_move):
