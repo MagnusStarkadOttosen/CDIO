@@ -37,9 +37,19 @@ def get_degrees_to_rotation(self, target_pos):
 
     # Determine direction based on the cross product's sign
         if cross_product_z > 0:
-            return degrees
-        elif cross_product_z < 0:
             return -degrees
-        else:
+        elif cross_product_z < 0:
+            return degrees
+        else: 
             return 0
 
+def generate_turn_command(self, target_pos):
+    degrees = self.get_degrees_to_rotation(target_pos)
+    if degrees > 0:
+        command = f"rotate {abs(degrees)}"
+    elif degrees < 0:
+        command = f"rotate {abs(degrees)}"
+    else:
+        command = f"move {self.get_distance_to_move(target_pos)}"
+
+    return command
