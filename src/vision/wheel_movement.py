@@ -1,5 +1,5 @@
 import math
-from  src.vision.shape_detection import Pos
+#from  src.vision.shape_detection import Pos
 
 WHEEL_DIMENSION = 80
 WHEEL_CIRCUMF_CM = WHEEL_DIMENSION * math.pi
@@ -11,12 +11,12 @@ def get_distance_to_move(robot_pos, target_pos):
     distance = round(math.sqrt(dist_vector[0] ** 2 + dist_vector[1] ** 2), 1)
     return distance
 
-def get_degrees_to_pivot(robot_pos: Pos, target_pos: Pos):
-
-    dist_x = robot_pos.x - target_pos.x
-    dist_y = robot_pos.y - target_pos.y
-    angle = math.degrees(math.atan2(dist_y, dist_x))
-    return angle
+# def get_degrees_to_pivot(robot_pos: Pos, target_pos: Pos):
+#
+#     dist_x = robot_pos.x - target_pos.x
+#     dist_y = robot_pos.y - target_pos.y
+#     angle = math.degrees(math.atan2(dist_y, dist_x))
+#     return angle
 
 
 def get_distance_to_move2(self, target_pos):
