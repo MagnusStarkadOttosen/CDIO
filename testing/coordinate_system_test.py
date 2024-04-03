@@ -7,6 +7,9 @@ from testing.visualization import draw_shapes
 from src.vision.coordinate_system import *
 from src.vision.filters import *
 from sklearn.cluster import KMeans
+from src.vision.shape_detection import Shapes
+from testing.visualization import draw_shapes
+from src.vision.buffer_zone import draw_center_and_lines
 
 # Manually placed corners on original image
 # corners = np.array([[417, 73], [1650, 66], [1689, 987], [403, 985]], dtype="float32") #Top left, top right, buttom right, buttom left
@@ -19,6 +22,8 @@ real_world_size = (120, 180)  # height, width
 # Desired output size (dimensions in pixels for the warped image)
 dst_size = (1200, 1800)  # width, height
 
+
+
 # Path from where images comes from and path where the processed images are stored
 input_folder_path = 'images/'
 output_folder_path = 'images/'
@@ -27,6 +32,11 @@ output_folder_path = 'images/'
 image_name = '9.jpg'
 input_image_path = input_folder_path + image_name
 image = cv2.imread(input_image_path)
+
+# Initialize shape detection
+shape_detector = Shapes(image)
+shape_detector.detect_balls()
+shape_detector.detect_red_walls()
 
 if image is not None:
     # Warped perspective for manual placed points.
@@ -132,6 +142,15 @@ if image is not None:
     gen_warped_image_path = output_folder_path + gen_warped_image_name
     cv2.imwrite(gen_warped_image_path, gen_warped_image)
 
+
+    if shape_detector.circles is not None or shape_detector.lines is not None:
+        draw_shapes(shape_detector.circles, shape_detector.lines, image)
+
+    buffer_zone_image_name = 'buffer_zone_' + image_name
+    buffer_zone_image_path = output_folder_path + buffer_zone_image_name
+    buffer_zone_image_name=gen_warped_image.copy()
+    draw_center_and_lines(buffer_zone_image_name)
+    cv2.imwrite( buffer_zone_image_path, buffer_zone_image_name)
     print(f"Processed image done!")
 else:
     print("Error: Image not found. Please check the input folder path and image name.")
