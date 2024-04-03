@@ -1,5 +1,6 @@
 import socket
 import cv2
+import queue
 import numpy as np
 from src.vision.shape_detection import Shapes
 from src.client.robot_data import *
@@ -16,6 +17,8 @@ try:
     sock.connect(ev3_address)
     print("Connected to EV3. Type 'exit' to quit.")
     balls_remain = True
+    commands = queue.Queue()
+
     while balls_remain:
         image = cv2.imread('images/3.jpg')
         robot=Robot()
@@ -27,13 +30,11 @@ try:
         if not balls_remain:
             command = "exit"
         else:
-            nearest = straightDrive(robot.M,shapes)
+            commands.put( straightDrive(robot.M,shapes))
+            nextCommand= commands.get()
             # WHEN DETECT ROBOT FUNCTION DONE, SWITCH OUT HARD CODED ROBOT POSITION
-            if not nearest == 0:
-                x = nearest.x
-                y = nearest.y
-                d = nearest.d
-                command = f"move {d}"
+            if not nextCommand == 0:
+                command = nextCommand
                 print(command)
                 # command = input("Enter command: ")
                 if command:

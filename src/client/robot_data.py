@@ -3,7 +3,7 @@ import numpy as np
 from src.vision.detector_robot import detect_ball
 from src.vision.coordinate_system import detect_red
 from src.vision.coordinate_system import detect_green
-from src.vision.wheel_movement import get_degrees_toturn
+from src.vision.wheel_movement import get_degrees_to_rotation
 from src.vision.wheel_movement import get_distance_to_move
 WHEEL_DIMENSION = 80
 WHEEL_CIRCUMF_CM = WHEEL_DIMENSION * math.pi
@@ -50,7 +50,7 @@ class Robot:
 
     def update_pivot_from_image(self, target_pos):
         self.C = target_pos
-        get_degrees_toturn(self, target_pos)
+        get_degrees_to_rotation(self, target_pos)
     
 
     def move(self, target_pos):

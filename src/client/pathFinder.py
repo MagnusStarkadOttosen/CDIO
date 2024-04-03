@@ -3,7 +3,7 @@ import numpy as np
 
 from src.vision.image_measurement import convert_px_to_cm
 from src.vision.shape_detection import Shapes
-from src.vision.wheel_movement import get_distance_to_move,get_degrees_toturn
+from src.vision.wheel_movement import get_distance_to_move,get_degrees_to_rotation
 
 class Pos:
     def __init__(self):
@@ -33,7 +33,8 @@ def findNearestBall(robotpostition:Pos, shape:Shapes):
             # width_cm, height_cm = convert_px_cm(circle.x, circle.y)
             # ball = np.array([width_cm, height_cm])
             # print(f"width : {width_cm} heigth: {height_cm}")
-            dist=get_distance_to_move(robotpostition, np.array([x, y]))
+            print
+            dist=get_distance_to_move((robotpostition.M[0],robotpostition.M[1]), np.array([x, y]))
             print("dist before if: ", dist)
             if(dist<nearest):
                 ball_route.x=x
@@ -63,16 +64,17 @@ def roboDrive(route:Route,pos:Pos,shape:Shapes):
    findNearestBall(pos,shape,route)
    route.drivingmode="roboDrive"
    return route
-
 def straightDrive(robotPostion,shape:Shapes):
     route=findNearestBall(robotPostion,shape)
     route.drivingmode="straightDrive"
-    route.newAngle=get_degrees_toturn(robotPostion,(route.x,route.y))
-    return route
+    route.newAngle=get_degrees_to_rotation(robotPostion,(route.x,route.y))
+
+
+    return "Rotate " + str(route.newAngle)+" Move " + str(route.d)
 
 
 
-def sendRoute(route:Route,pos:Pos,shape:Shapes,minWallDistance):
+def sendRoute(route:Route,pos:Pos,shape:Shapes,):
    # wallPositon= Route(0,0,0,0,"")
   #  findNearestWall(wallPositon)
    # if(wallPositon.d>=minWallDistance):
@@ -81,6 +83,11 @@ def sendRoute(route:Route,pos:Pos,shape:Shapes,minWallDistance):
    # else:
     straightDrive(route,pos,shape)
     return route
+
+
+
+
+
 
 
 
