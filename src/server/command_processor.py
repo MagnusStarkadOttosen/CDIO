@@ -1,9 +1,9 @@
 import time
 
-from src.server.commands import Robot
-from src.server.commands_stub import RobotStub
+from src.server.commands import Commands
+from src.server.commands_stub import CommandsStub
 
-robot = RobotStub()  # Robot()
+robot = CommandsStub()  # Robot()
 actions_functions = {
     "move": robot.drive,
     "turn": robot.turn_by_x_degrees,

@@ -6,7 +6,7 @@ import unittest
 import numpy as np
 
 from src.client.utilities import get_distance
-from src.server.commands import Robot, convert_distance_to_degrees, WHEEL_CIRCUMF_CM
+from src.server.commands import Commands, convert_distance_to_degrees, WHEEL_CIRCUMF_CM
 
 import sys
 
@@ -45,7 +45,7 @@ class TestDistanceCalculator(unittest.TestCase):
 # test get_degrees_to_rotation
 class TestRobotRotationCalculator(unittest.TestCase):
     def test_robot_rotation(self):
-        robot = Robot()
+        robot = Commands()
         robot.M = (0, 0)
         robot.B = (0, 5)
         pos_ball = Pos(5, 5)

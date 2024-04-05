@@ -10,7 +10,7 @@ ROBOT_START_X = 10
 ROBOT_START_Y = 20
 
 
-class Robot:
+class Commands:
     def __init__(self):
         self.tank_drive = MoveTank(OUTPUT_A, OUTPUT_D)
         self.collector_motor = MediumMotor(OUTPUT_B)

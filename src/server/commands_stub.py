@@ -6,7 +6,7 @@ DIST_BETWEEN_WHEELS = 13.5
 WHEEL_CIRCUMF_CM = WHEEL_DIMENSION * math.pi
 
 
-class RobotStub:
+class CommandsStub:
     @staticmethod
     def run_collector_clockwise(): print("Collector motor is on clockwise")
 
