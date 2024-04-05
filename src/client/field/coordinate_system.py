@@ -51,39 +51,6 @@ def draw_grid(image, real_world_size, grid_spacing_cm):
     return image_with_grid
 
 
-def filter_image_red(image):
-    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    lower_red1 = np.array([0, 70, 50])
-    upper_red1 = np.array([6, 255, 255])
-    lower_red2 = np.array([170, 70, 50])
-    upper_red2 = np.array([180, 255, 255])
-
-    mask1 = cv2.inRange(hsv, lower_red1, upper_red1)
-    mask2 = cv2.inRange(hsv, lower_red2, upper_red2)
-    mask = cv2.bitwise_or(mask1, mask2)
-
-    red_image = cv2.bitwise_and(image, image, mask=mask)
-        
-    return red_image
-
-
-def filter_image_green(image):
-    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    
-    lower_green1 = np.array([35, 70, 50])  
-    upper_green1 = np.array([85, 255, 255])  
-    lower_green2 = np.array([85, 70, 50])  
-    upper_green2 = np.array([92, 163, 99]) 
-   
-    mask1 = cv2.inRange(hsv, lower_green1, upper_green1)
-    mask2 = cv2.inRange(hsv, lower_green2, upper_green2)
-    mask = cv2.bitwise_or(mask1, mask2)
-
-    green_image = cv2.bitwise_and(image, image, mask=mask)
-        
-    return green_image
-
-
 def sharpen_image(image):
     kernel = np.array([[-1, -1, -1],
                        [-1, 9, -1],

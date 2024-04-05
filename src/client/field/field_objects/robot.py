@@ -1,7 +1,6 @@
 import math
 from src.client.vision import detect_ball
-from src.client.field.coordinate_system import filter_image_red
-from src.client.field.coordinate_system import filter_image_green
+from src.client.vision.filters import filter_image_red, filter_image_green
 from src.client.vision.wheel_movement import get_degrees_to_rotation
 from src.client.vision.wheel_movement import get_distance_to_move
 WHEEL_DIMENSION = 80
