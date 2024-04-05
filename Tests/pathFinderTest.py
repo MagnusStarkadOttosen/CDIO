@@ -1,6 +1,6 @@
 import cv2
 import unittest
-from src.client.pathFinder import *
+from src.client.vision.pathFinder import *
 from src.client.vision import Shapes
 
 class BallsRemainingTest(unittest.TestCase):
