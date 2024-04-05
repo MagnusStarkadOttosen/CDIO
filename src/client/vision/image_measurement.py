@@ -1,30 +1,11 @@
 DPI = 96  # RESOLUTION
 
 
-def calculate_image_size(image):
-    height, width = image.shape[:2]
-    print('Image width: ', width)
-    print('Image Height:', height)
-    return width, height
-
-
-# def resolution(image):
-#     dpi = image.info['dpi'] if 'dpi' in image.info else (72, 72)
-#     print(f"The image resolution is: {dpi} DPI")
-
-
-def convert_px_to_cm(pixel_value):
+def convert_px_to_cm(pixel_value): # TODO: Should this one be kept, or convert_px_cm_temp?
     return pixel_value / 10
 
 
-def convert_image_size_to_cm(image):
-    width_px, height_px = calculate_image_size(image)
-    width_cm, height_cm = convert_px_cm_temp(width_px, height_px)
-    print(f'Width in cm: {width_cm}, Height in cm: {height_cm}')
-    return width_cm, height_cm
-
-
-def convert_px_cm_temp(width_px, height_px):
+def convert_px_cm_temp(width_px, height_px): # TODO: Should this one be kept, or convert_px_cm?
     width_in, height_in = convert_px_to_inches(width_px, height_px)
     return width_in * 2.54, height_in * 2.54
 
