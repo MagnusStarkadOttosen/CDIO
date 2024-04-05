@@ -1,3 +1,5 @@
+import math
+
 DPI = 96  # RESOLUTION
 
 
@@ -15,3 +17,9 @@ def convert_px_to_inches(width_px, height_px):
     height_in = height_px / DPI
     return width_in, height_in
 
+
+def get_distance(robot_pos, target_pos):
+    print(f"robot pos :  {robot_pos} and target_pos :  {target_pos}")
+    dist_vector = robot_pos - target_pos
+    distance = round(math.sqrt(dist_vector[0] ** 2 + dist_vector[1] ** 2), 1)
+    return distance

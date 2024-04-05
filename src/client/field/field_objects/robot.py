@@ -2,8 +2,10 @@ import math
 from src.client.vision import detect_ball
 from src.client.vision.filters import filter_image_red, filter_image_green
 from src.client.vision.wheel_movement import get_degrees_to_rotation
-from src.client.vision.wheel_movement import get_distance_to_move
-WHEEL_DIMENSION = 80
+from src.client.utilities import get_distance
+
+WHEEL_DIMENSION = 5.5
+DIST_BETWEEN_WHEELS = 13.5
 WHEEL_CIRCUMF_CM = WHEEL_DIMENSION * math.pi
 
 # modified robot class with position and pivot
@@ -54,7 +56,7 @@ class Robot:
     def move(self, target_pos):
         # distance to move is the distance from M to the target position
         # the robot's position is updated after the robot moves
-        get_distance_to_move(self, target_pos)
+        get_distance(self, target_pos)
         self.M = target_pos
         return self.M
 

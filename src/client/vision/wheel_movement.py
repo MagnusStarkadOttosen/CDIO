@@ -1,15 +1,15 @@
 import math
 
+import src.client.utilities
+
 WHEEL_DIMENSION = 80
 WHEEL_CIRCUMF_CM = WHEEL_DIMENSION * math.pi
 
 
-
-
 # calculate the distance the robot needs to move to reach the target position
-def get_distance_to_move(self, target_pos):
-        b = math.sqrt((target_pos[0] - self.M[0]) ** 2 + (target_pos[1] - self.M[1]) ** 2)
-        return b
+# def get_distance_to_move(self, target_pos):
+#         b = math.sqrt((target_pos[0] - self.M[0]) ** 2 + (target_pos[1] - self.M[1]) ** 2)
+#         return b
 
 # calculate the degrees between the vector MB and the vector MC
 # determine the robot's rotation direction relative to the target position ( turn left or turn right)
@@ -49,7 +49,7 @@ def generate_turn_command(self, target_pos):
     elif degrees < 0:
         command = f"rotate {abs(degrees)}"
     else:
-        command = f"move {self.get_distance_to_move(target_pos)}"
+        command = f"move {src.client.utilities.get_distance(target_pos)}"
 
     return command
 
