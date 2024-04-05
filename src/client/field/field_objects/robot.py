@@ -1,7 +1,7 @@
 import math
 from src.client.vision import detect_ball
-from src.client.field.coordinate_system import detect_red
-from src.client.field.coordinate_system import detect_green
+from src.client.field.coordinate_system import filter_image_red
+from src.client.field.coordinate_system import filter_image_green
 from src.client.vision.wheel_movement import get_degrees_to_rotation
 from src.client.vision.wheel_movement import get_distance_to_move
 WHEEL_DIMENSION = 80
@@ -26,15 +26,15 @@ class Robot:
         
 
     def update_AB_andM_from_image(self, image):
-        red_point = detect_ball(detect_red(image))
-        green_point = detect_ball(detect_green(image))
-        if detect_red(image) is not None:
+        red_point = detect_ball(filter_image_red(image))
+        green_point = detect_ball(filter_image_green(image))
+        if filter_image_red(image) is not None:
             if red_point is not None:
                 self.A = (red_point[0], red_point[1])  # Extract x and y coordinates
             else:
                 self.A = None
 
-        if detect_green(image) is not None:
+        if filter_image_green(image) is not None:
              if green_point is not None:
                  self.B = (green_point[0], green_point[1])
              else:

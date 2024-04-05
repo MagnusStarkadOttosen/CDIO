@@ -51,7 +51,7 @@ def draw_grid(image, real_world_size, grid_spacing_cm):
     return image_with_grid
 
 
-def detect_red(image):
+def filter_image_red(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     lower_red1 = np.array([0, 70, 50])
     upper_red1 = np.array([6, 255, 255])
@@ -67,7 +67,7 @@ def detect_red(image):
     return red_image
 
 
-def detect_green(image):
+def filter_image_green(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     
     lower_green1 = np.array([35, 70, 50])  
