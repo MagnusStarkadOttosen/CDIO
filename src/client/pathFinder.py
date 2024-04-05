@@ -34,7 +34,7 @@ def findNearestBall(robotpostition:Pos, shape:Shapes):
             # ball = np.array([width_cm, height_cm])
             # print(f"width : {width_cm} heigth: {height_cm}")
             print
-            dist=get_distance((robotpostition.M[0], robotpostition.M[1]), np.array([x, y]))
+            dist= get_distance((robotpostition.M[0], robotpostition.M[1]), np.array([x, y]))
             print("dist before if: ", dist)
             if(dist<nearest):
                 ball_route.x=x
@@ -54,7 +54,7 @@ def findNearestWall(robotpostition:Pos,shape:Shapes,route:Route):
     for (x, y,z) in lines:
         width_cm, height_cm = convert_px_cm_temp(x, y)
         ball= Pos(width_cm,height_cm)
-        dist=get_distance(robotpostition, ball)
+        dist= get_distance(robotpostition, ball)
         if(dist<nearest):
             route.x=x
             route.y=y

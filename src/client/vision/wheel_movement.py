@@ -49,7 +49,7 @@ def generate_turn_command(self, target_pos):
     elif degrees < 0:
         command = f"rotate {abs(degrees)}"
     else:
-        command = f"move {src.client.utilities.get_distance(target_pos)}"
+        command = f"move {src.client.utilities.get_distance(target_pos, )}"
 
     return command
 
