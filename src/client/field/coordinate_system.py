@@ -51,34 +51,6 @@ def draw_grid(image, real_world_size, grid_spacing_cm):
     return image_with_grid
 
 
-def sharpen_image(image):
-    kernel = np.array([[-1, -1, -1],
-                       [-1, 9, -1],
-                       [-1, -1, -1]])
-
-    sharpened_image = cv2.filter2D(image, -1, kernel)
-    return sharpened_image
-
-
-def clean_image(image):
-
-    kernel = np.ones((3,3), np.uint8)
-    opening = cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel, iterations=2)
-    
-    dilated = cv2.dilate(opening, kernel, iterations=2)
-    
-    blurred = cv2.GaussianBlur(dilated, (5,5), 0)
-    
-    return blurred
-
-
-def erode_image(image, i=1):
-    kernel = np.ones((4, 4), np.uint8) 
-    img_erosion = cv2.erode(image, kernel, iterations=i) 
-    
-    return img_erosion
-
-
 def find_line_intersections(image):
     
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
