@@ -1,7 +1,7 @@
 import time
 
-from src.server.robot import Robot
-from src.server.robot_stub import RobotStub
+from src.server.commands import Robot
+from src.server.commands_stub import RobotStub
 
 robot = RobotStub()  # Robot()
 actions_functions = {

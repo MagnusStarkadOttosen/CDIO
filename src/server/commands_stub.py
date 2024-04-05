@@ -1,5 +1,5 @@
 import math
-from src.server.robot import convert_distance_to_degrees
+from src.server.commands import convert_distance_to_degrees
 WHEEL_DIMENSION = 5.5
 DIST_BETWEEN_WHEELS = 13.5
 

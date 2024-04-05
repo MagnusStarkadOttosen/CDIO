@@ -6,7 +6,7 @@ import unittest
 import numpy as np
 
 from src.client.vision.wheel_movement import get_distance_to_move
-from src.server.robot import Robot, convert_distance_to_degrees, WHEEL_CIRCUMF_CM
+from src.server.commands import Robot, convert_distance_to_degrees, WHEEL_CIRCUMF_CM
 
 import sys
 
