@@ -2,15 +2,10 @@
 import cv2
 import numpy as np
 
-from src.vision.shape_detection import Shapes
+from src.client.vision import detect_ball
+from src.client.vision import Shapes
 from testing.visualization import draw_shapes
-from src.vision.coordinate_system import *
-from src.vision.filters import *
-from src.vision.detector_robot import detect_ball
-from sklearn.cluster import KMeans
-from src.vision.shape_detection import Shapes
-from testing.visualization import draw_shapes
-from src.vision.buffer_zone import draw_center_and_lines
+from src.client.vision.buffer_zone import draw_center_and_lines
 
 # Manually placed corners on original image
 # corners = np.array([[417, 73], [1650, 66], [1689, 987], [403, 985]], dtype="float32") #Top left, top right, buttom right, buttom left

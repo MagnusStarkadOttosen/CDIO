@@ -1,9 +1,9 @@
 import cv2
 import numpy as np
 
-from src.vision.filters import apply_gray, apply_canny, apply_blur, convert_hsv
-from src.vision.coordinate_system import find_corners
-from src.vision.wheel_movement import Pos
+from src.client.vision.filters import apply_gray, apply_canny, apply_blur, convert_hsv
+from src.client.vision.coordinate_system import find_corners
+from src.client.vision.wheel_movement import Pos
 
 ROBOT_START_X = 10
 ROBOT_START_Y = 20

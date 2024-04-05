@@ -1,8 +1,6 @@
 import math
-import time
 
 from ev3dev2.motor import (OUTPUT_A, OUTPUT_B, OUTPUT_D, MoveTank, SpeedPercent, MediumMotor)
-from src.vision.wheel_movement import get_distance_to_move
 
 WHEEL_DIMENSION = 5.5
 DIST_BETWEEN_WHEELS = 13.5

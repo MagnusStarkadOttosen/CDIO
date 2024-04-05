@@ -1,18 +1,10 @@
 import cv2
-import numpy as np
 import sys
 import os
 
 # Add the parent directory of 'src' to the Python path
 base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(base_path)
-from src.vision.detector_robot import *
-from src.vision.shape_detection import Shapes
-from testing.visualization import draw_shapes
-from src.vision.coordinate_system import *
-from src.vision.filters import *
-
-
 
 #Manually placed corners on original image
 #corners = np.array([[417, 73], [1650, 66], [1689, 987], [403, 985]], dtype="float32") #Top left, top right, buttom right, buttom left

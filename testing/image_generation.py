@@ -1,10 +1,4 @@
 import cv2
-import numpy as np
-from src.client.pathFinder import *
-from src.vision.detector_robot import *
-from testing.visualization import draw_shapes
-
-from src.client.robot_data import Robot
 
 #Path from where images comes from and path where the processed images are stored
 input_folder_path = 'images/'

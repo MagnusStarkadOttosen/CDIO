@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-from src.vision.filters import apply_blur
 
 
 def detect_ball(image):

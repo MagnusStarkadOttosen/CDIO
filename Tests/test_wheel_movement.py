@@ -5,7 +5,7 @@ sys.path.append(base_path)
 import unittest
 import numpy as np
 
-from src.vision.wheel_movement import get_distance_to_move
+from src.client.vision.wheel_movement import get_distance_to_move
 from src.server.robot import Robot, convert_distance_to_degrees, WHEEL_CIRCUMF_CM
 
 import sys

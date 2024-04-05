@@ -3,8 +3,8 @@
 from ev3dev2._platform.ev3 import INPUT_2
 from ev3dev2.motor import SpeedPercent
 from ev3dev2.sensor.lego import ColorSensor
-from src.vision.wheel_movement import get_wheel_rotation, get_distance_to_move, move_robot_distance
-from src.vision.robot_controls import drive, tank_drive
+from src.client.vision.wheel_movement import move_robot_distance
+from testing.robot_controls import drive, tank_drive
 
 # tank_drive = MoveTank(OUTPUT_A, OUTPUT_D)
 cs = ColorSensor(INPUT_2)

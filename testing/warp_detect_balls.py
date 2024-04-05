@@ -1,9 +1,9 @@
 import cv2
 import numpy as np
-from src.vision.shape_detection import Shapes
-from src.vision.coordinate_system import warp_perspective
+from src.client.vision import Shapes
+from src.client.vision.coordinate_system import warp_perspective
 from testing.visualization import draw_shapes
-from src.vision.buffer_zone import draw_center_and_lines
+from src.client.vision.buffer_zone import draw_center_and_lines
 
 # Configuration parameters
 corners = np.array([[377, 44], [1382, 50], [1377, 779], [368, 791]], dtype="float32")
