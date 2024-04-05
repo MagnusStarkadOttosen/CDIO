@@ -3,25 +3,10 @@ import numpy as np
 
 from src.client.vision.filters import apply_gray, apply_canny, apply_blur, convert_hsv
 from src.client.field.coordinate_system import find_corners
-from src.client.vision.wheel_movement import Pos
 
 ROBOT_START_X = 10
 ROBOT_START_Y = 20
 
-
-class Robot:
-
-    def __init__(self):
-        self.position = Pos(ROBOT_START_X, ROBOT_START_Y)
-        self.pivot = 0
-        self.red_point = Pos(0, 0)
-        self.green_point = Pos(0, 0)
-
-    def update_position(self, new_position):
-        self.position = new_position
-
-
-# hej
 
 class Shapes:
     def __init__(self, image):
@@ -47,6 +32,7 @@ class Shapes:
                 print('Radius:', z)
                 balls += 1
         return balls
+
     # def detect_ball(self):
     #     if len(self.image.shape) == 3 and self.image.shape[2] == 3:
     #         gray = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
@@ -80,7 +66,7 @@ class Shapes:
 
     def detect_walls(self):
         canny = apply_canny(self.image)
-        self.lines =\
+        self.lines = \
             cv2.HoughLinesP(canny, 1, np.pi / 180, 50, None, 50, 10)
 
     def detect_red_walls(self):
@@ -96,29 +82,29 @@ class Shapes:
 
         self.image = cv2.bitwise_and(self.original_image, self.original_image, mask=mask)
 
-    def draw_coordinate_system( image):
+    def draw_coordinate_system(image):
         corners = find_corners(image)  # Assuming this returns the corners as (x, y) tuples
         if corners is not None and len(corners) >= 4:
             # Assuming top-left and bottom-right corners are what we need
             # This might need adjustment based on how corners are ordered
             top_left = tuple(corners[0].ravel())
             bottom_right = tuple(corners[2].ravel())
-            
+
             # Determine the number of lines in the grid (you can adjust this)
             num_lines = 10
-            
+
             # Draw horizontal lines
             for i in range(num_lines + 1):
                 start_point = (top_left[0], top_left[1] + i * ((bottom_right[1] - top_left[1]) // num_lines))
                 end_point = (bottom_right[0], top_left[1] + i * ((bottom_right[1] - top_left[1]) // num_lines))
                 cv2.line(image, start_point, end_point, (255, 255, 0), 2)  # Using yellow for visibility
-            
+
             # Draw vertical lines
             for i in range(num_lines + 1):
                 start_point = (top_left[0] + i * ((bottom_right[0] - top_left[0]) // num_lines), top_left[1])
                 end_point = (top_left[0] + i * ((bottom_right[0] - top_left[0]) // num_lines), bottom_right[1])
                 cv2.line(image, start_point, end_point, (255, 255, 0), 2)  # Using yellow for visibility
-    
+
     # def draw_corners_debug(self, image_to_draw_on):
     #     corners = find_corners(image_to_draw_on)
     #     if corners is not None:

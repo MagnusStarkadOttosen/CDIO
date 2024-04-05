@@ -32,7 +32,7 @@ class BallsRemainingTest(unittest.TestCase):
 
 
 
-        result = findNearestBall((0,0),shape_detector)
+        result = findNearestBall(np.array([0,0]),shape_detector)
 
         print("test 2",result.y)
 
