@@ -3,7 +3,7 @@ import numpy as np
 from src.client.vision import Shapes
 from src.client.field.coordinate_system import warp_perspective
 from testing.visualization import draw_shapes
-from src.client.vision.buffer_zone import draw_center_and_lines
+from src.client.field.buffer_zone import draw_center_and_lines
 
 # Configuration parameters
 corners = np.array([[377, 44], [1382, 50], [1377, 779], [368, 791]], dtype="float32")

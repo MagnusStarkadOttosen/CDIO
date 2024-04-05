@@ -5,7 +5,7 @@ import numpy as np
 from src.client.vision import detect_ball
 from src.client.vision import Shapes
 from testing.visualization import draw_shapes
-from src.client.vision.buffer_zone import draw_center_and_lines
+from src.client.field.buffer_zone import draw_center_and_lines
 
 # Manually placed corners on original image
 # corners = np.array([[417, 73], [1650, 66], [1689, 987], [403, 985]], dtype="float32") #Top left, top right, buttom right, buttom left
