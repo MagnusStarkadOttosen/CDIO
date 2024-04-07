@@ -3,7 +3,7 @@ import numpy as np
 
 from src.client.vision.filters import apply_gray, apply_canny, apply_blur, convert_hsv
 from src.client.field.coordinate_system import find_corners
-
+from src.client.vision.filters import apply_blur, apply_gray, apply_canny
 ROBOT_START_X = 10
 ROBOT_START_Y = 20
 
@@ -114,16 +114,21 @@ class Shapes:
 
 
 def detect_balls(image):
-    balls = 0
+    # balls = 0
     # Convert to grayscale
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    # gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    gray = apply_gray(image)
 
+    blurred = apply_blur(gray)
     # Apply edge detection
-    edges = cv2.Canny(gray, 100, 200)
+    #edges = cv2.Canny(gray, 100, 200)
+    edges = apply_canny(blurred)
+
+
 
     # Detect circles
     circles = cv2.HoughCircles(edges, cv2.HOUGH_GRADIENT, dp=1.75, minDist=7,
-                               param1=30, param2=35, minRadius=10, maxRadius=30)
+                               param1=30, param2=35, minRadius=28, maxRadius=30)
     if circles is not None:
         # circles = np.uint16(np.around(circles))
         #     for idx, (x, y, r) in enumerate(circles[0, :]):
