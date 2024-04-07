@@ -26,30 +26,32 @@ class Robot:
         self.pivot = 0  # the angle between the vector pos->green and vector pos->ball_pos
 
     def update_pos_from_image(self, image):
-        red = detect_ball(filter_image_red(image))
+        # red = detect_ball(filter_image_red(image))
+        # green = detect_ball(filter_image_green(image))
+        # if filter_image_red(image) is not None:
+        #     if red is not None:
+        #         self.red_dot = (red[0], red[1])  # Extract x and y coordinates
+        #     else:
+        #         self.red_dot = None
+        #
+        # distance from A to B, TODO make dist A->B a constant value
+        distance = math.sqrt(
+            (self.green_dot[0] - self.red_dot[0]) ** 2 + (self.green_dot[1] - self.red_dot[1]) ** 2)
+        # distance from A to M :a
+        self.update_dot_positions(image)
+        a = 10
+        self.pos = (self.red_dot[0] + a / (distance * (self.green_dot[0] - self.red_dot[0])),
+                    self.red_dot[1] + a / (distance * (self.green_dot[1] - self.red_dot[1])))
+
+    def update_dot_positions(self, image):
         green = detect_ball(filter_image_green(image))
-        if filter_image_red(image) is not None:
-            if red is not None:
-                self.red_dot = (red[0], red[1])  # Extract x and y coordinates
-            else:
-                self.red_dot = None
+        red = detect_ball(filter_image_red(image))
 
-        if filter_image_green(image) is not None:
-            if green is not None:
-                self.green_dot = (green[0], green[1])
-            else:
-                self.green_dot = None
-
-            # distance from A to B
-            distance = math.sqrt((self.green_dot[0] - self.red_dot[0]) ** 2 + (self.green_dot[1] - self.red_dot[1]) ** 2)
-            # distance from A to M :a
-            a = 10
-            self.pos = (red[0] + a / (distance * (green[0] - red[0])),
-                        red[1] + a / (distance * (green[1] - red[1])))
-        return self.red_dot, self.green_dot, self.pos
-
-    def update_green_dot_from_image(self, image):
-
+        if green is not None and red is not None:
+            self.green_dot = [green[0], green[1]]
+            self.red_dot = [red[0], red[1]]
+        else:
+            print("No red or green.")
 
     def update_pivot_from_image(self, ball_pos):
         # self.C = target_pos # There is no member C in Robot??
