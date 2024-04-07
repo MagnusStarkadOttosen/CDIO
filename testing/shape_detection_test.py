@@ -8,18 +8,36 @@ from src.client.vision.filters import filter_image_red, filter_image_green
 
 
 class TestBallDetection(unittest.TestCase):
-    def test_detect_balls(self):
+    def test_detect_balls_vector_drawing(self):
         image_name = "three_balls_extra_skewed.jpg"
         image = cv2.imread('images/' + image_name)
         balls = detect_balls(image)
+        ball_count = 0 if balls is None else len(balls)
         print_image(image, balls, image_name)
+        self.assertEqual(ball_count, 3)
+
+    def test_detect_balls_real_img(self):
+        image_name = "1.jpg"
+        image = cv2.imread('images/' + image_name)
+        balls = detect_balls(image)
+        ball_count = 0 if balls is None else len(balls)
+        print_image(image, balls, image_name)
+        self.assertEqual(ball_count, 0)  # expect 0 because circles too large
 
     def test_detect_red_dot(self):
-        image_name = 'image_with_robot.jpeg'
+        image_name = 'robot_with_circles.jpg'
         image = cv2.imread('images/' + image_name)
         balls = detect_balls(filter_image_red(image))
         ball_count = 0 if balls is None else len(balls)
         print_image(image, balls, 'red_' + image_name)
+        self.assertEqual(ball_count, 1)
+
+    def test_detect_green_dot(self):
+        image_name = 'robot_with_circles.jpg'
+        image = cv2.imread('images/' + image_name)
+        balls = detect_balls(filter_image_green(image))
+        ball_count = 0 if balls is None else len(balls)
+        print_image(image, balls, 'green_' + image_name)
         self.assertEqual(ball_count, 1)
 
 
