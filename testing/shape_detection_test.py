@@ -18,7 +18,9 @@ class TestBallDetection(unittest.TestCase):
         image_name = 'image_with_robot.jpeg'
         image = cv2.imread('images/' + image_name)
         balls = detect_balls(filter_image_red(image))
-        print_image(image, balls, image_name)
+        ball_count = 0 if balls is None else len(balls)
+        print_image(image, balls, 'red_' + image_name)
+        self.assertEqual(ball_count, 1)
 
 
 def print_image(image, balls, image_name):
@@ -36,3 +38,5 @@ def print_image(image, balls, image_name):
             print("ball x:", ball[0], "y:", ball[1])
 
         write_image_to_file('circles_detected_' + image_name, image)
+    else:
+        print("No balls detected to draw on the image.")
