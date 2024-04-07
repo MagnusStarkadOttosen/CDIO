@@ -4,16 +4,16 @@ import numpy as np
 from src.client.vision.filters import convert_hsv, filter_image_green, filter_image_red
 from src.client.field.coordinate_system import find_corners
 from src.client.vision.filters import apply_blur, apply_gray, apply_canny
-from src.client.field.objects_on_field.robot import Robot
-
-robot = Robot()
+from src.client.field.objects_on_field.robot import calc_robot_pos
 
 
 def detect_robot(image):
     green_dot = detect_balls(filter_image_green(image))
     red_dot = detect_balls(filter_image_red(image))
 
-    robot.update_robot_pos(green_dot, red_dot)
+    return calc_robot_pos(green_dot, red_dot)
+
+
 def detect_balls(image):
     # Convert to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
