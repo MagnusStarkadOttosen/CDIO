@@ -114,21 +114,15 @@ class Shapes:
 
 
 def detect_balls(image):
-    # balls = 0
     # Convert to grayscale
-    # gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    gray = apply_gray(image)
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-    blurred = apply_blur(gray)
     # Apply edge detection
-    #edges = cv2.Canny(gray, 100, 200)
-    edges = apply_canny(blurred)
-
-
+    edges = cv2.Canny(gray, 100, 200)
 
     # Detect circles
-    circles = cv2.HoughCircles(edges, cv2.HOUGH_GRADIENT, dp=1.75, minDist=7,
-                               param1=30, param2=35, minRadius=28, maxRadius=30)
+    circles = cv2.HoughCircles(edges, cv2.HOUGH_GRADIENT, dp=1.75, minDist=9,
+                               param1=30, param2=35, minRadius=15, maxRadius=30)
     if circles is not None:
         # circles = np.uint16(np.around(circles))
         #     for idx, (x, y, r) in enumerate(circles[0, :]):

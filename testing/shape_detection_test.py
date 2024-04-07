@@ -8,7 +8,7 @@ from testing.image_generation import write_image_to_file
 
 class TestBallDetection(unittest.TestCase):
     def test_detect_balls(self):
-        image_name = "three_balls.jpg"
+        image_name = "three_balls_extra_skewed.jpg"
         image = cv2.imread('images/' + image_name)
         balls = detect_balls(image)
         if balls is not None:
