@@ -36,16 +36,16 @@ class Robot:
         #
         # distance from A to B, TODO make dist A->B a constant value and delete if statement
         if self.red_dot or self.green_dot is None:
-            self.update_dot_positions(green_pos, red_pos)
+            self.__update_dot_positions(green_pos, red_pos)
         distance = math.sqrt(
             (self.green_dot[0] - self.red_dot[0]) ** 2 + (self.green_dot[1] - self.red_dot[1]) ** 2)
         # distance from A to M :a
         a = 10
-        self.update_dot_positions(green_pos, red_pos)
+        self.__update_dot_positions(green_pos, red_pos)
         self.pos = (self.red_dot[0] + a / (distance * (self.green_dot[0] - self.red_dot[0])),
                     self.red_dot[1] + a / (distance * (self.green_dot[1] - self.red_dot[1])))
 
-    def update_dot_positions(self, green_pos, red_pos):
+    def __update_dot_positions(self, green_pos, red_pos):
         if len(green_pos) > 1 and len(red_pos) > 1:
             self.green_dot = [green_pos[0], green_pos[1]]
             self.red_dot = [red_pos[0], red_pos[1]]
