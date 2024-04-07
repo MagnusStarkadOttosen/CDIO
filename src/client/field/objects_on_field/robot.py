@@ -48,6 +48,9 @@ class Robot:
                         red[1] + a / (distance * (green[1] - red[1])))
         return self.red_dot, self.green_dot, self.pos
 
+    def update_green_dot_from_image(self, image):
+
+
     def update_pivot_from_image(self, ball_pos):
         # self.C = target_pos # There is no member C in Robot??
         self.pivot = self.get_degrees_to_rotate(ball_pos)
