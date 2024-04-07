@@ -59,8 +59,7 @@ class Robot:
         self.M = target_pos
         return self.M
 
-
-    def get_degrees_to_rotation(self, target_pos):
+    def get_degrees_to_rotate(self, target_pos):
         # distance MB = a
         a = math.sqrt((self.B[0] - self.M[0]) ** 2 + (self.B[1] - self.M[1]) ** 2)
         # distance MC = b
