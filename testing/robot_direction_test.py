@@ -3,13 +3,36 @@ import unittest
 # import sys
 # import os
 
-from src.client.field.objects_on_field.robot import Robot
+from src.client.field.objects_on_field.robot import calc_degrees_to_rotate, calc_robot_pos
 from src.client.vision.shape_detection import detect_balls
+from src.client.vision.filters import filter_image_green, filter_image_red
 
-robot = Robot()
-image = cv2.imread('images/image_with_robot.jpeg')
-class TestUpdateRedAndGreenDot(unittest.TestCase):
-    def test_update_red_and_green_dot(self):
+image = cv2.imread('images/robot_with_circles.jpg')
+
+
+class TestCalcDegrees(unittest.TestCase):
+    def test_calc_degrees_to_rotate_hardcoded(self):
+        degrees = calc_degrees_to_rotate((5, 5), (5, 8), (9, 5))
+        expected_degrees = 90
+        self.assertEqual(expected_degrees, degrees)
+
+    def test_calc_degrees_from_image(self):
+        green_dot = detect_balls(filter_image_green(image))
+        if green_dot is None:
+            print("No green dot.")
+            return
+        green_vector = (green_dot[0][0], green_dot[0][1])
+        red_dot = detect_balls(filter_image_red(image))
+        if red_dot is None:
+            print("No red dot.")
+            return
+        red_vector = (red_dot[0][0], red_dot[0][1])
+        robot_pos = calc_robot_pos(green_vector, red_vector)
+        target_pos = (0, 0) # detect_balls(image)
+        expected_degrees = 45
+        actual_degrees = calc_degrees_to_rotate(robot_pos, green_vector, target_pos)
+        self.assertEqual(expected_degrees, actual_degrees)
+
 
 
 
@@ -39,8 +62,8 @@ class TestUpdateRedAndGreenDot(unittest.TestCase):
 #
 # #Name of the image to be used
 # image_name = 'robotdirection.jpeg'
-input_image_path = input_folder_path + image_name
-image = cv2.imread(input_image_path)
+# input_image_path = input_folder_path + image_name
+# image = cv2.imread(input_image_path)
 
 
 
