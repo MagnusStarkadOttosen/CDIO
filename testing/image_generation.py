@@ -17,6 +17,12 @@ def test_filter_image_red():
     write_image_to_file('filter_red_' + image_name[1], filtered_image)
 
 
+def test_filter_image_green():
+    image = cv2.imread(input_folder_path + image_name[1])
+    filtered_image = filter_image_green(image)
+    write_image_to_file('filter_green_' + image_name[1], filtered_image)
+
+
 def test_detect_balls():
     image = cv2.imread(input_folder_path + image_name[0])
     if image is not None:
@@ -45,3 +51,4 @@ def write_image_to_file(output_image_name, output_img):
 
 
 test_filter_image_red()
+test_filter_image_green()
