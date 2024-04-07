@@ -28,34 +28,34 @@ image = cv2.imread(input_image_path)
 
 
 
-if image is not None:
-    
-    #Detecting the corners of the image
-    
-    red_image = detect_red(image) 
-    red_image_name = 'red_' + image_name
-    red_image_path = output_folder_path + red_image_name
-    cv2.imwrite(red_image_path, red_image)
-
-    green_image = detect_green(image)
-    green_image_name = 'green_' + image_name
-    green_image_path = output_folder_path + green_image_name
-    cv2.imwrite(green_image_path, green_image)
-
-    red_point = detect_ball(red_image)
-    green_point = detect_ball(green_image)
-
-    if red_image is not None:
-        if red_point is not None:
-            red_point_coordinates = (red_point[0], red_point[1])  # Extract x and y coordinates
-        else:
-            red_point_coordinates = None
-
-    if green_image is not None:
-        if green_point is not None:
-            green_point_coordinates = (green_point[0], green_point[1])  # Extract x and y coordinates
-        else:
-            green_point_coordinates = None
-
-        print("Red point coordinates:", red_point_coordinates)
-        print("Green point coordinates:", green_point_coordinates)
+# if image is not None:
+#
+#     #Detecting the corners of the image
+#
+#     red_image = detect_red(image)
+#     red_image_name = 'red_' + image_name
+#     red_image_path = output_folder_path + red_image_name
+#     cv2.imwrite(red_image_path, red_image)
+#
+#     green_image = detect_green(image)
+#     green_image_name = 'green_' + image_name
+#     green_image_path = output_folder_path + green_image_name
+#     cv2.imwrite(green_image_path, green_image)
+#
+#     red_point = detect_ball(red_image)
+#     green_point = detect_ball(green_image)
+#
+#     if red_image is not None:
+#         if red_point is not None:
+#             red_point_coordinates = (red_point[0], red_point[1])  # Extract x and y coordinates
+#         else:
+#             red_point_coordinates = None
+#
+#     if green_image is not None:
+#         if green_point is not None:
+#             green_point_coordinates = (green_point[0], green_point[1])  # Extract x and y coordinates
+#         else:
+#             green_point_coordinates = None
+#
+#         print("Red point coordinates:", red_point_coordinates)
+#         print("Green point coordinates:", green_point_coordinates)

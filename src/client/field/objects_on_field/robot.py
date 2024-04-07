@@ -34,7 +34,9 @@ class Robot:
         #     else:
         #         self.red_dot = None
         #
-        # distance from A to B, TODO make dist A->B a constant value
+        # distance from A to B, TODO make dist A->B a constant value and delete if statement
+        if self.red_dot or self.green_dot is None:
+            self.update_dot_positions(image)
         distance = math.sqrt(
             (self.green_dot[0] - self.red_dot[0]) ** 2 + (self.green_dot[1] - self.red_dot[1]) ** 2)
         # distance from A to M :a
