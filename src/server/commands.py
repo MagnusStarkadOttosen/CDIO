@@ -24,9 +24,10 @@ class Commands:
 
     # Function to turn the robot by x degrees
     def turn_by_x_degrees(self, degrees):
-        self.collector_motor.off()
+        self.tank_drive.off()
         motor_revolutions = (degrees * DIST_BETWEEN_WHEELS) / WHEEL_DIMENSION
         self.tank_drive.on_for_degrees(SpeedPercent(25), SpeedPercent(-25), motor_revolutions)
+        self.tank_drive.on(SpeedPercent(30), SpeedPercent(30))
 
     def drive(self, distance_to_move):
         # revs = get_wheel_revolutions(distance_to_move)
