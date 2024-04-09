@@ -1,17 +1,31 @@
+import math
+
 import cv2
 import numpy as np
 
 from src.client.vision.filters import convert_hsv, filter_image_green, filter_image_red
 from src.client.field.coordinate_system import find_corners
 from src.client.vision.filters import apply_gray, apply_canny
-from src.client.field.robot import calc_robot_pos
 
 
 def detect_robot(image):
     green_dot = detect_balls(filter_image_green(image))
     red_dot = detect_balls(filter_image_red(image))
 
-    return calc_robot_pos(green_dot, red_dot)
+    return _calc_robot_pos(green_dot, red_dot)
+
+
+def _calc_robot_pos(green_dot, red_dot):
+    distance = math.sqrt(
+        (green_dot[0] - red_dot[0]) ** 2 + (green_dot[1] - red_dot[1]) ** 2)
+    # distance from red_dot to robot_pos :a
+    a = 10
+
+    pos = (red_dot[0] + a / (distance * (green_dot[0] - red_dot[0])),
+           red_dot[1] + a / (distance * (green_dot[1] - red_dot[1])))
+
+    print(f"robot_pos: {pos}")
+    return pos
 
 
 def detect_balls(image, min_radius=15, max_radius=25):
@@ -138,3 +152,4 @@ class Shapes: # TODO opløs Shapes klasse
     #         for corner in corners:
     #             x, y = tuple(corner.ravel())
     #             # cv2.circle(image_to_draw_on, (x, y), 5, (0, 255, 0), -1)  # Draw green circles at each corner
+

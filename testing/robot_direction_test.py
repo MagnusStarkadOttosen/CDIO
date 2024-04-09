@@ -3,8 +3,8 @@ import unittest
 # import sys
 # import os
 
-from src.client.field.robot import calc_degrees_to_rotate, calc_robot_pos
-from src.client.vision.shape_detection import detect_balls
+from src.client.field.robot import calc_degrees_to_rotate
+from src.client.vision.shape_detection import detect_balls, _calc_robot_pos
 from src.client.vision.filters import filter_image_green, filter_image_red
 
 image = cv2.imread('images/robot_ball_90.jpeg')
@@ -33,7 +33,7 @@ class TestCalcDegrees(unittest.TestCase):
         red_vector = (red_dot[0][0], red_dot[0][1])
         print(f"red_vect: {red_vector}")
 
-        robot_pos = calc_robot_pos(green_vector, red_vector)
+        robot_pos = _calc_robot_pos(green_vector, red_vector)
         balls = detect_balls(image, min_radius=20)
         target_pos = (balls[0][0], balls[0][1])
         print(f"target_pos: {target_pos}")

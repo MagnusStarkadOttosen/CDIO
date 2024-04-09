@@ -22,18 +22,6 @@ WHEEL_CIRCUMF_CM = WHEEL_DIMENSION * math.pi
 #         self.pos = None  # the robot's position
 #         self.pivot = 0  # the angle between the vector pos->green and vector pos->ball_pos
 
-def calc_robot_pos(green_dot, red_dot):
-    distance = math.sqrt(
-        (green_dot[0] - red_dot[0]) ** 2 + (green_dot[1] - red_dot[1]) ** 2)
-    # distance from red_dot to robot_pos :a
-    a = 10
-
-    pos = (red_dot[0] + a / (distance * (green_dot[0] - red_dot[0])),
-           red_dot[1] + a / (distance * (green_dot[1] - red_dot[1])))
-
-    print(f"robot_pos: {pos}")
-    return pos
-
 
 # def update_pivot_from_image(robot_pos, ball_pos):
 #     # self.C = target_pos # There is no member C in Robot??
