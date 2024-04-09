@@ -51,7 +51,7 @@ def draw_grid(image, real_world_size, grid_spacing_cm):
     return image_with_grid
 
 
-def find_line_intersections(image):
+def find_lines(image):
     
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     edges = cv2.Canny(gray, 50, 150, apertureSize=3)
@@ -64,3 +64,31 @@ def find_line_intersections(image):
             print(f"Line from ({x1}, {y1}) to ({x2}, {y2})")
 
     return image, lines
+
+def find_intersection(l1, l2):
+    x1, y1, x2, y2 = l1
+    x3, y3, x4, y4 = l2
+    den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
+    if den == 0:
+        return None 
+    px = ((x1*y2 - y1*x2) * (x3 - x4) - (x1 - x2) * (x3*y4 - y3*x4)) / den
+    py = ((x1*y2 - y1*x2) * (y3 - y4) - (y1 - y2) * (x3*y4 - y3*x4)) / den
+    return int(px), int(py)
+
+def is_near_90_degrees(slope1, slope2, tolerance=5):
+    if slope1 == np.inf and slope2 == 0:
+        return True
+    if slope2 == np.inf and slope1 == 0:
+        return True
+    if slope1 == np.inf or slope2 == np.inf:
+        return False
+    angle = np.abs(np.arctan((slope2 - slope1) / (1 + slope1 * slope2)))
+    angle_deg = np.degrees(angle)
+    return 85 <= angle_deg <= 95
+
+def calculate_slope(line):
+    x1, y1, x2, y2 = line
+    if x2 == x1:
+        return np.inf  
+    return (y2 - y1) / (x2 - x1)
+
