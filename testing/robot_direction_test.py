@@ -1,11 +1,9 @@
 import cv2
 import unittest
-# import sys
-# import os
 
-from src.client.field.robot import calc_degrees_to_rotate, calc_vector_direction, angle_between_vectors, calc_robot_pos
+from src.client.field.robot import calc_degrees_to_rotate, calc_vector_direction
 from src.client.vision.shape_detection import detect_balls, detect_robot
-from src.client.vision.filters import filter_image_green, filter_image_red
+
 
 image = cv2.imread('images/robot_pos_red_dot.jpg')
 

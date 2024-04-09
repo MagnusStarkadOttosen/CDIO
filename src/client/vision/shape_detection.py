@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-from src.client.field.robot import calc_robot_pos, calc_vector_direction
+from src.client.field.robot import calc_vector_direction
 from src.client.vision.filters import convert_hsv, filter_image_green, filter_image_red
 from src.client.field.coordinate_system import find_corners
 from src.client.vision.filters import apply_gray, apply_canny
