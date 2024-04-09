@@ -5,23 +5,29 @@ import socket
 ev3_address = ('127.0.0.1', 10000)
 buffer_size = 1024
 
-# Create a TCP/IP socket
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-try:
-    sock.connect(ev3_address)
-    print("Connected to EV3. Type 'exit' to quit.")
+class ClientPC:
+    def __init__(self):
+        # Create a TCP/IP socket
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            self.sock.connect(ev3_address)
+            print("Connected to EV3.")
 
-    test_commands = ["start_collect", "move 50", "turn 90", "deliver", "stop_collect", "exit"]
-    for command in test_commands:
-        if command:
-            sock.sendall(command.encode('utf-8'))
-            print(f"Sent: {command}")
-            server_response = sock.recv(buffer_size)
-        else:
-            print("test")
-except socket.gaierror as e:
-    print(f"Error connecting to EV3: {e}")
-finally:
-    print("Closing connection.")
-    sock.close()
+        except socket.gaierror as e:
+            print(f"Error connecting to EV3: {e}")
+
+    def close_connection(self):
+        print("Closing connection.")
+        self.sock.close()
+
+    def send_command(self, command):
+        try:
+            if command:
+                self.sock.sendall(command.encode('utf-8'))
+                print(f"Sent: {command}")
+                self.sock.recv(buffer_size)
+            else:
+                print("test")
+        except (ConnectionError, TimeoutError, BrokenPipeError, OSError) as e:
+            print(f"Error during socket operation: {e}")
