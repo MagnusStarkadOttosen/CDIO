@@ -57,34 +57,12 @@ def _vector_length(vector):
     return math.sqrt(sum(x ** 2 for x in vector))
 
 
-def calc_degrees_to_rotate(robot_pos, green_dot, target_pos, robot_direction):
-    # distance robot_pos -> green_dot = a
-    a = math.sqrt(robot_direction[0] ** 2 + robot_direction[1] ** 2)
-
-    # distance robot_pos -> target_pos = b
-    b = math.sqrt((target_pos[0] - robot_pos[0]) ** 2 + (target_pos[1] - robot_pos[1]) ** 2)
-
-    # distance green_dot -> target_pos = c
-    c = math.sqrt((target_pos[0] - green_dot[0]) ** 2 + (target_pos[1] - green_dot[1]) ** 2)
-
-    # vector between robot_pos -> green_dot and robot_pos->target_pos
-    # vect_ab = _tuple_subtract(b, a)
-    # c = vect_ab
-    # radian of angle between vector pos_to_green_dot and vector robot_pos->target_pos
-    radian = math.acos((a ** 2 + b ** 2 - c ** 2)
-                       / (2 * a * b))
-
-    # degrees of angle between vector pos_to_green_dot and vector robot_pos->target_pos
-    degrees = math.degrees(radian)
-
-    # determine the robot's rotation direction relative to the target position
-    # turn left or turn right
-    # Calculate direction vectors
-    pos_to_green_dot = (green_dot[0] - robot_pos[0], green_dot[1] - robot_pos[1])
-    pos_to_target = (target_pos[0] - robot_pos[0], target_pos[1] - robot_pos[1])
+def calc_direction_to_rotate(robot_direction, target_direction):
+    degrees = angle_between_vectors(robot_direction, target_direction)
 
     # Calculate the cross product's Z component
-    cross_product_z = pos_to_green_dot[0] * pos_to_target[1] - pos_to_green_dot[1] * pos_to_target[0]
+    cross_product_z = (robot_direction[0] * target_direction[1]
+                       - robot_direction[1] * target_direction[0])
 
     # Determine direction based on the cross product's sign
     if cross_product_z > 0:
@@ -95,6 +73,53 @@ def calc_degrees_to_rotate(robot_pos, green_dot, target_pos, robot_direction):
         return 0
 
 
-def _tuple_subtract(tuple1, tuple2):
-    result = tuple(a - b for a, b in zip(tuple1, tuple2))
-    return result
+# def calc_degrees_to_rotate(robot_pos, green_dot, target_pos, robot_direction):
+#     # distance robot_pos -> green_dot = a
+#     # a = math.sqrt(robot_direction[0] ** 2 + robot_direction[1] ** 2)
+#
+#     # distance robot_pos -> target_pos = b
+#     # b = math.sqrt((target_pos[0] - robot_pos[0]) ** 2 + (target_pos[1] - robot_pos[1]) ** 2)
+#
+#     # distance green_dot -> target_pos = c
+#     # c = math.sqrt((target_pos[0] - green_dot[0]) ** 2 + (target_pos[1] - green_dot[1]) ** 2)
+#
+#     # vector between robot_pos -> green_dot and robot_pos->target_pos
+#     # vect_ab = _tuple_subtract(b, a)
+#     # c = vect_ab
+#     # radian of angle between vector pos_to_green_dot and vector robot_pos->target_pos
+#     # radian = math.acos((a ** 2 + b ** 2 - c ** 2)
+#     #                   / (2 * a * b))
+#
+#
+#     # degrees of angle between vector pos_to_green_dot and vector robot_pos->target_pos
+#     # degrees = math.degrees(radian)
+#
+#     # determine the robot's rotation direction relative to the target position
+#     # turn left or turn right
+#     # Calculate direction vectors
+#     pos_to_green_dot = (green_dot[0] - robot_pos[0], green_dot[1] - robot_pos[1])
+#     pos_to_target = (target_pos[0] - robot_pos[0], target_pos[1] - robot_pos[1])
+#
+#     # Calculate the cross product's Z component
+#     cross_product_z = pos_to_green_dot[0] * pos_to_target[1] - pos_to_green_dot[1] * pos_to_target[0]
+#
+#     # Determine direction based on the cross product's sign
+#     if cross_product_z > 0:
+#         return -degrees
+#     elif cross_product_z < 0:
+#         return degrees
+#     else:
+#         return 0
+
+
+def calc_robot_pos(green_dot, red_dot):
+    distance = math.sqrt(
+        (green_dot[0] - red_dot[0]) ** 2 + (green_dot[1] - red_dot[1]) ** 2)
+    # distance from red_dot to robot_pos :a
+    a = 10
+
+    pos = (red_dot[0] + a / (distance * (green_dot[0] - red_dot[0])),
+           red_dot[1] + a / (distance * (green_dot[1] - red_dot[1])))
+
+    print(f"robot_pos: {pos}")
+    return pos
