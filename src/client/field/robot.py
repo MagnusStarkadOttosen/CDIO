@@ -33,14 +33,6 @@ def calc_robot_pos(green_dot, red_dot):
     return pos
 
 
-def __update_dot_positions(self, green_pos, red_pos):
-    if len(green_pos) > 1 and len(red_pos) > 1:
-        self.green_dot = [green_pos[0], green_pos[1]]
-        self.red_dot = [red_pos[0], red_pos[1]]
-    else:
-        print("Green or red position missing coordinate")
-
-
 # def update_pivot_from_image(robot_pos, ball_pos):
 #     # self.C = target_pos # There is no member C in Robot??
 #     return get_degrees_to_rotate(robot_pos, ball_pos)
