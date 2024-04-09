@@ -43,7 +43,8 @@ class TestBallDetection(unittest.TestCase):
     def test_detect_red_dot(self):
         image_name = 'robot_ball_90.jpeg'
         image = cv2.imread('images/' + image_name)
-        balls = detect_balls(filter_image_red(image))
+        balls = detect_balls(filter_image_red(image),
+                             min_radius=25, max_radius=35)
         ball_count = 0 if balls is None else len(balls)
         print_image(image, balls, 'red_' + image_name)
         self.assertEqual(ball_count, 1)
@@ -51,7 +52,8 @@ class TestBallDetection(unittest.TestCase):
     def test_detect_green_dot(self):
         image_name = 'robot_ball_90.jpeg'
         image = cv2.imread('images/' + image_name)
-        balls = detect_balls(filter_image_green(image))
+        balls = detect_balls(filter_image_green(image),
+                             min_radius=25, max_radius=35)
         ball_count = 0 if balls is None else len(balls)
         print_image(image, balls, 'green_' + image_name)
         self.assertEqual(ball_count, 1)
