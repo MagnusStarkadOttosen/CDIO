@@ -14,7 +14,7 @@ def detect_robot(image):
     return calc_robot_pos(green_dot, red_dot)
 
 
-def detect_balls(image):
+def detect_balls(image, min_radius=15, max_radius=25):
     # Convert to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
@@ -22,8 +22,10 @@ def detect_balls(image):
     edges = cv2.Canny(gray, 110, 200)
 
     # Detect circles
-    circles = cv2.HoughCircles(edges, cv2.HOUGH_GRADIENT, dp=1.75, minDist=9,
-                               param1=30, param2=35, minRadius=25, maxRadius=33)
+    circles = cv2.HoughCircles(edges, cv2.HOUGH_GRADIENT,
+                               dp=1.75, minDist=9,
+                               param1=30, param2=35,
+                               minRadius=min_radius, maxRadius=max_radius)
     if circles is not None:
         circles = np.round(circles[0, :]).astype("int")
         print("balls count: ", len(circles))
