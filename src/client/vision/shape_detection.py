@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-from src.client.field.robot import calc_robot_pos, calc_robot_direction
+from src.client.field.robot import calc_robot_pos, calc_vector_direction
 from src.client.vision.filters import convert_hsv, filter_image_green, filter_image_red
 from src.client.field.coordinate_system import find_corners
 from src.client.vision.filters import apply_gray, apply_canny
@@ -19,7 +19,7 @@ def detect_robot(image):
         print("No red dot.")
 
     robot_pos = calc_robot_pos(green_dot[0], red_dot[0])
-    robot_direction = calc_robot_direction(green_dot[0], robot_pos)
+    robot_direction = calc_vector_direction(green_dot[0], robot_pos)
 
     return robot_pos, robot_direction
 
