@@ -5,36 +5,6 @@ DIST_BETWEEN_WHEELS = 13.5
 WHEEL_CIRCUMF_CM = WHEEL_DIMENSION * math.pi
 
 
-# modified robot class with position and pivot
-# the robot's position in the coordinate system with two points ( red and green) is called A and B
-# A and B is get from the image detection with the red and green points from decetor_robot.py
-# M is the intersection point between the line AB and the wheel axis with distan M to A is 10 cm
-# M is the robot's position
-
-# the robot's position is updated after the robot moves or turns
-# the pivot is updated after the robot turns
-# the robot's position is updated after the robot moves
-
-# class Robot:
-#     def __init__(self):
-#         self.red_dot = None  # red point's coordinates
-#         self.green_dot = None  # green point's coordinates
-#         self.pos = None  # the robot's position
-#         self.pivot = 0  # the angle between the vector pos->green and vector pos->ball_pos
-
-
-# def update_pivot_from_image(robot_pos, ball_pos):
-#     # self.C = target_pos # There is no member C in Robot??
-#     return get_degrees_to_rotate(robot_pos, ball_pos)
-#
-#
-# def move(self, target_pos):
-#     # distance to move is the distance from M to the target position
-#     # the robot's position is updated after the robot moves
-#     get_distance(self, target_pos)
-#     self.pos = target_pos
-#     return self.pos
-
 def calc_vector_direction(end_point, start_point):
     direction = (end_point[0] - start_point[0], end_point[1] - start_point[1])
     return direction
@@ -72,6 +42,36 @@ def calc_degrees_to_rotate(robot_direction, target_direction):
     else:
         return 0
 
+
+# modified robot class with position and pivot
+# the robot's position in the coordinate system with two points ( red and green) is called A and B
+# A and B is get from the image detection with the red and green points from decetor_robot.py
+# M is the intersection point between the line AB and the wheel axis with distan M to A is 10 cm
+# M is the robot's position
+
+# the robot's position is updated after the robot moves or turns
+# the pivot is updated after the robot turns
+# the robot's position is updated after the robot moves
+
+# class Robot:
+#     def __init__(self):
+#         self.red_dot = None  # red point's coordinates
+#         self.green_dot = None  # green point's coordinates
+#         self.pos = None  # the robot's position
+#         self.pivot = 0  # the angle between the vector pos->green and vector pos->ball_pos
+
+
+# def update_pivot_from_image(robot_pos, ball_pos):
+#     # self.C = target_pos # There is no member C in Robot??
+#     return get_degrees_to_rotate(robot_pos, ball_pos)
+#
+#
+# def move(self, target_pos):
+#     # distance to move is the distance from M to the target position
+#     # the robot's position is updated after the robot moves
+#     get_distance(self, target_pos)
+#     self.pos = target_pos
+#     return self.pos
 
 # def calc_degrees_to_rotate(robot_pos, green_dot, target_pos, robot_direction):
 #     # distance robot_pos -> green_dot = a
@@ -112,14 +112,15 @@ def calc_degrees_to_rotate(robot_direction, target_direction):
 #         return 0
 
 
-def calc_robot_pos(green_dot, red_dot):
-    distance = math.sqrt(
-        (green_dot[0] - red_dot[0]) ** 2 + (green_dot[1] - red_dot[1]) ** 2)
-    # distance from red_dot to robot_pos :a
-    a = 10
-
-    pos = (red_dot[0] + a / (distance * (green_dot[0] - red_dot[0])),
-           red_dot[1] + a / (distance * (green_dot[1] - red_dot[1])))
-
-    print(f"robot_pos: {pos}")
-    return pos
+# def calc_robot_pos(green_dot, red_dot):
+#     distance = math.sqrt(
+#         (green_dot[0] - red_dot[0]) ** 2 + (green_dot[1] - red_dot[1]) ** 2)
+#
+#     # distance from red_dot to robot_pos :a
+#     a = 45
+#
+#     pos = (red_dot[0] + a / (distance * (green_dot[0] - red_dot[0])),
+#            red_dot[1] + a / (distance * (green_dot[1] - red_dot[1])))
+#
+#     print(f"robot_pos: {pos}")
+#     return pos
