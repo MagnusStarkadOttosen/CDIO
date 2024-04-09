@@ -27,6 +27,8 @@ class ClientPC:
                 self.sock.sendall(command.encode('utf-8'))
                 print(f"Sent: {command}")
                 self.sock.recv(buffer_size)
+                if command == 'exit':
+                    self.close_connection()
             else:
                 print("test")
         except (ConnectionError, TimeoutError, BrokenPipeError, OSError) as e:
