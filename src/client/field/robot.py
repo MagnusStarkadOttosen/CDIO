@@ -25,11 +25,13 @@ WHEEL_CIRCUMF_CM = WHEEL_DIMENSION * math.pi
 def calc_robot_pos(green_dot, red_dot):
     distance = math.sqrt(
         (green_dot[0] - red_dot[0]) ** 2 + (green_dot[1] - red_dot[1]) ** 2)
-    # distance from A to M :a
+    # distance from red_dot to robot_pos :a
     a = 10
 
     pos = (red_dot[0] + a / (distance * (green_dot[0] - red_dot[0])),
            red_dot[1] + a / (distance * (green_dot[1] - red_dot[1])))
+
+    print(f"robot_pos: {pos}")
     return pos
 
 
