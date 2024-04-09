@@ -3,7 +3,7 @@ import unittest
 # import sys
 # import os
 
-from src.client.field.objects_on_field.robot import calc_degrees_to_rotate, calc_robot_pos
+from src.client.field.robot import calc_degrees_to_rotate, calc_robot_pos
 from src.client.vision.shape_detection import detect_balls
 from src.client.vision.filters import filter_image_green, filter_image_red
 

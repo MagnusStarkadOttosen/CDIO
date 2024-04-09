@@ -3,7 +3,7 @@ import numpy as np
 
 from src.client.utilities import convert_px_to_cm, convert_px_cm_temp, get_distance
 from src.client.vision.shape_detection import Shapes
-from src.client.field.objects_on_field.robot import get_degrees_to_rotation
+from src.client.field.robot import get_degrees_to_rotation
 
 
 class Route:

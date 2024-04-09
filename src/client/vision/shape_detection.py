@@ -3,8 +3,8 @@ import numpy as np
 
 from src.client.vision.filters import convert_hsv, filter_image_green, filter_image_red
 from src.client.field.coordinate_system import find_corners
-from src.client.vision.filters import apply_blur, apply_gray, apply_canny
-from src.client.field.objects_on_field.robot import calc_robot_pos
+from src.client.vision.filters import apply_gray, apply_canny
+from src.client.field.robot import calc_robot_pos
 
 
 def detect_robot(image):
