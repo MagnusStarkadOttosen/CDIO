@@ -17,18 +17,27 @@ class TestCalcDegrees(unittest.TestCase):
         self.assertEqual(expected_degrees, degrees)
 
     def test_calc_degrees_from_image(self):
-        green_dot = detect_balls(filter_image_green(image))
+        green_dot = detect_balls(filter_image_green(image),
+                                 min_radius=25, max_radius=35)
         if green_dot is None:
             print("No green dot.")
             return
         green_vector = (green_dot[0][0], green_dot[0][1])
-        red_dot = detect_balls(filter_image_red(image))
+        print(f"green_vector: {green_vector}")
+
+        red_dot = detect_balls(filter_image_red(image),
+                               min_radius=25, max_radius=35)
         if red_dot is None:
             print("No red dot.")
             return
         red_vector = (red_dot[0][0], red_dot[0][1])
+        print(f"red_vect: {red_vector}")
+
         robot_pos = calc_robot_pos(green_vector, red_vector)
-        target_pos = detect_balls(image)
+        balls = detect_balls(image, min_radius=20)
+        target_pos = (balls[0][0], balls[0][1])
+        print(f"target_pos: {target_pos}")
+
         expected_degrees = 90
         actual_degrees = calc_degrees_to_rotate(robot_pos, green_vector, target_pos)
         print(actual_degrees)
