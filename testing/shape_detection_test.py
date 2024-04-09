@@ -35,7 +35,7 @@ class TestBallDetection(unittest.TestCase):
     def test_detect_1_ball(self):
         image_name = "robot_ball_90.jpeg"
         image = cv2.imread('images/' + image_name)
-        balls = detect_balls(image)
+        balls = detect_balls(image, min_radius=20)
         ball_count = 0 if balls is None else len(balls)
         print_image(image, balls, image_name)
         self.assertEqual(ball_count, 1)
