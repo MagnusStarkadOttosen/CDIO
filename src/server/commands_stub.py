@@ -20,7 +20,7 @@ class CommandsStub:
     @staticmethod
     def turn_by_x_degrees(degrees):
         motor_revolutions = (degrees * DIST_BETWEEN_WHEELS) / WHEEL_DIMENSION
-        print(f"Turning robot by {motor_revolutions} degrees")
+        print(f"Turning wheel motors by {motor_revolutions} degrees")
 
     @staticmethod
     def drive(distance_to_move):
