@@ -10,15 +10,15 @@ from src.client.vision.filters import apply_gray, apply_canny
 def detect_robot(image):
     green_dot = detect_balls(filter_image_green(image),
                              min_radius=25, max_radius=35)
-    if green_dot is None:
+    if green_dot is None:  # TODO Proper error handling for green_dot
         print("No green dot.")
 
     red_dot = detect_balls(filter_image_red(image),
                            min_radius=25, max_radius=35)
-    if red_dot is None:
+    if red_dot is None:  # TODO Proper error handling for red_dot
         print("No red dot.")
 
-    robot_pos = calc_robot_pos(green_dot[0], red_dot[0])
+    robot_pos = (red_dot[0][0], red_dot[0][1])
     robot_direction = calc_vector_direction(green_dot[0], robot_pos)
 
     return robot_pos, robot_direction
