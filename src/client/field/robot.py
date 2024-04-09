@@ -35,8 +35,8 @@ WHEEL_CIRCUMF_CM = WHEEL_DIMENSION * math.pi
 #     self.pos = target_pos
 #     return self.pos
 
-def calc_robot_direction(green_dot, robot_pos):
-    direction = (green_dot[0] - robot_pos[0], green_dot[1] - robot_pos[1])
+def calc_vector_direction(end_point, start_point):
+    direction = (end_point[0] - start_point[0], end_point[1] - start_point[1])
     return direction
 
 
@@ -57,7 +57,7 @@ def _vector_length(vector):
     return math.sqrt(sum(x ** 2 for x in vector))
 
 
-def calc_direction_to_rotate(robot_direction, target_direction):
+def calc_degrees_to_rotate(robot_direction, target_direction):
     degrees = angle_between_vectors(robot_direction, target_direction)
 
     # Calculate the cross product's Z component
