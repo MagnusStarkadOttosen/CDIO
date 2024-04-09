@@ -1,8 +1,8 @@
 import cv2
 import numpy as np
 
-from src.client.vision.filters import temp_filter_for_red_wall
-
+from src.client.vision.filters import *
+from sklearn.cluster import KMeans
 
 def find_corners(masked_image):
     corners = cv2.goodFeaturesToTrack(cv2.cvtColor(masked_image, cv2.COLOR_BGR2GRAY), 4, 0.01, 10)
@@ -53,17 +53,18 @@ def draw_grid(image, real_world_size, grid_spacing_cm):
     return image_with_grid
 
 
-def find_lines(image):
+def find_lines(image, resolution=1, doVerbose=False):
     
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     edges = cv2.Canny(gray, 50, 150, apertureSize=3)
-    lines = cv2.HoughLinesP(edges, 1, np.pi/180, 100, minLineLength=100, maxLineGap=150)
+    lines = cv2.HoughLinesP(edges, resolution, np.pi/180, 100, minLineLength=100, maxLineGap=150)
     
     if lines is not None:
         for line in lines:
             x1, y1, x2, y2 = line[0]
             cv2.line(image, (x1, y1), (x2, y2), (0, 255, 0), 2)
-            print(f"Line from ({x1}, {y1}) to ({x2}, {y2})")
+            if doVerbose:
+                print(f"Line from ({x1}, {y1}) to ({x2}, {y2})")
 
     return image, lines
 
@@ -99,7 +100,7 @@ def find_corner_points_full(image, doVerbose=False):
     #Filter for red wall
     red_image = temp_filter_for_red_wall(image)
     #Clean up small defects
-    clean_image = clean_image(red_image)
+    clean_image = clean_the_image(red_image)
     #Find the lines on the image
     edge_image, lines = find_lines(clean_image)
     
@@ -116,7 +117,7 @@ def find_corner_points_full(image, doVerbose=False):
                 intersection = find_intersection(lines[i], lines[j])
                 if intersection:
                     intersection_points.append(intersection)
-                    print(f"Intersection point: {intersection}") 
+                    # print(f"Intersection point: {intersection}") 
                     cv2.circle(clean_image, intersection, radius=5, color=(255, 0, 0), thickness=-1) 
     
     height, width, _ = image.shape
@@ -161,14 +162,37 @@ def find_corner_points_full(image, doVerbose=False):
 def printImagesFromWarping(images):
     output_folder_path = 'images/outputObstacle/'
     
-    red_image_path = output_folder_path + "red_image"
+    red_image_path = output_folder_path + "red_image.jpg"
     cv2.imwrite(red_image_path, images[0])
     
-    clean_image_path = output_folder_path + "clean_image"
+    clean_image_path = output_folder_path + "clean_image.jpg"
     cv2.imwrite(clean_image_path, images[1])
 
-    edge_image_path = output_folder_path + "edge_image"
+    edge_image_path = output_folder_path + "edge_image.jpg"
     cv2.imwrite(edge_image_path, images[2])
     
-    gen_warped_image_path = output_folder_path + "gen_warped_image"
+    gen_warped_image_path = output_folder_path + "gen_warped_image.jpg"
     cv2.imwrite(gen_warped_image_path, images[3])
+    
+def cluster_lines_into_4(lines):
+    if lines is None or len(lines) == 0:
+        print("No lines detected.")
+        return
+
+    lines = lines.reshape(-1, 4)
+    
+    midpoints = np.array([(x1 + x2) / 2.0 for x1, y1, x2, y2 in lines]), np.array([(y1 + y2) / 2.0 for x1, y1, x2, y2 in lines])
+    midpoints = np.stack(midpoints, axis=1)
+
+    kmeans = KMeans(n_clusters=4, random_state=42).fit(midpoints)
+    labels = kmeans.labels_
+
+    averaged_lines = []
+    for i in range(4):
+        cluster_lines = lines[labels == i]
+
+        avg_line = np.mean(cluster_lines, axis=0)
+        averaged_lines.append(avg_line)
+
+    for x1, y1, x2, y2 in averaged_lines:
+        print(f"Line from ({int(x1)}, {int(y1)}) to ({int(x2)}, {int(y2)})")
