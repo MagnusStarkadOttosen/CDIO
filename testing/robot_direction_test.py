@@ -3,8 +3,8 @@ import unittest
 # import sys
 # import os
 
-from src.client.field.robot import calc_degrees_to_rotate
-from src.client.vision.shape_detection import detect_balls, _calc_robot_pos
+from src.client.field.robot import calc_degrees_to_rotate, calc_vector_direction, angle_between_vectors, calc_robot_pos
+from src.client.vision.shape_detection import detect_balls, detect_robot
 from src.client.vision.filters import filter_image_green, filter_image_red
 
 image = cv2.imread('images/robot_ball_90.jpeg')
@@ -12,34 +12,41 @@ image = cv2.imread('images/robot_ball_90.jpeg')
 
 class TestCalcDegrees(unittest.TestCase):
     def test_calc_degrees_to_rotate_hardcoded(self):
-        degrees = calc_degrees_to_rotate((5, 5), (5, 8), (9, 5))
+        robot_pos = (5, 5)
+        target_pos = (9, 5)
+        green_dot = (5, 8)
+        robot_direction = calc_vector_direction(green_dot, robot_pos)
+        ball_direction = calc_vector_direction(target_pos, robot_pos)
+        degrees = calc_degrees_to_rotate(robot_direction, ball_direction)
         expected_degrees = 90
         self.assertEqual(expected_degrees, degrees)
 
     def test_calc_degrees_from_image(self):
-        green_dot = detect_balls(filter_image_green(image),
-                                 min_radius=25, max_radius=35)
-        if green_dot is None:
-            print("No green dot.")
-            return
-        green_vector = (green_dot[0][0], green_dot[0][1])
-        print(f"green_vector: {green_vector}")
-
-        red_dot = detect_balls(filter_image_red(image),
-                               min_radius=25, max_radius=35)
-        if red_dot is None:
-            print("No red dot.")
-            return
-        red_vector = (red_dot[0][0], red_dot[0][1])
-        print(f"red_vect: {red_vector}")
-
-        robot_pos = _calc_robot_pos(green_vector, red_vector)
+        robot_pos, robot_direction = detect_robot(image)
+        # green_dot = detect_balls(filter_image_green(image),
+        #                          min_radius=25, max_radius=35)
+        # if green_dot is None:
+        #     print("No green dot.")
+        #     return
+        # green_vector = (green_dot[0][0], green_dot[0][1])
+        # print(f"green_vector: {green_vector}")
+        #
+        # red_dot = detect_balls(filter_image_red(image),
+        #                        min_radius=25, max_radius=35)
+        # if red_dot is None:
+        #     print("No red dot.")
+        #     return
+        # red_vector = (red_dot[0][0], red_dot[0][1])
+        # print(f"red_vect: {red_vector}")
+        #
+        # robot_pos = calc_robot_pos(green_vector, red_vector)
         balls = detect_balls(image, min_radius=20)
         target_pos = (balls[0][0], balls[0][1])
+        target_direction = calc_vector_direction(target_pos, robot_pos)
         print(f"target_pos: {target_pos}")
 
         expected_degrees = 90
-        actual_degrees = calc_degrees_to_rotate(robot_pos, green_vector, target_pos)
+        actual_degrees = calc_degrees_to_rotate(robot_direction, target_direction)
         print(actual_degrees)
         self.assertEqual(expected_degrees, actual_degrees)
 
