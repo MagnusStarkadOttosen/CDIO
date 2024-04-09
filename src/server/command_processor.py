@@ -1,46 +1,29 @@
-import numpy as np
+import time
 
-from src.server.robot import drive, turn
+from src.server.commands import Commands
+from src.server.commands_stub import CommandsStub
 
-"""
-class CommandProcessor:
-
-    def __init__(self):
-        self.robot = Robot()
-        self.is_moving = False
-        self.is_rotating = False
-        self.target_position = None
-        self.target_rotation = None
-
-    def start(self, x, y):
-        self.target_position = np.array([x, y], dtype=int)
-
-    def update(self):
-        if self.robot.position == self.target_position:
-            self.is_moving = False
-
-        if self.robot.pivot == self.target_rotation:
-            self.is_rotating = False
-"""
+robot = CommandsStub()  # Robot()
+actions_functions = {
+    "move": robot.drive,
+    "turn": robot.turn_by_x_degrees,
+    "start_collect": robot.run_collector_clockwise,
+    "deliver": robot.run_collector_counterclockwise,
+    "stop_collect": robot.stop_collector
+}
 
 
 def process_command(command):
-    command_list = command.split(" ")
+    command_parsed = command.split(" ")
     try:
-        action = command_list[0].lower()
-        if action == "exit":
-            print("Client closing connection.")
-            return
-
-        value = float(command_list[1])
-
-        if action == "move":
-            drive(value)
-            # self.is_moving = True
-        elif action == "rotate":
-            turn(value)
-            # self.is_rotating = True
+        action = command_parsed[0].lower()
+        if action in actions_functions:
+            if len(command_parsed) > 1:
+                value = float(command_parsed[1])
+                actions_functions[action](value)
+            else:
+                actions_functions[action]()
         else:
-            print('Invalid command')
+            print("Invalid command")
     except IndexError as e:
-        print(f"Command should be in the format 'command int': {e} ")
+        print("Command should be in the format 'command int':", e)

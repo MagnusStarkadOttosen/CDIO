@@ -1,11 +1,11 @@
 import cv2
 import numpy as np
-from src.vision.filters import apply_blur
+
 
 def detect_ball(image):
-        # from image_detection import detect_red and detect_green functions 
-        #give the robot position with red point's coordinates and green point's coordinates
-        
+    # from image_detection import detect_red and detect_green functions
+    # give the robot position with red point's coordinates and green point's coordinates
+
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     gray_blurred = cv2.GaussianBlur(gray, (9, 9), 2,2)
     # center=(0,0)
@@ -19,7 +19,3 @@ def detect_ball(image):
     else:
         print("No ball detected")
         return None
-
-
-       
-    
