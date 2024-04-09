@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
 
+from src.client.vision.filters import temp_filter_for_red_wall
+
 
 def find_corners(masked_image):
     corners = cv2.goodFeaturesToTrack(cv2.cvtColor(masked_image, cv2.COLOR_BGR2GRAY), 4, 0.01, 10)
@@ -92,3 +94,81 @@ def calculate_slope(line):
         return np.inf  
     return (y2 - y1) / (x2 - x1)
 
+#This takes the image finds the corner points
+def find_corner_points_full(image, doVerbose=False):
+    #Filter for red wall
+    red_image = temp_filter_for_red_wall(image)
+    #Clean up small defects
+    clean_image = clean_image(red_image)
+    #Find the lines on the image
+    edge_image, lines = find_lines(clean_image)
+    
+    
+    lines = np.array(lines)
+    lines = lines.reshape(-1, 4)
+    
+    intersection_points = []
+    for i in range(len(lines)):
+        for j in range(i+1, len(lines)):
+            slope1 = calculate_slope(lines[i])
+            slope2 = calculate_slope(lines[j])
+            if is_near_90_degrees(slope1, slope2):
+                intersection = find_intersection(lines[i], lines[j])
+                if intersection:
+                    intersection_points.append(intersection)
+                    print(f"Intersection point: {intersection}") 
+                    cv2.circle(clean_image, intersection, radius=5, color=(255, 0, 0), thickness=-1) 
+    
+    height, width, _ = image.shape
+    center_x, center_y = width // 2, height // 2
+    
+    quadrants = {1: [], 2: [], 3: [], 4: []}
+
+    # Categorize points into quadrants
+    for point in intersection_points:
+        x, y = point
+        if x > center_x and y < center_y:
+            quadrants[1].append(point)  # Quadrant I
+        elif x < center_x and y < center_y:
+            quadrants[2].append(point)  # Quadrant II
+        elif x < center_x and y > center_y:
+            quadrants[3].append(point)  # Quadrant III
+        elif x > center_x and y > center_y:
+            quadrants[4].append(point)  # Quadrant IV
+    
+    # Find the closest point to the center in each quadrant
+    closest_points = []
+    for q in [2, 1, 4, 3]:
+        if quadrants[q]:  # Check if the list is not empty
+            # closest_point = min(quadrants[q], key=lambda point: distance_between_points(point, (center_x, center_y)))
+            closest_point = min(quadrants[q], key=lambda point: np.sqrt((point[0]-center_x) ** 2 + (point[1]-center_y) ** 2))
+            closest_points.append(closest_point)
+    
+    #An array of the 4 points in the corners
+    final_points = np.array(closest_points, dtype="float32")
+    
+    #This is to print the images for visual inspection
+    if doVerbose == True:
+        #Desired output size (dimensions in pixels for the warped image)
+        dst_size = (1200, 1800)  # width, height
+        gen_warped_image = warp_perspective(image, final_points, dst_size)
+        images = [red_image, clean_image, edge_image, gen_warped_image]
+        printImagesFromWarping(images)
+    
+    return final_points
+
+#This prints the images for visual inspection
+def printImagesFromWarping(images):
+    output_folder_path = 'images/outputObstacle/'
+    
+    red_image_path = output_folder_path + "red_image"
+    cv2.imwrite(red_image_path, images[0])
+    
+    clean_image_path = output_folder_path + "clean_image"
+    cv2.imwrite(clean_image_path, images[1])
+
+    edge_image_path = output_folder_path + "edge_image"
+    cv2.imwrite(edge_image_path, images[2])
+    
+    gen_warped_image_path = output_folder_path + "gen_warped_image"
+    cv2.imwrite(gen_warped_image_path, images[3])
