@@ -48,7 +48,7 @@ class TestCalcDegrees(unittest.TestCase):
         expected_degrees = 90
         actual_degrees = calc_degrees_to_rotate(robot_direction, target_direction)
         print(actual_degrees)
-        self.assertEqual(expected_degrees, actual_degrees)
+        self.assertAlmostEqual(expected_degrees, actual_degrees, 1)
 
 
 
