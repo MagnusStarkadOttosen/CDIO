@@ -1,7 +1,6 @@
 import cv2
 import unittest
 
-from src.client.vision.detector_robot import detect_ball
 from src.client.vision.filters import (filter_image_red, filter_image_green,
                                        apply_gray, apply_canny)
 
@@ -43,27 +42,6 @@ class TestColorFilters(unittest.TestCase):
         gray = apply_gray(image)
         edges = apply_canny(gray)
         write_image_to_file('edges_colour_' + image_name[1], edges)
-
-
-class TestDetectBall(unittest.TestCase):
-    def test_detect_balls(self):
-        image = cv2.imread(input_folder_path + image_name[0])
-        if image is not None:
-
-            circles = detect_ball(image)
-
-            # shape_detector.detect_ball()
-
-            # shape_detector.detect_walls()
-
-            # shape_detector.draw_corners_debug(image)
-            # shape_detector.draw_coordinate_system(image)
-
-            write_image_to_file('detect_balls_' + image_name[0], image)
-
-        else:
-            print("Error: Image not found. Please check the input folder path and image name.")
-
 
 
 if __name__ == '__main__':
