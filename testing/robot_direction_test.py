@@ -7,7 +7,7 @@ from src.client.field.robot import calc_degrees_to_rotate, calc_robot_pos
 from src.client.vision.shape_detection import detect_balls
 from src.client.vision.filters import filter_image_green, filter_image_red
 
-image = cv2.imread('images/robot_with_circles.jpg')
+image = cv2.imread('images/robot_ball_90.jpeg')
 
 
 class TestCalcDegrees(unittest.TestCase):
@@ -28,9 +28,10 @@ class TestCalcDegrees(unittest.TestCase):
             return
         red_vector = (red_dot[0][0], red_dot[0][1])
         robot_pos = calc_robot_pos(green_vector, red_vector)
-        target_pos = (0, 0) # detect_balls(image)
-        expected_degrees = 45
+        target_pos = detect_balls(image)
+        expected_degrees = 90
         actual_degrees = calc_degrees_to_rotate(robot_pos, green_vector, target_pos)
+        print(actual_degrees)
         self.assertEqual(expected_degrees, actual_degrees)
 
 
