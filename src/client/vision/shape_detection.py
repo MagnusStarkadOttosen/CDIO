@@ -1,8 +1,7 @@
-import math
-
 import cv2
 import numpy as np
 
+from src.client.field.robot import calc_robot_pos, calc_robot_direction
 from src.client.vision.filters import convert_hsv, filter_image_green, filter_image_red
 from src.client.field.coordinate_system import find_corners
 from src.client.vision.filters import apply_gray, apply_canny
@@ -12,20 +11,10 @@ def detect_robot(image):
     green_dot = detect_balls(filter_image_green(image))
     red_dot = detect_balls(filter_image_red(image))
 
-    return _calc_robot_pos(green_dot, red_dot)
+    robot_pos = calc_robot_pos(green_dot, red_dot)
+    robot_direction = calc_robot_direction(green_dot, robot_pos)
 
-
-def _calc_robot_pos(green_dot, red_dot):
-    distance = math.sqrt(
-        (green_dot[0] - red_dot[0]) ** 2 + (green_dot[1] - red_dot[1]) ** 2)
-    # distance from red_dot to robot_pos :a
-    a = 10
-
-    pos = (red_dot[0] + a / (distance * (green_dot[0] - red_dot[0])),
-           red_dot[1] + a / (distance * (green_dot[1] - red_dot[1])))
-
-    print(f"robot_pos: {pos}")
-    return pos
+    return robot_pos, robot_direction
 
 
 def detect_balls(image, min_radius=15, max_radius=25):
