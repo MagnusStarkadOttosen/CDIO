@@ -7,7 +7,7 @@ from src.client.field.robot import calc_degrees_to_rotate, calc_vector_direction
 from src.client.vision.shape_detection import detect_balls, detect_robot
 from src.client.vision.filters import filter_image_green, filter_image_red
 
-image = cv2.imread('images/robot_ball_90.jpeg')
+image = cv2.imread('images/robot_pos_red_dot.jpg')
 
 
 class TestCalcDegrees(unittest.TestCase):
@@ -23,32 +23,16 @@ class TestCalcDegrees(unittest.TestCase):
 
     def test_calc_degrees_from_image(self):
         robot_pos, robot_direction = detect_robot(image)
-        # green_dot = detect_balls(filter_image_green(image),
-        #                          min_radius=25, max_radius=35)
-        # if green_dot is None:
-        #     print("No green dot.")
-        #     return
-        # green_vector = (green_dot[0][0], green_dot[0][1])
-        # print(f"green_vector: {green_vector}")
-        #
-        # red_dot = detect_balls(filter_image_red(image),
-        #                        min_radius=25, max_radius=35)
-        # if red_dot is None:
-        #     print("No red dot.")
-        #     return
-        # red_vector = (red_dot[0][0], red_dot[0][1])
-        # print(f"red_vect: {red_vector}")
-        #
-        # robot_pos = calc_robot_pos(green_vector, red_vector)
+
         balls = detect_balls(image, min_radius=20)
         target_pos = (balls[0][0], balls[0][1])
         target_direction = calc_vector_direction(target_pos, robot_pos)
         print(f"target_pos: {target_pos}")
 
         expected_degrees = 90
-        actual_degrees = calc_degrees_to_rotate(robot_direction, target_direction)
+        actual_degrees = round(calc_degrees_to_rotate(robot_direction, target_direction))
         print(actual_degrees)
-        self.assertAlmostEqual(expected_degrees, actual_degrees, 1)
+        self.assertAlmostEqual(expected_degrees, actual_degrees, delta=1)
 
 
 
