@@ -174,17 +174,23 @@ def printImagesFromWarping(images):
     gen_warped_image_path = output_folder_path + "gen_warped_image.jpg"
     cv2.imwrite(gen_warped_image_path, images[3])
     
-def cluster_lines_into_4(lines):
+def cluster_lines_into_4(image, lines):
     if lines is None or len(lines) == 0:
         print("No lines detected.")
         return
 
     lines = lines.reshape(-1, 4)
     
-    midpoints = np.array([(x1 + x2) / 2.0 for x1, y1, x2, y2 in lines]), np.array([(y1 + y2) / 2.0 for x1, y1, x2, y2 in lines])
-    midpoints = np.stack(midpoints, axis=1)
+    angles = np.array([calculate_angle(line) for line in lines])
+    midpoints = np.array([((x1 + x2) / 2, (y1 + y2) / 2) for x1, y1, x2, y2 in lines])
+    # midpoints = np.array([(x1 + x2) / 2.0 for x1, y1, x2, y2 in lines]), np.array([(y1 + y2) / 2.0 for x1, y1, x2, y2 in lines])
+    # midpoints = np.stack(midpoints, axis=1)
 
-    kmeans = KMeans(n_clusters=4, random_state=42).fit(midpoints)
+    angles = np.unwrap(angles[:, np.newaxis], axis=0)
+    features = np.hstack((midpoints, angles))
+
+    # kmeans = KMeans(n_clusters=4, random_state=42).fit(midpoints)
+    kmeans = KMeans(n_clusters=4, random_state=42).fit(features)
     labels = kmeans.labels_
 
     averaged_lines = []
@@ -193,6 +199,57 @@ def cluster_lines_into_4(lines):
 
         avg_line = np.mean(cluster_lines, axis=0)
         averaged_lines.append(avg_line)
+        
+    if averaged_lines is not None:
+        for x1, y1, x2, y2 in averaged_lines:
+            cv2.line(image, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
+            print(f"Line from ({int(x1)}, {int(y1)}) to ({int(x2)}, {int(y2)})")
 
-    for x1, y1, x2, y2 in averaged_lines:
-        print(f"Line from ({int(x1)}, {int(y1)}) to ({int(x2)}, {int(y2)})")
+    return image
+    # for x1, y1, x2, y2 in averaged_lines:
+    #     print(f"Line from ({int(x1)}, {int(y1)}) to ({int(x2)}, {int(y2)})")
+    
+def calculate_angle(line):
+    x1, y1, x2, y2 = line
+    return np.arctan2(y2 - y1, x2 - x1)
+
+def calculate_line_features(lines):
+    """Calculate features for clustering: angle and distance from the origin."""
+    angles = []
+    distances = []
+    for line in lines:
+        x1, y1, x2, y2 = line
+        angle = np.arctan2(y2 - y1, x2 - x1)
+        distance = (y1 * x2 - y2 * x1) / np.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+        angles.append(angle)
+        distances.append(distance)
+    return np.array(angles), np.array(distances)
+
+def cluster_lines(image, lines):
+    angles, distances = calculate_line_features(lines.reshape(-1, 4))
+    # Normalize angles to range [0, π] for undirected lines
+    angles = np.mod(angles, np.pi)
+    features = np.vstack((angles, distances)).T
+    
+    # K-means clustering
+    kmeans = KMeans(n_clusters=4, random_state=42).fit(features)
+    labels = kmeans.labels_
+
+    # Prepare to average lines within each cluster
+    averaged_lines = []
+    for i in range(4):
+        cluster_lines = lines[labels == i]
+        # Average the coordinates of the lines in the cluster, if any
+        if len(cluster_lines) > 0:
+            avg_line = np.mean(cluster_lines.reshape(-1, 4), axis=0)
+            averaged_lines.append(avg_line)
+        else:
+            print(f"No lines found for cluster {i}")
+
+    # Print the averaged lines
+    for line in averaged_lines:
+        x1, y1, x2, y2 = line.astype(int)
+        cv2.line(image, (x1, y1), (x2, y2), (0, 255, 0), 2)
+        print(f"Line from ({x1}, {y1}) to ({x2}, {y2})")
+    
+    return image

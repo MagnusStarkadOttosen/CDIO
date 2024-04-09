@@ -36,6 +36,11 @@ if image is not None:
     
     print("test")
     
-    cluster_lines_into_4(lines)
+    # edge_image2 = cluster_lines_into_4(gen_warped_image, lines)
+    edge_image2 = cluster_lines(gen_warped_image, lines)
+
+    red_image_name = 'red3_' + image_name
+    red_image_path = output_folder_path + red_image_name
+    cv2.imwrite(red_image_path, edge_image2)
     
     
