@@ -31,5 +31,10 @@ class TestMainLoop(unittest.TestCase):
 
     def move(self):
         client_pc = ClientPC()
-        client_pc.send_command("move 10")
+        client_pc.send_command("start_collect")
+        #client_pc.send_command("turn 90")
+        client_pc.send_command("move 60")
+        client_pc.send_command("stop_collect")
+        client_pc.send_command("deliver")
+        client_pc.send_command(f"exit")
 
