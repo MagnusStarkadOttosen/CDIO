@@ -18,7 +18,7 @@ class Commands:
 
     def run_collector_clockwise(self): self.collector_motor.on(30)
 
-    def stop_motor(self): self.collector_motor.off(brake=True)
+    def stop_collector(self): self.collector_motor.off(brake=True)
 
     def run_collector_counterclockwise(self): self.collector_motor.on(-30)
 
