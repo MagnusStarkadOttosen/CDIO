@@ -3,7 +3,7 @@ import time
 from src.server.commands import Commands
 from src.server.commands_stub import CommandsStub
 
-commands = CommandsStub()  # Robot()
+commands = Commands()  # Robot()
 actions_functions = {
     "move": commands.drive,
     "turn": commands.turn_by_x_degrees,
