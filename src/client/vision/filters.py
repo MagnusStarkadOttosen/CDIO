@@ -111,3 +111,15 @@ def temp_filter_for_red_wall(image):
     red_image = cv2.bitwise_and(image, image, mask=mask)
 
     return red_image
+
+def filter_image_white(image):
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    
+    lower_white = np.array([0, 0, 200])
+    upper_white = np.array([200, 111, 255])
+
+    mask = cv2.inRange(hsv, lower_white, upper_white)
+
+    white_image = cv2.bitwise_and(image, image, mask=mask)
+    
+    return white_image
