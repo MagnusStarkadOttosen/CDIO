@@ -3,15 +3,10 @@ import numpy as np
 
 from src.vision.filters import apply_gray, apply_canny, apply_blur, convert_hsv
 from src.vision.coordinate_system import find_corners
+from src.vision.wheel_movement import Pos
 
 ROBOT_START_X = 10
 ROBOT_START_Y = 20
-
-
-class Pos:
-    def __init__(self, pos_x, pos_y):
-        self.x = pos_x
-        self.y = pos_y
 
 
 class Robot:
@@ -101,7 +96,7 @@ class Shapes:
 
         self.image = cv2.bitwise_and(self.original_image, self.original_image, mask=mask)
 
-    def draw_coordinate_system(self, image):
+    def draw_coordinate_system( image):
         corners = find_corners(image)  # Assuming this returns the corners as (x, y) tuples
         if corners is not None and len(corners) >= 4:
             # Assuming top-left and bottom-right corners are what we need
