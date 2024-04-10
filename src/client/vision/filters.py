@@ -79,7 +79,7 @@ def sharpen_image(image):
     return sharpened_image
 
 
-def clean_image(image):
+def clean_the_image(image):
     kernel = np.ones((3, 3), np.uint8)
     opening = cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel, iterations=2)
 
@@ -95,3 +95,19 @@ def erode_image(image, i=1):
     img_erosion = cv2.erode(image, kernel, iterations=i)
 
     return img_erosion
+
+#TODO: find a set of values that work for both walls and balls
+def temp_filter_for_red_wall(image):
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    lower_red1 = np.array([0, 70, 50])
+    upper_red1 = np.array([10, 255, 255]) #The first value need to be 10 for the wall
+    lower_red2 = np.array([170, 70, 50])
+    upper_red2 = np.array([180, 255, 255])
+
+    mask1 = cv2.inRange(hsv, lower_red1, upper_red1)
+    mask2 = cv2.inRange(hsv, lower_red2, upper_red2)
+    mask = cv2.bitwise_or(mask1, mask2)
+
+    red_image = cv2.bitwise_and(image, image, mask=mask)
+
+    return red_image
