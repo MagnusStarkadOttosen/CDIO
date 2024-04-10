@@ -5,8 +5,8 @@ sys.path.append(base_path)
 import unittest
 import numpy as np
 
-from src.vision.wheel_movement import get_distance_to_move
-from src.server.robot import Robot, convert_distance_to_degrees, WHEEL_CIRCUMF_CM
+from src.client.utilities import get_distance
+from src.server.commands import Commands, convert_distance_to_degrees, WHEEL_CIRCUMF_CM
 
 import sys
 
@@ -28,7 +28,7 @@ class TestDistanceCalculator(unittest.TestCase):
         expected_distance = 8.1
         pos_robot = np.array([3, 2], dtype=int)  # Pos(3, 2)
         pos_ball = np.array([7, 9], dtype=int)  # Pos(7, 9)
-        actual_distance = get_distance_to_move(pos_robot, pos_ball)
+        actual_distance = get_distance(pos_robot, pos_ball)
         print(actual_distance)
         self.assertAlmostEqual(actual_distance, expected_distance)
         print('Expected distance: ', expected_distance)
@@ -37,7 +37,7 @@ class TestDistanceCalculator(unittest.TestCase):
         expected_distance = 8.1
         pos_robot = np.array([7, 9], dtype=int)  # Pos(5, 2)
         pos_ball = np.array(([3, 2]), dtype=int)  # Pos(7, 9)
-        actual_distance = get_distance_to_move(pos_robot, pos_ball)
+        actual_distance = get_distance(pos_robot, pos_ball)
         print(actual_distance)
         self.assertAlmostEqual(actual_distance, expected_distance)
         print('Expected distance: ', expected_distance)
@@ -45,7 +45,7 @@ class TestDistanceCalculator(unittest.TestCase):
 # test get_degrees_to_rotation
 class TestRobotRotationCalculator(unittest.TestCase):
     def test_robot_rotation(self):
-        robot = Robot()
+        robot = Commands()
         robot.M = (0, 0)
         robot.B = (0, 5)
         pos_ball = Pos(5, 5)

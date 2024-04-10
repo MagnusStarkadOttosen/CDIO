@@ -1,8 +1,6 @@
 import math
-import time
 
 from ev3dev2.motor import (OUTPUT_A, OUTPUT_B, OUTPUT_D, MoveTank, SpeedPercent, MediumMotor)
-from src.vision.wheel_movement import get_distance_to_move
 
 WHEEL_DIMENSION = 5.5
 DIST_BETWEEN_WHEELS = 13.5
@@ -12,7 +10,7 @@ ROBOT_START_X = 10
 ROBOT_START_Y = 20
 
 
-class Robot:
+class Commands:
     def __init__(self):
         self.tank_drive = MoveTank(OUTPUT_A, OUTPUT_D)
         self.collector_motor = MediumMotor(OUTPUT_B)
@@ -26,8 +24,10 @@ class Robot:
 
     # Function to turn the robot by x degrees
     def turn_by_x_degrees(self, degrees):
+        self.tank_drive.off()
         motor_revolutions = (degrees * DIST_BETWEEN_WHEELS) / WHEEL_DIMENSION
         self.tank_drive.on_for_degrees(SpeedPercent(25), SpeedPercent(-25), motor_revolutions)
+        self.tank_drive.on(SpeedPercent(30), SpeedPercent(30))
 
     def drive(self, distance_to_move):
         # revs = get_wheel_revolutions(distance_to_move)

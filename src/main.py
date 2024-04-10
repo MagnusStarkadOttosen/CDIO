@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-def main_lop():
+def main_loop():
     get_image
     modify_image
     update_robot_position

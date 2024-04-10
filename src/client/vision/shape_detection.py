@@ -1,29 +1,51 @@
 import cv2
 import numpy as np
 
-from src.vision.filters import apply_gray, apply_canny, apply_blur, convert_hsv
-from src.vision.coordinate_system import find_corners
-from src.vision.wheel_movement import Pos
-
-ROBOT_START_X = 10
-ROBOT_START_Y = 20
+from src.client.field.robot import calc_vector_direction
+from src.client.vision.filters import convert_hsv, filter_image_green, filter_image_red
+from src.client.field.coordinate_system import find_corners
+from src.client.vision.filters import apply_gray, apply_canny
 
 
-class Robot:
+def detect_robot(image):
+    green_dot = detect_balls(filter_image_green(image),
+                             min_radius=25, max_radius=35)
+    if green_dot is None:  # TODO Proper error handling for green_dot
+        print("No green dot.")
 
-    def __init__(self):
-        self.position = Pos(ROBOT_START_X, ROBOT_START_Y)
-        self.pivot = 0
-        self.red_point = Pos(0, 0)
-        self.green_point = Pos(0, 0)
+    red_dot = detect_balls(filter_image_red(image),
+                           min_radius=25, max_radius=35)
+    if red_dot is None:  # TODO Proper error handling for red_dot
+        print("No red dot.")
 
-    def update_position(self, new_position):
-        self.position = new_position
+    robot_pos = (red_dot[0][0], red_dot[0][1])
+    robot_direction = calc_vector_direction(green_dot[0], robot_pos)
+
+    return robot_pos, robot_direction
 
 
-# hej
+def detect_balls(image, min_radius=15, max_radius=25):
+    # Convert to grayscale
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-class Shapes:
+    # Apply edge detection
+    edges = cv2.Canny(gray, 110, 200)
+
+    # Detect circles
+    circles = cv2.HoughCircles(edges, cv2.HOUGH_GRADIENT,
+                               dp=1.75, minDist=9,
+                               param1=30, param2=35,
+                               minRadius=min_radius, maxRadius=max_radius)
+    if circles is not None:
+        circles = np.round(circles[0, :]).astype("int")
+        print("balls count: ", len(circles))
+    else:
+        print("No balls detected.")
+
+    return circles
+
+
+class Shapes: # TODO opløs Shapes klasse
     def __init__(self, image):
         self.original_image = image
         self.image = None
@@ -31,22 +53,23 @@ class Shapes:
         self.image = apply_gray(image)
         self.circles = None
         self.lines = None
+    #
+    # def detect_balls(self):
+    #     balls = 0
+    #     rows = self.image.shape[0]
+    #     blurred = apply_blur(self.image)
+    #     self.circles = cv2.HoughCircles(blurred, cv2.HOUGH_GRADIENT, 1, rows / 8, param1=100, param2=30, minRadius=10,
+    #                                     maxRadius=100)
+    #     if self.circles is not None:
+    #         circles = np.round(self.circles[0, :]).astype("int")
+    #         for (x, y, z) in circles:
+    #             print('Ball:', str(balls))
+    #             print('X:', x)
+    #             print('Y:', y)
+    #             print('Radius:', z)
+    #             balls += 1
+    #     return balls
 
-    def detect_balls(self):
-        balls = 0
-        rows = self.image.shape[0]
-        blurred = apply_blur(self.image)
-        self.circles = cv2.HoughCircles(blurred, cv2.HOUGH_GRADIENT, 1, rows / 8, param1=100, param2=30, minRadius=10,
-                                        maxRadius=100)
-        if self.circles is not None:
-            circles = np.round(self.circles[0, :]).astype("int")
-            for (x, y, z) in circles:
-                print('Ball:', str(balls))
-                print('X:', x)
-                print('Y:', y)
-                print('Radius:', z)
-                balls += 1
-        return balls
     # def detect_ball(self):
     #     if len(self.image.shape) == 3 and self.image.shape[2] == 3:
     #         gray = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
@@ -80,7 +103,7 @@ class Shapes:
 
     def detect_walls(self):
         canny = apply_canny(self.image)
-        self.lines =\
+        self.lines = \
             cv2.HoughLinesP(canny, 1, np.pi / 180, 50, None, 50, 10)
 
     def detect_red_walls(self):
@@ -96,32 +119,33 @@ class Shapes:
 
         self.image = cv2.bitwise_and(self.original_image, self.original_image, mask=mask)
 
-    def draw_coordinate_system( image):
+    def draw_coordinate_system(image):
         corners = find_corners(image)  # Assuming this returns the corners as (x, y) tuples
         if corners is not None and len(corners) >= 4:
             # Assuming top-left and bottom-right corners are what we need
             # This might need adjustment based on how corners are ordered
             top_left = tuple(corners[0].ravel())
             bottom_right = tuple(corners[2].ravel())
-            
+
             # Determine the number of lines in the grid (you can adjust this)
             num_lines = 10
-            
+
             # Draw horizontal lines
             for i in range(num_lines + 1):
                 start_point = (top_left[0], top_left[1] + i * ((bottom_right[1] - top_left[1]) // num_lines))
                 end_point = (bottom_right[0], top_left[1] + i * ((bottom_right[1] - top_left[1]) // num_lines))
                 cv2.line(image, start_point, end_point, (255, 255, 0), 2)  # Using yellow for visibility
-            
+
             # Draw vertical lines
             for i in range(num_lines + 1):
                 start_point = (top_left[0] + i * ((bottom_right[0] - top_left[0]) // num_lines), top_left[1])
                 end_point = (top_left[0] + i * ((bottom_right[0] - top_left[0]) // num_lines), bottom_right[1])
                 cv2.line(image, start_point, end_point, (255, 255, 0), 2)  # Using yellow for visibility
-    
+
     # def draw_corners_debug(self, image_to_draw_on):
     #     corners = find_corners(image_to_draw_on)
     #     if corners is not None:
     #         for corner in corners:
     #             x, y = tuple(corner.ravel())
     #             # cv2.circle(image_to_draw_on, (x, y), 5, (0, 255, 0), -1)  # Draw green circles at each corner
+

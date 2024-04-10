@@ -1,12 +1,12 @@
 import math
-from src.server.robot import convert_distance_to_degrees
+from src.server.commands import convert_distance_to_degrees
 WHEEL_DIMENSION = 5.5
 DIST_BETWEEN_WHEELS = 13.5
 
 WHEEL_CIRCUMF_CM = WHEEL_DIMENSION * math.pi
 
 
-class RobotStub:
+class CommandsStub:
     @staticmethod
     def run_collector_clockwise(): print("Collector motor is on clockwise")
 
@@ -20,7 +20,7 @@ class RobotStub:
     @staticmethod
     def turn_by_x_degrees(degrees):
         motor_revolutions = (degrees * DIST_BETWEEN_WHEELS) / WHEEL_DIMENSION
-        print(f"Turning robot by {motor_revolutions} degrees")
+        print(f"Turning wheel motors by {motor_revolutions} degrees")
 
     @staticmethod
     def drive(distance_to_move):

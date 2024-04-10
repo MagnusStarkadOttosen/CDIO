@@ -1,7 +1,7 @@
 import cv2
 import unittest
-from src.client.pathFinder import *
-from src.vision.shape_detection import Shapes
+from src.client.vision.pathfinder import *
+from src.client.vision import Shapes
 
 class BallsRemainingTest(unittest.TestCase):
 
@@ -32,7 +32,7 @@ class BallsRemainingTest(unittest.TestCase):
 
 
 
-        result = findNearestBall((0,0),shape_detector)
+        result = findNearestBall(np.array([0,0]),shape_detector)
 
         print("test 2",result.y)
 
