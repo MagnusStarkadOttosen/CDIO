@@ -27,3 +27,6 @@ class CommandsStub:
         # revs = get_wheel_revolutions(distance_to_move)
         degrees = convert_distance_to_degrees(distance_to_move)
         print('Wheel motor turning this many degrees: ', degrees)  # Placeholder
+
+    @staticmethod
+    def stop(): print("Stop robot")

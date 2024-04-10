@@ -39,6 +39,9 @@ class Commands:
     #     self.turn_by_x_degrees(degrees_to_rotate)
     #     print('Turning this many degrees: ', degrees_to_rotate)  # Placeholder
 
+    def stop(self):
+        self.tank_drive.off()
+
 
 def convert_distance_to_degrees(distance_to_move):
     revolutions = distance_to_move / WHEEL_CIRCUMF_CM

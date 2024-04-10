@@ -9,7 +9,8 @@ actions_functions = {
     "turn": commands.turn_by_x_degrees,
     "start_collect": commands.run_collector_clockwise,
     "deliver": commands.run_collector_counterclockwise,
-    "stop_collect": commands.stop_collector
+    "stop_collect": commands.stop_collector,
+    "stop": commands.stop
 }
 
 
