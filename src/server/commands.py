@@ -20,7 +20,7 @@ class Commands:
 
     def stop_collector(self): self.collector_motor.off(brake=True)
 
-    def run_collector_counterclockwise(self): self.collector_motor.on(-50)
+    def run_collector_counterclockwise(self): self.collector_motor.on(-55)
 
     # Function to turn the robot by x degrees
     def turn_by_x_degrees(self, degrees):
