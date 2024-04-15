@@ -1,8 +1,6 @@
 import math
 import heapq
 
- 
-
 # Define the Cell class
 class Cell:
 	def __init__(self):
@@ -22,7 +20,7 @@ def is_valid(row, col):
 
 # Check if a cell is unblocked
 def is_unblocked(grid, row, col):
-	return grid[row][col] == 1
+	return grid[row][col] == 0
 
 # Check if a cell is the destination
 def is_destination(row, col, dest):
@@ -34,7 +32,6 @@ def calculate_h_value(row, col, dest):
 
 # Trace the path from source to destination
 def trace_path(cell_details, dest):
-	print("The Path is ")
 	path = []
 	row = dest[0]
 	col = dest[1]
@@ -42,8 +39,10 @@ def trace_path(cell_details, dest):
 	# Trace the path from destination to source using parent cells
 	while not (cell_details[row][col].parent_i == row and cell_details[row][col].parent_j == col):
 		path.append((row, col))
+		# get the parent cell's indices
 		temp_row = cell_details[row][col].parent_i
 		temp_col = cell_details[row][col].parent_j
+		# Move to the parent cell
 		row = temp_row
 		col = temp_col
 
@@ -51,11 +50,7 @@ def trace_path(cell_details, dest):
 	path.append((row, col))
 	# Reverse the path to get the path from source to destination
 	path.reverse()
-
-	# Print the path
-	for i in path:
-		print("->", i, end=" ")
-	print()
+	return path
 
 # Implement the A* search algorithm
 def a_star_search(grid, src, dest):
@@ -119,10 +114,8 @@ def a_star_search(grid, src, dest):
 					cell_details[new_i][new_j].parent_i = i
 					cell_details[new_i][new_j].parent_j = j
 					print("The destination cell is found")
-					# Trace and print the path from source to destination
-					trace_path(cell_details, dest)
-					found_dest = True
-					return
+					# Trace the path from source to destination
+					return trace_path(cell_details, dest)
 				else:
 					# Calculate the new f, g, and h values
 					g_new = cell_details[i][j].g + 1.0
@@ -143,31 +136,4 @@ def a_star_search(grid, src, dest):
 	# If the destination is not found after visiting all cells
 	if not found_dest:
 		print("Failed to find the destination cell")
-
-def main():
-	# Define the grid (1 for unblocked, 0 for blocked)
-	grid = [
-		[0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0,0,0],
-		[0, 1, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,1,1,1,0],
-		[0, 1, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,1,1,1,0],
-		[0, 1, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,1,1,1,0],
-		[0, 1, 1, 1, 1, 1, 1, 0, 0, 0,1,1,1,1,1,1,1,0],
-		[0, 1, 1, 1, 1, 1, 1, 0, 0, 0,1,1,1,1,1,1,1,0],
-		[0, 1, 1, 1, 1, 1, 1, 0, 0, 0,1,1,1,1,1,1,1,0],
-		[0, 1, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,1,1,1,0],
-		[0, 1, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,1,1,1,0],
-		[0, 1, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,1,1,1,0],
-		[0, 1, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,1,1,1,0],
-		[0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0,0,0],
-		
-	]
-
-	# Define the source and destination
-	src = [8, 0]
-	dest = [0, 0]
-
-	# Run the A* search algorithm
-	a_star_search(grid, src, dest)
-
-if __name__ == "__main__":
-	main()
+		return None
