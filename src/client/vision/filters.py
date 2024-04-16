@@ -1,6 +1,14 @@
 import cv2
 import numpy as np
 
+colors = {
+    "red": (np.array([0, 70, 50]),
+            np.array([6, 255, 255]),
+            np.array([170, 70, 50]),
+            np.array([180, 255, 255])
+            )
+}
+
 
 def apply_gray(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -35,6 +43,22 @@ def apply_blur(image):
 def convert_hsv(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     return hsv
+
+
+def filter_image_by_color(image, color):
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    lower1 = colors[color][0]
+    upper1 = colors[color][1]
+    lower2 = colors[color][2]
+    upper2 = colors[color][3]
+
+    mask1 = cv2.inRange(hsv, lower1, upper1)
+    mask2 = cv2.inRange(hsv, lower2, upper2)
+    mask = cv2.bitwise_or(mask1, mask2)
+
+    img = cv2.bitwise_and(image, image, mask=mask)
+
+    return img
 
 
 def filter_image_red(image):
@@ -96,11 +120,12 @@ def erode_image(image, i=1):
 
     return img_erosion
 
-#TODO: find a set of values that work for both walls and balls
+
+# TODO: find a set of values that work for both walls and balls
 def temp_filter_for_red_wall(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     lower_red1 = np.array([0, 70, 50])
-    upper_red1 = np.array([10, 255, 255]) #The first value need to be 10 for the wall
+    upper_red1 = np.array([10, 255, 255])  # The first value need to be 10 for the wall
     lower_red2 = np.array([170, 70, 50])
     upper_red2 = np.array([180, 255, 255])
 
@@ -112,14 +137,15 @@ def temp_filter_for_red_wall(image):
 
     return red_image
 
+
 def filter_image_white(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    
+
     lower_white = np.array([0, 0, 200])
     upper_white = np.array([200, 111, 255])
 
     mask = cv2.inRange(hsv, lower_white, upper_white)
 
     white_image = cv2.bitwise_and(image, image, mask=mask)
-    
+
     return white_image
