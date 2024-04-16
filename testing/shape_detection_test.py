@@ -4,7 +4,8 @@ import cv2
 
 from src.client.vision.shape_detection import detect_balls
 from testing.image_generation import write_image_to_file
-from src.client.vision.filters import filter_image_red, filter_image_green
+from src.client.vision.filters import filter_image_red, filter_image_green, filter_image_by_color
+
 
 
 class TestBallDetection(unittest.TestCase):
@@ -43,7 +44,7 @@ class TestBallDetection(unittest.TestCase):
     def test_detect_red_dot(self):
         image_name = 'robot_ball_90.jpeg'
         image = cv2.imread('images/' + image_name)
-        balls = detect_balls(filter_image_red(image),
+        balls = detect_balls(filter_image_by_color(image, "red"),
                              min_radius=25, max_radius=35)
         ball_count = 0 if balls is None else len(balls)
         print_image(image, balls, 'red_' + image_name)
