@@ -1,3 +1,4 @@
+import math
 import cv2
 import numpy as np
 
@@ -253,3 +254,7 @@ def cluster_lines(image, lines):
         print(f"Line from ({x1}, {y1}) to ({x2}, {y2})")
     
     return image
+
+def are_points_close(point1, point2, tolerance = 5):
+    distance = math.sqrt((point2[0] - point1[0]) ** 2 + (point2[1] - point1[1]) ** 2)
+    return distance <= tolerance
