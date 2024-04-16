@@ -6,7 +6,12 @@ colors = {
             np.array([6, 255, 255]),
             np.array([170, 70, 50]),
             np.array([180, 255, 255])
-            )
+            ),
+    "green": (np.array([35, 70, 50]),
+              np.array([85, 255, 255]),
+              np.array([85, 70, 50]),
+              np.array([92, 163, 99])
+              ),
 }
 
 
@@ -94,6 +99,18 @@ def filter_image_green(image):
     return green_image
 
 
+def filter_image_orange(image):
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+    lower_orange = np.array([5, 100, 100])
+    upper_orange = np.array([15, 255, 255])
+
+    mask_orange = cv2.inRange(hsv, lower_orange, upper_orange)
+
+    orange_image = cv2.bitwise_and(image, image, mask=mask_orange)
+
+    return orange_image
+
 def sharpen_image(image):
     kernel = np.array([[-1, -1, -1],
                        [-1, 9, -1],
@@ -101,6 +118,7 @@ def sharpen_image(image):
 
     sharpened_image = cv2.filter2D(image, -1, kernel)
     return sharpened_image
+
 
 
 def clean_the_image(image):
