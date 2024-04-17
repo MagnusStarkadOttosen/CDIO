@@ -43,16 +43,6 @@ def calc_degrees_to_rotate(robot_direction, target_direction):
         return 0
 
 
-# modified robot class with position and pivot
-# the robot's position in the coordinate system with two points ( red and green) is called A and B
-# A and B is get from the image detection with the red and green points from decetor_robot.py
-# M is the intersection point between the line AB and the wheel axis with distan M to A is 10 cm
-# M is the robot's position
-
-# the robot's position is updated after the robot moves or turns
-# the pivot is updated after the robot turns
-# the robot's position is updated after the robot moves
-
 # class Robot:
 #     def __init__(self):
 #         self.red_dot = None  # red point's coordinates
