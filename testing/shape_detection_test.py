@@ -34,12 +34,12 @@ class TestBallDetection(unittest.TestCase):
         self.assertEqual(ball_count, 9)
 
     def test_detect_white_balls(self):
-        image_name = "white_balls.jpeg"
+        image_name = "gen_warped2_newCourse_darkened.jpg"
         image = cv2.imread('images/' + image_name)
         balls = detect_balls(filter_image_white(image))
         ball_count = 0 if balls is None else len(balls)
         print_image(image, balls, image_name)
-        self.assertEqual(ball_count, 7)
+        self.assertEqual(ball_count, 5)
 
     def test_detect_1_ball(self):
         image_name = "robot_ball_90.jpeg"
