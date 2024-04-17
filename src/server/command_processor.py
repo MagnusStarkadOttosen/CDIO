@@ -10,7 +10,8 @@ actions_functions = {
     "start_collect": commands.run_collector_clockwise,
     "deliver": commands.run_collector_counterclockwise,
     "stop_collect": commands.stop_collector,
-    "stop": commands.stop
+    "stop": commands.stop,
+    "start_drive": commands.drive_inf
 }
 
 
