@@ -36,10 +36,9 @@ class TestMainLoop(unittest.TestCase):
 
         client_pc.send_command("start_collect")
         #client_pc.send_command("turn 90")
-        client_pc.send_command("move 60")
+        #client_pc.send_command("move 23")
 
-        client_pc.send_command("deliver")
-        time.sleep(3)
+        time.sleep(45)
         client_pc.send_command("stop_collect")
         client_pc.send_command(f"exit")
 

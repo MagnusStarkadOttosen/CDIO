@@ -28,6 +28,7 @@ target_point = (900, 600)
 
 isRobot_moving = False
 
+
 #take image
 capture_image("test.jpg")
 image = cv2.imread("images/capturedImage/test.jpg")
@@ -72,3 +73,4 @@ client_pc.send_command("exit")
 client_pc.close_connection()
 
 print("Robot done moving")
+

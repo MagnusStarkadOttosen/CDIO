@@ -22,9 +22,9 @@ def map_to_coordinate_system(image, point, origin, scale):
 
 def warp_perspective(image, src_points, dst_size):
     height, width = dst_size
-    
+
     pts_dst = np.array([[0, 0], [width, 0], [width, height], [0, height]], dtype="float32")
-    
+
     M = cv2.getPerspectiveTransform(src_points, pts_dst)
     
     warped_image = cv2.warpPerspective(image, M, (width, height))
@@ -258,3 +258,4 @@ def cluster_lines(image, lines):
 def are_points_close(point1, point2, tolerance = 5):
     distance = math.sqrt((point2[0] - point1[0]) ** 2 + (point2[1] - point1[1]) ** 2)
     return distance <= tolerance
+
