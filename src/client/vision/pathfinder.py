@@ -3,7 +3,6 @@ import numpy as np
 
 from src.client.utilities import convert_px_to_cm, convert_px_cm_temp, get_distance
 from src.client.vision.shape_detection import Shapes
-from src.client.field.robot import get_degrees_to_rotation
 
 
 class Route:
@@ -15,8 +14,8 @@ class Route:
         self.drivingMode = drivingMode
 
 
-def balls_are_remaining(shapes):
-    if shapes.circles is not None:
+def balls_are_remaining(circles):
+    if circles is not None:
         return True
     else:
         return False
@@ -31,7 +30,6 @@ def findNearestBall(robotpostition, shape: Shapes):
             # width_cm, height_cm = convert_px_cm(circle.x, circle.y)
             # ball = np.array([width_cm, height_cm])
             # print(f"width : {width_cm} heigth: {height_cm}")
-            print
             dist = get_distance(robotpostition, np.array([x, y]))
             print("dist before if: ", dist)
             if (dist < nearest):
