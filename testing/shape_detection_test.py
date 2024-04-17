@@ -41,6 +41,14 @@ class TestBallDetection(unittest.TestCase):
         print_image(image, balls, image_name)
         self.assertEqual(ball_count, 5)
 
+    def test_detect_white_balls_big_dots(self):
+        image_name = "gen_warped2_newCourse_bigDots.jpg"
+        image = cv2.imread('images/' + image_name)
+        balls = detect_balls(filter_image_white(image))
+        ball_count = 0 if balls is None else len(balls)
+        print_image(image, balls, image_name)
+        self.assertEqual(ball_count, 5)
+
     def test_detect_1_ball(self):
         image_name = "robot_ball_90.jpeg"
         image = cv2.imread('images/' + image_name)
@@ -96,7 +104,7 @@ def print_image(image, balls, image_name):
             # Enumerate the detected balls
             cv2.putText(image, str(idx), (ball[0], ball[1]), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 0), 2)
             idx += 1
-            print("ball x:", ball[0], "y:", ball[1])
+            print(f"ball {idx} x {ball[0]}, y:, {ball[1]}")
 
         write_image_to_file('circles_detected_' + image_name, image)
     else:
