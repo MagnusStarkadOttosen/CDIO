@@ -1,13 +1,21 @@
 import cv2
 import unittest
 from src.client.vision.pathfinder import *
-from src.client.vision.shape_detection import detect_balls
+from src.client.vision.shape_detection import detect_balls, detect_robot
 from src.client.vision.filters import filter_image_white
 
 class BallsRemainingTest(unittest.TestCase):
 
-    def test_get_orange_ball_last(self):
-        print("hi")
+    def test_nearest_ball_coordinates(self):
+        input_folder_path = 'images/'
+        image_name = 'gen_warped2_newCourse_bigDots.jpg'
+        input_image_path = input_folder_path + image_name
+        image = cv2.imread(input_image_path)
+
+        balls = detect_balls(filter_image_white(image))
+        robot_pos, robot_direction = detect_robot(image)
+        nearest = find_nearest_ball(robot_pos, balls)
+        print(f"nearest x: {nearest[0]}, nearest y: {nearest[1]}")
 
     def test_are_balls_remaining(self):
         input_folder_path = 'images/'
