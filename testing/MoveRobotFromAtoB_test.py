@@ -62,12 +62,13 @@ while(True):
         client_pc.send_command("turn " + angle)
     
     if not isRobot_moving:
-        client_pc.send_command("move")
+        client_pc.send_command("start_drive")
         isRobot_moving = True
         
     
     
     
-#TODO: send exit command to shut down the server
+client_pc.send_command("exit")
+client_pc.close_connection()
 
 print("Robot done moving")
