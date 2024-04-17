@@ -9,12 +9,12 @@ from src.client.vision.filters import apply_gray, apply_canny
 
 def detect_robot(image):
     green_dot = detect_balls(filter_image_green(image),
-                             min_radius=25, max_radius=35)
+                             min_radius=45, max_radius=50)
     if green_dot is None:  # TODO Proper error handling for green_dot
         print("No green dot.")
 
     red_dot = detect_balls(filter_image_red(image),
-                           min_radius=25, max_radius=35)
+                           min_radius=45, max_radius=50)
     if red_dot is None:  # TODO Proper error handling for red_dot
         print("No red dot.")
 
@@ -45,7 +45,7 @@ def detect_balls(image, min_radius=15, max_radius=25):
     return circles
 
 
-class Shapes: # TODO opløs Shapes klasse
+class Shapes:  # TODO opløs Shapes klasse
     def __init__(self, image):
         self.original_image = image
         self.image = None
@@ -53,6 +53,7 @@ class Shapes: # TODO opløs Shapes klasse
         self.image = apply_gray(image)
         self.circles = None
         self.lines = None
+
     #
     # def detect_balls(self):
     #     balls = 0
@@ -148,4 +149,3 @@ class Shapes: # TODO opløs Shapes klasse
     #         for corner in corners:
     #             x, y = tuple(corner.ravel())
     #             # cv2.circle(image_to_draw_on, (x, y), 5, (0, 255, 0), -1)  # Draw green circles at each corner
-
