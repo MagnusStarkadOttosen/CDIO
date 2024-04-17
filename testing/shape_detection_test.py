@@ -4,7 +4,7 @@ import cv2
 
 from src.client.vision.shape_detection import detect_balls
 from testing.image_generation import write_image_to_file
-from src.client.vision.filters import filter_image_red, filter_image_green, filter_image_by_color, filter_image_orange
+from src.client.vision.filters import filter_image_red, filter_image_green, filter_image_by_color, filter_image_orange, filter_image_white
 
 
 
@@ -36,7 +36,7 @@ class TestBallDetection(unittest.TestCase):
     def test_detect_white_balls(self):
         image_name = "white_balls.jpeg"
         image = cv2.imread('images/' + image_name)
-        balls = detect_balls(image)
+        balls = detect_balls(filter_image_white(image))
         ball_count = 0 if balls is None else len(balls)
         print_image(image, balls, image_name)
         self.assertEqual(ball_count, 7)
