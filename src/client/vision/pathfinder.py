@@ -21,27 +21,44 @@ def balls_are_remaining(circles):
         return False
 
 
-def findNearestBall(robotpostition, shape: Shapes):
-    ball_route = Route(0, 0, 0, 0, " ")
-    circles = np.round(shape.circles[0, :]).astype("int")
-    if balls_are_remaining:
-        nearest = 300000
-        for (x, y, r) in circles:
-            # width_cm, height_cm = convert_px_cm(circle.x, circle.y)
-            # ball = np.array([width_cm, height_cm])
-            # print(f"width : {width_cm} heigth: {height_cm}")
-            dist = get_distance(robotpostition, np.array([x, y]))
-            print("dist before if: ", dist)
-            if (dist < nearest):
-                ball_route.x = x
-                ball_route.y = y
-                ball_route.d = convert_px_to_cm(dist)
-                print("dist: ", dist)
-                nearest = dist
+def find_nearest_ball(robot_pos, circles):
+    ball_pos = np.array([0, 0])
+    nearest = 300000
+    for (x, y, r) in circles:
+        # width_cm, height_cm = convert_px_cm(circle.x, circle.y)
+        # ball = np.array([width_cm, height_cm])
+        # print(f"width : {width_cm} heigth: {height_cm}")
+        dist = get_distance(robot_pos, np.array([x, y]))
+        # print("dist before if: ", dist)
+        if dist < nearest:
+            ball_pos[0] = x
+            ball_pos[1] = y
+            # print("dist: ", dist)
+            nearest = dist
+    return ball_pos
 
-        return ball_route
-    else:
-        return 0
+
+# def findNearestBall(robotpostition, shape: Shapes):
+#     #ball_route = Route(0, 0, 0, 0, " ")
+#     circles = np.round(shape.circles[0, :]).astype("int")
+#     if balls_are_remaining:
+#         nearest = 300000
+#         for (x, y, r) in circles:
+#             # width_cm, height_cm = convert_px_cm(circle.x, circle.y)
+#             # ball = np.array([width_cm, height_cm])
+#             # print(f"width : {width_cm} heigth: {height_cm}")
+#             dist = get_distance(robotpostition, np.array([x, y]))
+#             print("dist before if: ", dist)
+#             if (dist < nearest):
+#                 ball_route.x = x
+#                 ball_route.y = y
+#                 ball_route.d = convert_px_to_cm(dist)
+#                 print("dist: ", dist)
+#                 nearest = dist
+#
+#         return ball_route
+#     else:
+#         return 0
 
 
 def findNearestWall(robotpostition, shape: Shapes, route: Route):
