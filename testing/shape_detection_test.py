@@ -50,9 +50,10 @@ class TestBallDetection(unittest.TestCase):
         self.assertEqual(ball_count, 1)
 
     def test_detect_red_dot(self):
-        image_name = 'gen_warped2_newCourse.jpg'
+        image_name = 'gen_warped2_newCourse_bigDots.jpg'
         image = cv2.imread('images/' + image_name)
-        balls = detect_balls(filter_image_by_color(image, "red"))
+        balls = detect_balls(filter_image_by_color(image, "red"),
+                             min_radius=45, max_radius=50)
         ball_count = 0 if balls is None else len(balls)
         print_image(image, balls, 'red_' + image_name)
         self.assertEqual(ball_count, 1)
@@ -61,6 +62,15 @@ class TestBallDetection(unittest.TestCase):
         image_name = 'gen_warped2_newCourse.jpg'
         image = cv2.imread('images/' + image_name)
         balls = detect_balls(filter_image_green(image))
+        ball_count = 0 if balls is None else len(balls)
+        print_image(image, balls, 'green_' + image_name)
+        self.assertEqual(ball_count, 1)
+
+    def test_detect_big_green_dot(self):
+        image_name = 'gen_warped2_newCourse_bigDots.jpg'
+        image = cv2.imread('images/' + image_name)
+        balls = detect_balls(filter_image_green(image),
+                             min_radius=45, max_radius=50)
         ball_count = 0 if balls is None else len(balls)
         print_image(image, balls, 'green_' + image_name)
         self.assertEqual(ball_count, 1)
