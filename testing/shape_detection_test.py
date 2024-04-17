@@ -4,7 +4,7 @@ import cv2
 
 from src.client.vision.shape_detection import detect_balls
 from testing.image_generation import write_image_to_file
-from src.client.vision.filters import filter_image_red, filter_image_green, filter_image_by_color
+from src.client.vision.filters import filter_image_red, filter_image_green, filter_image_by_color, filter_image_orange
 
 
 
@@ -33,6 +33,14 @@ class TestBallDetection(unittest.TestCase):
         print_image(image, balls, image_name)
         self.assertEqual(ball_count, 9)
 
+    def test_detect_white_balls(self):
+        image_name = "white_balls.jpeg"
+        image = cv2.imread('images/' + image_name)
+        balls = detect_balls(image)
+        ball_count = 0 if balls is None else len(balls)
+        print_image(image, balls, image_name)
+        self.assertEqual(ball_count, 7)
+
     def test_detect_1_ball(self):
         image_name = "robot_ball_90.jpeg"
         image = cv2.imread('images/' + image_name)
@@ -58,6 +66,14 @@ class TestBallDetection(unittest.TestCase):
         ball_count = 0 if balls is None else len(balls)
         print_image(image, balls, 'green_' + image_name)
         self.assertEqual(ball_count, 1)
+
+    def test_detect_orange_ball(self):
+        image_name = 'orange_ball.jpeg'
+        image = cv2.imread('images/' + image_name)
+        balls = detect_balls(filter_image_orange(image), min_radius=18)
+        ball_count = 0 if balls is None else len(balls)
+        print_image(image, balls, 'orange_' + image_name)
+        self.assertEqual(ball_count, 2)
 
 
 def print_image(image, balls, image_name):
