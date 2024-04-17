@@ -17,15 +17,15 @@ image_name = ('1.jpg', 'image_with_robot.jpeg', 'robot_ball_90.jpeg',
 
 class TestColorFilters(unittest.TestCase):
     def test_filter_image_red(self):
-        name = image_name[2]
+        name = image_name[7]
         image = cv2.imread(input_folder_path + name)
         filtered_image = filter_image_red(image)
         write_image_to_file('filter_red_' + name, filtered_image)
 
     def test_filter_image_green(self):
-        image = cv2.imread(input_folder_path + image_name[1])
+        image = cv2.imread(input_folder_path + image_name[7])
         filtered_image = filter_image_green(image)
-        write_image_to_file('filter_green_' + image_name[1], filtered_image)
+        write_image_to_file('filter_green_' + image_name[7], filtered_image)
 
     def test_filter_image_white(self):
         image = cv2.imread(input_folder_path + image_name[7])
