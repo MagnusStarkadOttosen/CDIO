@@ -2,14 +2,17 @@ import cv2
 import unittest
 
 from src.client.vision.filters import (filter_image_red, filter_image_green,
-                                       apply_gray, apply_canny)
+                                       apply_gray, apply_canny, filter_image_white)
 
 # Path from where images comes from and path where the processed images are stored
 input_folder_path = 'images/'
 output_folder_path = 'images/'
 
 # Name of the image to be used
-image_name = ('1.jpg', 'image_with_robot.jpeg', 'robot_ball_90.jpeg')
+image_name = ('1.jpg', 'image_with_robot.jpeg', 'robot_ball_90.jpeg',
+              'gen_warped2_newCourse_brightened.jpg', '9_balls_on_field.jpeg',
+              'gen_warped2_newCourse.jpg', 'gen_warped2_newCourse_purple_robot.jpg',
+              'gen_warped2_newCourse_darkened.jpg')
 
 
 class TestColorFilters(unittest.TestCase):
@@ -23,6 +26,11 @@ class TestColorFilters(unittest.TestCase):
         image = cv2.imread(input_folder_path + image_name[1])
         filtered_image = filter_image_green(image)
         write_image_to_file('filter_green_' + image_name[1], filtered_image)
+
+    def test_filter_image_white(self):
+        image = cv2.imread(input_folder_path + image_name[7])
+        filtered_image = filter_image_white(image)
+        write_image_to_file('filter_white_' + image_name[7], filtered_image)
 
     def test_grayed_filter_image_red(self):
         image = cv2.imread(input_folder_path + image_name[1])
