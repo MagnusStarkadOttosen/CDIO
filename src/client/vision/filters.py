@@ -61,9 +61,14 @@ def filter_image_green(image):
     lower_green2 = np.array([85, 70, 50])
     upper_green2 = np.array([92, 163, 99])
 
+    lower_green3 = np.array([30, 20, 64])
+    upper_green3 = np.array([94, 255, 255])
+
     mask1 = cv2.inRange(hsv, lower_green1, upper_green1)
     mask2 = cv2.inRange(hsv, lower_green2, upper_green2)
+    mask3 = cv2.inRange(hsv, lower_green3, upper_green3)
     mask = cv2.bitwise_or(mask1, mask2)
+    mask = cv2.bitwise_or(mask, mask3)
 
     green_image = cv2.bitwise_and(image, image, mask=mask)
 

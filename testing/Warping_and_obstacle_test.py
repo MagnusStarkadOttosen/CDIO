@@ -8,11 +8,11 @@ from src.client.vision.shape_detection import detect_balls
 dst_size = (1200, 1800)  # width, height
 
 # Path from where images comes from and path where the processed images are stored
-input_folder_path = 'images/'
+input_folder_path = 'images/capturedImage/'
 output_folder_path = 'images/outputObstacle/'
 
 # Name of the image to be used
-image_name = 'Course_X2.jpg'
+image_name = 'test.jpg'
 input_image_path = input_folder_path + image_name
 image = cv2.imread(input_image_path)
 
@@ -21,6 +21,11 @@ if image is not None:
     corners = find_corner_points_full(image, doVerbose=True)
     
     gen_warped_image = warp_perspective(image, corners, dst_size)
+
+    green_image = filter_image_green(gen_warped_image)
+    green_image_name = 'green_' + image_name
+    green_image_path = output_folder_path + green_image_name
+    cv2.imwrite(green_image_path, green_image)
     
     gen_warped_image_name = 'gen_warped2_' + image_name
     gen_warped_image_path = output_folder_path + gen_warped_image_name
