@@ -16,103 +16,99 @@ WHITE_BALL_COUNT = 10
 ROBOT_CAPACITY = 6
 TOLERANCE = 1
 DST_SIZE = (1200, 1800)
+
+
 class Main:
-        def __init__(self):
-                self.client = ClientPC()
-                self.balls = None
+    def __init__(self):
+        self.client = ClientPC()
+        self.balls = None
+        self.collect_orange_ball = False
+        self.target_pos = None
+
+    def main_loop(self):
+        while len(self.balls) > WHITE_BALL_COUNT - ROBOT_CAPACITY - 1:
+            self._collect_ball()
+
+        self.collect_orange_ball = True
+        while self.collect_orange_ball:
+            self._collect_ball()
+        self._deliver_balls_loop()
+
+        while len(self.balls) > 0:
+            self._collect_ball()
+        self._deliver_balls_loop()
+        self.client.send_command("stop_collect")
+
+    def _collect_ball(self):  # TODO break up _collect_ball in smaller functions
+        capture_image("test.jpg")
+        image = cv2.imread("images/capturedImage/test.jpg")
+        final_points = find_corner_points_full(image)
+        warped_img = warp_perspective(image, final_points, DST_SIZE)
+
+        robot_pos, robot_direction = detect_robot(warped_img)
+
+        # Set target ball position
+        if not self.collect_orange_ball:
+            self.balls = detect_balls(filter_image_white(warped_img))
+            self.target_pos = find_nearest_ball(robot_pos, self.balls)
+        else:
+            self.balls = detect_balls(filter_image_orange(warped_img))
+            if len(self.balls) is 0:
                 self.collect_orange_ball = False
-                self.target_pos = None
+                return
+            self.target_pos = (self.balls[0][0], self.balls[0][1])
 
-        def main_loop(self):
-                while len(self.balls) > WHITE_BALL_COUNT - ROBOT_CAPACITY - 1:
-                        self._collect_ball()
+        # Calculate target direction vector
+        target_direction = calc_vector_direction(robot_pos, self.target_pos)
 
-                self.collect_orange_ball = True
-                while self.collect_orange_ball:
-                        self._collect_ball()
-                self._deliver_balls_loop()
+        # Check if robot arrived at target destination
+        if are_points_close(robot_pos, self.target_pos):
+            self.client.send_command("stop")
+            return
 
-                while len(self.balls) > 0:
-                        self._collect_ball()
-                self._deliver_balls_loop()
-                self.client.send_command("stop_collect")
+        # Calculate the degrees the robot needs to turn to face robot
+        deg = calc_degrees_to_rotate(robot_direction, target_direction)
 
-        def _collect_ball(self):  # TODO break up _collect_ball in smaller functions
-                capture_image("test.jpg")
-                image = cv2.imread("images/capturedImage/test.jpg")
-                final_points = find_corner_points_full(image)
-                warped_img = warp_perspective(image, final_points, DST_SIZE)
+        # Check if angle need to change
+        if deg < -TOLERANCE or deg > TOLERANCE:
+            self.client.send_command("turn " + deg)
+            # self.client.send_command("start_drive")
 
+    # def _collect_orange_ball(self):
+    #         print("hei girl hei girl hei girl")
 
-                robot_pos, robot_direction = detect_robot(warped_img)
+    def _deliver_balls_loop(self):
+        # get angle to turn from current robot direction
+        # send command to drive until robot_pos = goal_pos
+        self.client.send_command("deliver")
+        time.sleep(5)  # TODO use on_for_degrees in deliver command server-side
+        self.client.send_command("start_collect")
 
-                # Set target ball position
-                if not self.collect_orange_ball:
-                        self.balls = detect_balls(filter_image_white(warped_img))
-                        self.target_pos = find_nearest_ball(robot_pos, self.balls)
-                else:
-                        self.balls = detect_balls(filter_image_orange(warped_img))
-                        if len(self.balls) is 0:
-                                self.collect_orange_ball = False
-                                return
-                        self.target_pos = (self.balls[0][0], self.balls[0][1])
+    def _run_get_white_balls_loop(self, filtered_image):  # probably needs to be video feed here
+        self.balls = detect_balls(filtered_image)
 
-                # Calculate target direction vector
-                target_direction = calc_vector_direction(robot_pos, self.target_pos)
-
-                # Check if robot arrived at target destination
-                if are_points_close(robot_pos, self.target_pos):
-                        self.client.send_command("stop")
-                        return
-
-                # Calculate the degrees the robot needs to turn to face robot
-                deg = calc_degrees_to_rotate(robot_direction, target_direction)
-
-                # Check if angle need to change
-                if deg < -TOLERANCE or deg > TOLERANCE:
-                        self.client.send_command("turn " + deg)
-                        # self.client.send_command("start_drive")
-
-        # def _collect_orange_ball(self):
-        #         print("hei girl hei girl hei girl")
-
-
-        def _deliver_balls_loop(self):
-            # get angle to turn from current robot direction
-            # send command to drive until robot_pos = goal_pos
-            self.client.send_command("deliver")
-            time.sleep(5) #  TODO use on_for_degrees in deliver command server-side
-            self.client.send_command("start_collect")
-
-        def _run_get_white_balls_loop(self, filtered_image):  # probably needs to be video feed here
-                self.balls = detect_balls(filtered_image)
-
-
-
-
-        # get_image
-        # modify_image
-        # update_robot_position
-        # plan_path
-        # move_robot
-
+    # get_image
+    # modify_image
+    # update_robot_position
+    # plan_path
+    # move_robot
 
 
 def get_image():
-        pass
+    pass
 
 
 def modify_image(image):
-        pass
+    pass
 
 
 def update_robot_position():
-        pass
+    pass
 
 
 def plan_path():
-        pass
+    pass
 
 
 def move_robot():
-        pass
+    pass
