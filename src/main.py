@@ -50,11 +50,14 @@ class Main:
         # Set target ball position
         if not self.collect_orange_ball:
             self.balls = detect_balls(filter_image_white(warped_img))
+            if self.balls is None:
+                return
             self.target_pos = find_nearest_ball(robot_pos, self.balls)
         else:
             self.balls = detect_balls(filter_image_orange(warped_img))
-            if len(self.balls) is 0:
+            if self.balls is None:
                 self.collect_orange_ball = False
+                self.balls = detect_balls(filter_image_white(warped_img))
                 return
             self.target_pos = (self.balls[0][0], self.balls[0][1])
 
@@ -80,6 +83,7 @@ class Main:
     def _deliver_balls_loop(self):
         # get angle to turn from current robot direction
         # send command to drive until robot_pos = goal_pos
+        self.client.send_command("stop")
         self.client.send_command("deliver")
         time.sleep(5)  # TODO use on_for_degrees in deliver command server-side
         self.client.send_command("start_collect")
