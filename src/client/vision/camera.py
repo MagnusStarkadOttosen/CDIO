@@ -2,7 +2,7 @@ import cv2
 
 def capture_image(filename = "captured_image.jpg"):
     # Start the video capture object
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(2)
     
     if not cap.isOpened():
         print("Could not open video device")

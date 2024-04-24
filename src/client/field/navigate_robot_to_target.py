@@ -17,8 +17,8 @@ def navigate_robot_to_target(client_pc, target_point, dst_size=(1200, 1800), tol
 
     while True:
         # Take image
-        capture_image("test.jpg")
-        image = cv2.imread("images/capturedImage/test.jpg")
+        capture_image("test1.jpg")
+        image = cv2.imread("images/capturedImage/test1.jpg")
 
         # Warp image
         gen_warped_image = warp_perspective(image, final_points, dst_size)

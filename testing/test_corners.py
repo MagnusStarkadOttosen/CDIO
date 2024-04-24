@@ -7,14 +7,13 @@ import unittest
 
 
 
-def test_corners(self):
-        client_pc = ClientPC()
+client_pc = ClientPC()
 
-        print("In test_corners")
-        corner_point = (0, 0)
-        target_point = (300, 600)
-        #calculate_distance(corner_point, target_point)
-        print("After calculate_distance")
-        deliver_points(target_point)
-        client_pc.send_command("move 20")
-        print("After deliver_points")
+print("In test_corners")
+corner_point = (0, 0)
+target_point = (300, 600)
+#calculate_distance(corner_point, target_point)
+print("After calculate_distance")
+deliver_points(client_pc, target_point)
+# client_pc.send_command("move 20")
+print("After deliver_points")
