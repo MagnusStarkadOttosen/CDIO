@@ -52,6 +52,36 @@ def trace_path(cell_details, dest):
 	path.reverse()
 	return path
 
+# 	Optimize the path by removing unnecessary points
+def optimize_path(path):
+    if not path:
+        return []
+
+    optimized_path = [path[0]] # Add the first point
+    current_direction = get_direction(path[0], path[1])
+
+    for i in range(1, len(path) - 1):
+        next_direction = get_direction(path[i], path[i + 1])
+        if next_direction != current_direction:
+            optimized_path.append(path[i])
+            current_direction = next_direction
+
+    optimized_path.append(path[-1])  # Add the last point
+    return optimized_path
+
+def get_direction(p1, p2):
+    dx = p2[0] - p1[0]
+    dy = p2[1] - p1[1]
+    if dx == 0:
+        return 'vertical'
+    elif dy == 0:
+        return 'horizontal'
+    elif abs(dx) == abs(dy):
+        return 'diagonal'
+    else:
+        return 'none'
+
+
 # Implement the A* search algorithm
 def a_star_search(grid, src, dest):
 	# Check if the source and destination are valid
@@ -115,7 +145,9 @@ def a_star_search(grid, src, dest):
 					cell_details[new_i][new_j].parent_j = j
 					print("The destination cell is found")
 					# Trace the path from source to destination
-					return trace_path(cell_details, dest)
+					full_path = trace_path(cell_details, (new_i, new_j))
+					optimized_path = optimize_path(full_path)
+					return optimized_path
 				else:
 					# Calculate the new f, g, and h values
 					g_new = cell_details[i][j].g + 1.0
@@ -137,3 +169,6 @@ def a_star_search(grid, src, dest):
 	if not found_dest:
 		print("Failed to find the destination cell")
 		return None
+	
+
+
