@@ -8,8 +8,7 @@ from src.client.vision.filters import apply_gray, apply_canny
 
 
 def detect_robot(image):
-    green_dot = detect_balls(filter_image_green(image),
-                             min_radius=25, max_radius=35)
+    green_dot = detect_balls(filter_image_green(image))
     if green_dot is None:  # TODO Proper error handling for green_dot
         print("No green dot.")
 
