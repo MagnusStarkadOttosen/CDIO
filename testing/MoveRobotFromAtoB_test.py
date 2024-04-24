@@ -82,9 +82,4 @@ finally:
     client_pc.send_command("exit")
     client_pc.close_connection()
 
-<<<<<<< HEAD
-print("Robot done moving")
-
-=======
     print("Robot done moving")
->>>>>>> feature/MoveRobotFromAtoB
