@@ -6,6 +6,7 @@ import unittest
 from src.client.field.robot import calc_degrees_to_rotate, calc_vector_direction
 from src.client.vision.shape_detection import detect_balls, detect_robot
 from src.client.pc_client import ClientPC
+from src.client.field.deliver_point import deliver_points, calculate_distance
 
 
 class TestMainLoop(unittest.TestCase):
@@ -35,10 +36,12 @@ class TestMainLoop(unittest.TestCase):
         client_pc = ClientPC()
 
         client_pc.send_command("start_collect")
-        #client_pc.send_command("turn 90")
-        #client_pc.send_command("move 23")
+        client_pc.send_command("turn 90")
+        client_pc.send_command("move 23")
 
-        time.sleep(45)
-        client_pc.send_command("stop_collect")
-        client_pc.send_command(f"exit")
+        #time.sleep(45)
+        #client_pc.send_command("stop_collect")
+        #client_pc.send_command(f"exit")
+
+
 

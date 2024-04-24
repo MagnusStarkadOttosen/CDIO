@@ -15,11 +15,11 @@ def calculate_distance(corner_point, target_point):
 
 
 def deliver_points(target_point):
-
     dist=calculate_distance(corner_point, target_point)
     navigate_robot_to_target(client_pc, target_point)
 
     client_pc.send_command(f"turn {turn_angle}")
+    print("I am in deliver point")
     client_pc.send_command("start_collect")
     navigate_robot_to_target(client_pc,corner_point)
 
