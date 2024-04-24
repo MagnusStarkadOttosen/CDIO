@@ -148,32 +148,34 @@ def find_corner_points_full(image, doVerbose=False):
     
     #An array of the 4 points in the corners
     final_points = np.array(closest_points, dtype="float32")
-    
+    print(final_points.size)
     #This is to print the images for visual inspection
     if doVerbose == True:
         #Desired output size (dimensions in pixels for the warped image)
-        dst_size = (1200, 1800)  # width, height
-        gen_warped_image = warp_perspective(image, final_points, dst_size)
-        images = [red_image, clean_image, edge_image, gen_warped_image]
-        printImagesFromWarping(images)
+        
+        images = [image, red_image, clean_image, edge_image]
+        printImagesFromWarping(images, final_points)
     
     return final_points
 
 #This prints the images for visual inspection
-def printImagesFromWarping(images):
+def printImagesFromWarping(images, final_points):
     output_folder_path = 'images/outputObstacle/'
     
     red_image_path = output_folder_path + "red_image.jpg"
-    cv2.imwrite(red_image_path, images[0])
+    cv2.imwrite(red_image_path, images[1])
     
     clean_image_path = output_folder_path + "clean_image.jpg"
-    cv2.imwrite(clean_image_path, images[1])
+    cv2.imwrite(clean_image_path, images[2])
 
     edge_image_path = output_folder_path + "edge_image.jpg"
-    cv2.imwrite(edge_image_path, images[2])
+    cv2.imwrite(edge_image_path, images[3])
     
+    dst_size = (1200, 1800)  # width, height
+    gen_warped_image = warp_perspective(images[0], final_points, dst_size)
+
     gen_warped_image_path = output_folder_path + "gen_warped_image.jpg"
-    cv2.imwrite(gen_warped_image_path, images[3])
+    cv2.imwrite(gen_warped_image_path, gen_warped_image)
     
 def cluster_lines_into_4(image, lines):
     if lines is None or len(lines) == 0:

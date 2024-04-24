@@ -40,7 +40,7 @@ def convert_hsv(image):
 def filter_image_red(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     lower_red1 = np.array([0, 70, 50])
-    upper_red1 = np.array([6, 255, 255])
+    upper_red1 = np.array([13, 255, 255])
     lower_red2 = np.array([170, 70, 50])
     upper_red2 = np.array([180, 255, 255])
 
@@ -61,11 +61,16 @@ def filter_image_green(image):
     lower_green2 = np.array([85, 70, 50])
     upper_green2 = np.array([92, 163, 99])
 
+    lower_green3 = np.array([40, 50, 50])
+    upper_green3 = np.array([80, 255, 255])
+
     mask1 = cv2.inRange(hsv, lower_green1, upper_green1)
     mask2 = cv2.inRange(hsv, lower_green2, upper_green2)
+    mask3 = cv2.inRange(hsv, lower_green3, upper_green3)
     mask = cv2.bitwise_or(mask1, mask2)
+    mask = cv2.bitwise_or(mask, mask3)
 
-    green_image = cv2.bitwise_and(image, image, mask=mask)
+    green_image = cv2.bitwise_and(image, image, mask=mask3)
 
     return green_image
 
