@@ -6,14 +6,10 @@ from src.client.vision.camera import capture_image, initialize_camera
 from src.client.vision.shape_detection import detect_robot
 
 
-def navigate_robot_to_target(client_pc, target_point, dst_size=(1200, 1800), tolerance=1):
+def navigate_robot_to_target(final_points, camera, client_pc, target_point, dst_size=(1200, 1800), tolerance=1):
     is_robot_moving = False
-    camera = initialize_camera(index=2)
-    # Take initial image
-    capture_image(camera, "test.jpg")
-    image = cv2.imread("images/capturedImage/test.jpg")
-    # Find corners
-    final_points = find_corner_points_full(image)
+
+
 
     while True:
         # Take image
