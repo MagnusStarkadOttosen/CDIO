@@ -30,6 +30,9 @@ class Main:
         capture_image(self.camera, "test.jpg")
         image = cv2.imread("images/capturedImage/test.jpg")
         final_points = find_corner_points_full(image)
+        warped_img = warp_perspective(image, final_points, DST_SIZE)
+        if self.balls is None:
+            self.balls = detect_balls(warped_img)
         while len(self.balls) > WHITE_BALL_COUNT - ROBOT_CAPACITY - 1:
             self._collect_ball(final_points)
 
@@ -101,6 +104,9 @@ class Main:
     # plan_path
     # move_robot
 
+
+main = Main()
+main.main_loop()
 
 def get_image():
     pass
