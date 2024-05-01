@@ -40,38 +40,24 @@ print("after read image")
 final_points = find_corner_points_full(image, doVerbose=True)
 
 try:
-    while(True):
-        print("before 1")
-        #take image
-        capture_image(camera, "test1.jpg")
-        image = cv2.imread("images/capturedImage/test1.jpg")
-        print("after 1")
-        #warp image
-        gen_warped_image = warp_perspective(image, final_points, dst_size)
-        print("after warp")
-        #find robot
-        robot_pos, robot_direction = detect_robot(gen_warped_image)
-        print(f"after robot pos {robot_pos} and direction {robot_direction}")
-        #if robot at target stop robot and break
-        if are_points_close(robot_pos, target_point):
-            client_pc.send_command("stop")
-            isRobot_moving = False
-            break
-        print("after if 1")
-        #calculate degrees to turn
-        angle = rotate_vector_to_point(robot_pos, robot_direction, target_point)
-        print("after angle")
-        #Check if angle need to change
-        if angle < -tolerance or angle > tolerance:
-            if isRobot_moving:
-                client_pc.send_command("stop")
-                isRobot_moving = False
-            client_pc.send_command(f"turn {angle}")
-        print("after if 2")
-        if not isRobot_moving:
-            client_pc.send_command("start_drive")
-            isRobot_moving = True
-        print("after if 3")
+    print("before 1")
+    #take image
+    capture_image(camera, "test1.jpg")
+    image = cv2.imread("images/capturedImage/test1.jpg")
+    print("after 1")
+    #warp image
+    gen_warped_image = warp_perspective(image, final_points, dst_size)
+    print("after warp")
+    #find robot
+    robot_pos, robot_direction = detect_robot(gen_warped_image)
+    print(f"robot pos {robot_pos} and direction {robot_direction} before")
+    #calculate degrees to turn
+    angle = rotate_vector_to_point(robot_pos, robot_direction, target_point)
+    print(f"angle before {angle}")
+    client_pc.send_command(f"turn {angle}")
+    robot_pos, robot_direction = detect_robot(gen_warped_image)
+    print(f"robot pos {robot_pos} and direction {robot_direction} after")
+
 except KeyboardInterrupt:
     print("Interrupted by user")
 finally:

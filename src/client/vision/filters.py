@@ -124,7 +124,6 @@ def sharpen_image(image):
     return sharpened_image
 
 
-
 def clean_the_image(image):
     kernel = np.ones((3, 3), np.uint8)
     opening = cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel, iterations=2)
@@ -164,7 +163,7 @@ def filter_image_white(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
     lower_white = np.array([0, 0, 200])
-    upper_white = np.array([180, 30, 255])
+    upper_white = np.array([200, 111, 255])
 
     mask = cv2.inRange(hsv, lower_white, upper_white)
 
