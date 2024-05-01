@@ -60,7 +60,17 @@ class Main:
                 self.balls = detect_balls(filter_image_white(warped_img))
                 return
             self.target_pos = (self.balls[0][0], self.balls[0][1])
+            self._navigate_to_target(robot_pos, robot_direction)
 
+    def _deliver_balls_loop(self):
+        # get angle to turn from current robot direction
+        # send command to drive until robot_pos = goal_pos
+        self.client.send_command("stop")
+        self.client.send_command("deliver")
+        time.sleep(5)  # TODO use on_for_degrees in deliver command server-side
+        self.client.send_command("start_collect")
+
+    def _navigate_to_target(self, robot_pos, robot_direction):
         # Calculate target direction vector
         target_direction = calc_vector_direction(robot_pos, self.target_pos)
 
@@ -76,17 +86,6 @@ class Main:
         if deg < -TOLERANCE or deg > TOLERANCE:
             self.client.send_command("turn " + deg)
             # self.client.send_command("start_drive")
-
-    # def _collect_orange_ball(self):
-    #         print("hei girl hei girl hei girl")
-
-    def _deliver_balls_loop(self):
-        # get angle to turn from current robot direction
-        # send command to drive until robot_pos = goal_pos
-        self.client.send_command("stop")
-        self.client.send_command("deliver")
-        time.sleep(5)  # TODO use on_for_degrees in deliver command server-side
-        self.client.send_command("start_collect")
 
     def _run_get_white_balls_loop(self, filtered_image):  # probably needs to be video feed here
         self.balls = detect_balls(filtered_image)
