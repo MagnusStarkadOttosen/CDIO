@@ -7,7 +7,7 @@ from src.client.field.coordinate_system import are_points_close, find_corner_poi
 from src.client.field.field import Field
 from src.client.field.robot import calc_vector_direction, calc_degrees_to_rotate
 from src.client.pc_client import ClientPC
-from src.client.vision.camera import capture_image
+from src.client.vision.camera import capture_image, initialize_camera
 from src.client.vision.filters import filter_image_white, filter_image_orange
 from src.client.vision.pathfinder import find_nearest_ball
 from src.client.vision.shape_detection import detect_balls, detect_robot
@@ -24,25 +24,29 @@ class Main:
         self.balls = None
         self.collect_orange_ball = False
         self.target_pos = None
+        self.camera = initialize_camera(index=2)
 
     def main_loop(self):
+        capture_image(self.camera, "test.jpg")
+        image = cv2.imread("images/capturedImage/test.jpg")
+        final_points = find_corner_points_full(image)
         while len(self.balls) > WHITE_BALL_COUNT - ROBOT_CAPACITY - 1:
-            self._collect_ball()
+            self._collect_ball(final_points)
 
         self.collect_orange_ball = True
         while self.collect_orange_ball:
-            self._collect_ball()
+            self._collect_ball(final_points)
         self._deliver_balls_loop()
 
         while len(self.balls) > 0:
-            self._collect_ball()
+            self._collect_ball(final_points)
         self._deliver_balls_loop()
         self.client.send_command("stop_collect")
 
-    def _collect_ball(self):  # TODO break up _collect_ball in smaller functions
-        capture_image("test.jpg")
+    def _collect_ball(self, final_points):  # TODO break up _collect_ball in smaller functions
+        capture_image(self.camera, "test.jpg")
         image = cv2.imread("images/capturedImage/test.jpg")
-        final_points = find_corner_points_full(image)
+
         warped_img = warp_perspective(image, final_points, DST_SIZE)
 
         robot_pos, robot_direction = detect_robot(warped_img)
@@ -60,6 +64,7 @@ class Main:
                 self.balls = detect_balls(filter_image_white(warped_img))
                 return
             self.target_pos = (self.balls[0][0], self.balls[0][1])
+
             self._navigate_to_target(robot_pos, robot_direction)
 
     def _deliver_balls_loop(self):
