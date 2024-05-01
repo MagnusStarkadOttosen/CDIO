@@ -1,13 +1,13 @@
 
 import math
 from src.client.field.navigate_robot_to_target import *
-from src.client.pc_client import ClientPC
+# from src.client.pc_client import ClientPC
 
 
 target_point = (300, 600)
 turn_angle = 75
 corner_point = (0, 0)
-client_pc = ClientPC()
+# client_pc = ClientPC()
 
 
 def calculate_distance(corner_point, target_point):

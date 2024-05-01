@@ -7,7 +7,7 @@ import unittest
 
 
 
-client_pc = ClientPC()
+# client_pc = ClientPC()
 
 print("In test_corners")
 corner_point = (0, 0)

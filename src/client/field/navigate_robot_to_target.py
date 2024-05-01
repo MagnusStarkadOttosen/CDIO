@@ -1,7 +1,7 @@
 import cv2
 from src.client.field.coordinate_system import are_points_close, find_corner_points_full, warp_perspective
 from src.client.pathfinding.CalculateCommandList import rotate_vector_to_point
-from src.client.pc_client import ClientPC
+# from src.client.pc_client import ClientPC
 from src.client.vision.camera import capture_image, initialize_camera
 from src.client.vision.shape_detection import detect_robot
 
@@ -27,14 +27,14 @@ def navigate_robot_to_target(client_pc, target_point, dst_size=(1200, 1800), tol
         robot_pos, robot_direction = detect_robot(gen_warped_image)
 
         # If robot at target, stop robot and break
-        if are_points_close(robot_pos, target_point, tolerance):
+        if are_points_close(robot_pos, target_point, tolerance=100):
             client_pc.send_command("stop")
             is_robot_moving = False
             break
 
         # Calculate degrees to turn
         angle = rotate_vector_to_point(robot_pos, robot_direction, target_point)
-
+        tolerance = 10
         # Check if angle needs to change
         if angle < -tolerance or angle > tolerance:
             if is_robot_moving:
