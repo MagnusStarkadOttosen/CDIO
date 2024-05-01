@@ -2,9 +2,10 @@ import cv2
 import numpy as np
 
 from src.client.field.robot import calc_vector_direction
-from src.client.vision.filters import convert_hsv, filter_image_green, filter_image_red
-from src.client.field.coordinate_system import find_corners
+from src.client.vision.filters import clean_the_image, convert_hsv, filter_image_green, filter_image_red, temp_filter_for_red_wall
+from src.client.field.coordinate_system import find_corner_points_full, find_corners, find_lines, warp_perspective
 from src.client.vision.filters import apply_gray, apply_canny
+from src.client.field.coordinate_system import find_intersection
 
 
 def detect_robot(image):
@@ -43,6 +44,24 @@ def detect_balls(image, min_radius=15, max_radius=25):
         print("No balls detected.")
 
     return circles
+
+def detect_obstacles(image):
+    dst_size = (1200, 1800)  # width, height
+    corners = find_corner_points_full(image, doVerbose=True) 
+    gen_warped_image = warp_perspective(image, corners, dst_size)
+    red_image = temp_filter_for_red_wall(gen_warped_image)
+    clean_image = clean_the_image(red_image)
+    edge_image, lines = find_lines(clean_image, resolution=5, doVerbose=True)
+   
+    intersections=[]
+    if lines is not None:
+       for i in range(len(lines)):
+           for j in range(i + 1, len(lines)):
+               inter = find_intersection(lines[i], lines[j])
+               if inter is not None:
+                   intersections.append(inter)
+
+    return intersections
 
 
 class Shapes: # TODO opløs Shapes klasse
@@ -119,10 +138,7 @@ class Shapes: # TODO opløs Shapes klasse
 
         self.image = cv2.bitwise_and(self.original_image, self.original_image, mask=mask)
 
-    def detect_obstacles(self):
-        pass
-
-
+    
     def draw_coordinate_system(image):
         corners = find_corners(image)  # Assuming this returns the corners as (x, y) tuples
         if corners is not None and len(corners) >= 4:
