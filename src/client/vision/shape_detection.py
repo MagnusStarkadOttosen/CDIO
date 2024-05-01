@@ -119,6 +119,10 @@ class Shapes: # TODO opløs Shapes klasse
 
         self.image = cv2.bitwise_and(self.original_image, self.original_image, mask=mask)
 
+    def detect_obstacles(self):
+        pass
+
+
     def draw_coordinate_system(image):
         corners = find_corners(image)  # Assuming this returns the corners as (x, y) tuples
         if corners is not None and len(corners) >= 4:
