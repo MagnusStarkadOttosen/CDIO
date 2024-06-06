@@ -1,2 +1,6 @@
-Lower HSV: [35, 0, 0]
-Upper HSV: [85, 255, 255]
+LowerH 35
+LowerS 0
+LowerV 0
+UpperH 85
+UpperS 255
+UpperV 255

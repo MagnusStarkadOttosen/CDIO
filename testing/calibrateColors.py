@@ -1,3 +1,4 @@
+import os
 import cv2
 import numpy as np
 
@@ -43,9 +44,26 @@ def nothing(x):
 def save_color_presets(color, lower_bound, upper_bound, base_filename="hsv_presets"):
     filename = f"{base_filename}_{color}.txt"
     with open(filename, "w") as file:
-        file.write(f"Lower HSV: {lower_bound.tolist()}\n")
-        file.write(f"Upper HSV: {upper_bound.tolist()}\n")
+        file.write(f"LowerH {lower_bound[0]}\n")
+        file.write(f"LowerS {lower_bound[1]}\n")
+        file.write(f"LowerV {lower_bound[2]}\n")
+        file.write(f"UpperH {upper_bound[0]}\n")
+        file.write(f"UpperS {upper_bound[1]}\n")
+        file.write(f"UpperV {upper_bound[2]}\n")
     print(f"{color.capitalize()} HSV values saved to {filename}")
+
+def load_color_presets(color, base_filename="hsv_presets"):
+    filename = f"{base_filename}_{color}.txt"
+    if os.path.isfile(filename):
+        with open(filename, "r") as file:
+            lines = file.readlines()
+            lower_bound = np.array([int(lines[0].split()[1]), int(lines[1].split()[1]), int(lines[2].split()[1])])
+            upper_bound = np.array([int(lines[3].split()[1]), int(lines[4].split()[1]), int(lines[5].split()[1])])
+        print(f"{color.capitalize()} HSV values loaded from {filename}")
+        return lower_bound, upper_bound
+    else:
+        print(f"File {filename} not found. Using default values.")
+        return None, None
 
 # Capture from camera
 cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
@@ -64,10 +82,25 @@ colors = {
 }
 current_color = 'green'
 
+# Toggle for circles and lines
+show_circles = False
+show_lines = False
+
+
 # Initialize trackbars for the initial color (green)
 for k, v in colors[current_color].items():
     window = 'Lower Bounds' if 'Lower' in k else 'Upper Bounds'
     cv2.createTrackbar(k, window, v, 179 if 'H' in k else 255, nothing)
+    
+# Load saved presets if available
+lower_bound, upper_bound = load_color_presets(current_color)
+if lower_bound is not None and upper_bound is not None:
+    cv2.setTrackbarPos('LowerH', 'Lower Bounds', lower_bound[0])
+    cv2.setTrackbarPos('LowerS', 'Lower Bounds', lower_bound[1])
+    cv2.setTrackbarPos('LowerV', 'Lower Bounds', lower_bound[2])
+    cv2.setTrackbarPos('UpperH', 'Upper Bounds', upper_bound[0])
+    cv2.setTrackbarPos('UpperS', 'Upper Bounds', upper_bound[1])
+    cv2.setTrackbarPos('UpperV', 'Upper Bounds', upper_bound[2])
 
 while True:
     ret, frame = cap.read()
@@ -81,13 +114,16 @@ while True:
     mask = cv2.inRange(hsv, lower_bound, upper_bound)
     res = cv2.bitwise_and(frame, frame, mask=mask)
     
-    lines = find_lines(res)
+    # Display lines
+    if show_lines:
+        lines = find_lines(res)
     
     # Detect and count balls
     circles = detect_balls(res)
     ball_count = len(circles)
     
-    if circles is not None:
+    # Display circles
+    if circles is not None and show_circles:
         for (x, y, r) in circles:
             cv2.circle(res, (x, y), r, (255, 255, 0), 4)
     
@@ -101,12 +137,25 @@ while True:
         break
     elif key == ord('s'):
         save_color_presets(current_color, lower_bound, upper_bound)
+    elif key == ord('c'): # Toggle circles
+        show_circles = not show_circles
+    elif key == ord('l'): # Toggle lines
+        show_lines = not show_lines
     elif key in [ord('g'), ord('r'), ord('o'), ord('w')]:  # Preset selection keys
         preset_keys = {'g': 'green', 'r': 'red', 'o': 'orange', 'w': 'white'}
         current_color = preset_keys[chr(key)]
         for k in colors[current_color]:
             window = 'Lower Bounds' if 'Lower' in k else 'Upper Bounds'
             cv2.setTrackbarPos(k, window, colors[current_color][k])
+        # Load saved presets if available
+        lower_bound, upper_bound = load_color_presets(current_color)
+        if lower_bound is not None and upper_bound is not None:
+            cv2.setTrackbarPos('LowerH', 'Lower Bounds', lower_bound[0])
+            cv2.setTrackbarPos('LowerS', 'Lower Bounds', lower_bound[1])
+            cv2.setTrackbarPos('LowerV', 'Lower Bounds', lower_bound[2])
+            cv2.setTrackbarPos('UpperH', 'Upper Bounds', upper_bound[0])
+            cv2.setTrackbarPos('UpperS', 'Upper Bounds', upper_bound[1])
+            cv2.setTrackbarPos('UpperV', 'Upper Bounds', upper_bound[2])
 
 cap.release()
 cv2.destroyAllWindows()
