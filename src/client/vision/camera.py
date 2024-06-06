@@ -1,10 +1,12 @@
 import cv2
 
 def initialize_camera(index=0):
-    cap = cv2.VideoCapture(index)
+    cap = cv2.VideoCapture(index, cv2.CAP_DSHOW)
     if not cap.isOpened():
         print("Could not open video device")
         return None
+    focus_property_id = 28
+    cap.set(focus_property_id, 0)
     return cap
 
 def capture_image(cap, filename="captured_image.jpg"):

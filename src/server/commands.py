@@ -36,7 +36,7 @@ class Commands:
         print('Wheel motor turning this many degrees: ', degrees)  # Placeholder
 
     def drive_inf(self):
-        self.tank_drive.on(SpeedPercent(30), SpeedPercent(30))
+        self.tank_drive.on(SpeedPercent(10), SpeedPercent(10))
 
     # def turn(degrees_to_rotate):
     #     self.turn_by_x_degrees(degrees_to_rotate)
