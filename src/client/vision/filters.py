@@ -1,6 +1,19 @@
 import cv2
 import numpy as np
 
+colors = {
+    "red": (np.array([0, 70, 50]),
+            np.array([6, 255, 255]),
+            np.array([170, 70, 50]),
+            np.array([180, 255, 255])
+            ),
+    "green": (np.array([35, 70, 50]),
+              np.array([85, 255, 255]),
+              np.array([85, 70, 50]),
+              np.array([92, 163, 99])
+              ),
+}
+
 
 def apply_gray(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -37,10 +50,26 @@ def convert_hsv(image):
     return hsv
 
 
+def filter_image_by_color(image, color):
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    lower1 = colors[color][0]
+    upper1 = colors[color][1]
+    lower2 = colors[color][2]
+    upper2 = colors[color][3]
+
+    mask1 = cv2.inRange(hsv, lower1, upper1)
+    mask2 = cv2.inRange(hsv, lower2, upper2)
+    mask = cv2.bitwise_or(mask1, mask2)
+
+    img = cv2.bitwise_and(image, image, mask=mask)
+
+    return img
+
+
 def filter_image_red(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     lower_red1 = np.array([0, 70, 50])
-    upper_red1 = np.array([13, 255, 255])
+    upper_red1 = np.array([6, 255, 255])
     lower_red2 = np.array([170, 70, 50])
     upper_red2 = np.array([180, 255, 255])
 
@@ -56,24 +85,35 @@ def filter_image_red(image):
 def filter_image_green(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
-    lower_green1 = np.array([35, 70, 50])
-    upper_green1 = np.array([85, 255, 255])
-    lower_green2 = np.array([85, 70, 50])
-    upper_green2 = np.array([92, 163, 99])
+    # lower_green1 = np.array([35, 70, 50])
+    # upper_green1 = np.array([85, 255, 255])
+    # lower_green2 = np.array([85, 70, 50])
+    # upper_green2 = np.array([92, 163, 99])
+    #
+    # mask1 = cv2.inRange(hsv, lower_green1, upper_green1)
+    # mask2 = cv2.inRange(hsv, lower_green2, upper_green2)
+    # mask = cv2.bitwise_or(mask1, mask2)
+    lower_green = np.array([35, 70, 50])
+    upper_green = np.array([92, 255, 255])
 
-    lower_green3 = np.array([40, 50, 50])
-    upper_green3 = np.array([80, 255, 255])
+    mask = cv2.inRange(hsv, lower_green, upper_green)
 
-    mask1 = cv2.inRange(hsv, lower_green1, upper_green1)
-    mask2 = cv2.inRange(hsv, lower_green2, upper_green2)
-    mask3 = cv2.inRange(hsv, lower_green3, upper_green3)
-    mask = cv2.bitwise_or(mask1, mask2)
-    mask = cv2.bitwise_or(mask, mask3)
-
-    green_image = cv2.bitwise_and(image, image, mask=mask3)
+    green_image = cv2.bitwise_and(image, image, mask=mask)
 
     return green_image
 
+
+def filter_image_orange(image):
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+    lower_orange = np.array([5, 100, 100])
+    upper_orange = np.array([15, 255, 255])
+
+    mask_orange = cv2.inRange(hsv, lower_orange, upper_orange)
+
+    orange_image = cv2.bitwise_and(image, image, mask=mask_orange)
+
+    return orange_image
 
 def sharpen_image(image):
     kernel = np.array([[-1, -1, -1],
@@ -101,11 +141,12 @@ def erode_image(image, i=1):
 
     return img_erosion
 
-#TODO: find a set of values that work for both walls and balls
+
+# TODO: find a set of values that work for both walls and balls
 def temp_filter_for_red_wall(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     lower_red1 = np.array([0, 70, 50])
-    upper_red1 = np.array([10, 255, 255]) #The first value need to be 10 for the wall
+    upper_red1 = np.array([10, 255, 255])  # The first value need to be 10 for the wall
     lower_red2 = np.array([170, 70, 50])
     upper_red2 = np.array([180, 255, 255])
 
@@ -117,14 +158,15 @@ def temp_filter_for_red_wall(image):
 
     return red_image
 
+
 def filter_image_white(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    
+
     lower_white = np.array([0, 0, 200])
     upper_white = np.array([200, 111, 255])
 
     mask = cv2.inRange(hsv, lower_white, upper_white)
 
     white_image = cv2.bitwise_and(image, image, mask=mask)
-    
+
     return white_image

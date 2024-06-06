@@ -11,19 +11,37 @@ def detect_robot(image):
     green_dot = detect_balls(filter_image_green(image))
     if green_dot is None:  # TODO Proper error handling for green_dot
         print("No green dot.")
+    print("green dot found ", len(green_dot))
 
-    red_dot = detect_balls(filter_image_red(image),
-                           min_radius=25, max_radius=35)
+    red_dot = detect_balls(filter_image_red(image))
     if red_dot is None:  # TODO Proper error handling for red_dot
         print("No red dot.")
-
+    print("red dot found ", len(red_dot))
     robot_pos = (red_dot[0][0], red_dot[0][1])
     robot_direction = calc_vector_direction(green_dot[0], robot_pos)
 
     return robot_pos, robot_direction
 
+def detect_egg(image, min_radius=45,max_radius=55):
+    # Convert to grayscale
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-def detect_balls(image, min_radius=15, max_radius=25):
+    # Apply edge detection
+    edges = cv2.Canny(gray, 110, 200)
+
+    # Detect circles
+    circles = cv2.HoughCircles(edges, cv2.HOUGH_GRADIENT,
+                               dp=1.75, minDist=60,
+                               param1=30, param2=35,
+                               minRadius=min_radius, maxRadius=max_radius)
+    if circles is not None:
+        circles = np.round(circles[0, :]).astype("int")
+        print("balls count: ", len(circles))
+    else:
+        print("No balls detected.")
+
+    return circles
+def detect_balls(image, min_radius=15,max_radius=25):
     # Convert to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
@@ -44,7 +62,7 @@ def detect_balls(image, min_radius=15, max_radius=25):
     return circles
 
 
-class Shapes: # TODO opløs Shapes klasse
+class Shapes:  # TODO opløs Shapes klasse
     def __init__(self, image):
         self.original_image = image
         self.image = None
@@ -52,6 +70,7 @@ class Shapes: # TODO opløs Shapes klasse
         self.image = apply_gray(image)
         self.circles = None
         self.lines = None
+
     #
     # def detect_balls(self):
     #     balls = 0
@@ -147,4 +166,3 @@ class Shapes: # TODO opløs Shapes klasse
     #         for corner in corners:
     #             x, y = tuple(corner.ravel())
     #             # cv2.circle(image_to_draw_on, (x, y), 5, (0, 255, 0), -1)  # Draw green circles at each corner
-
