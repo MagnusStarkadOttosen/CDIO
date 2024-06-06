@@ -45,8 +45,11 @@ def detect_balls(image, min_radius=15,max_radius=25):
     # Convert to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
+    # Apply Gaussian blur
+    blurred = cv2.GaussianBlur(gray, (9, 9), 2)
+
     # Apply edge detection
-    edges = cv2.Canny(gray, 110, 200)
+    edges = cv2.Canny(blurred, 50, 150)
 
     # Detect circles
     circles = cv2.HoughCircles(edges, cv2.HOUGH_GRADIENT,
@@ -58,6 +61,7 @@ def detect_balls(image, min_radius=15,max_radius=25):
         print("balls count: ", len(circles))
     else:
         print("No balls detected.")
+        circles = np.array([])
 
     return circles
 
