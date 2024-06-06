@@ -45,4 +45,5 @@ def collect_from_corner(client_pc, camera):
     client_pc.send_command("stop")
 
 
-def determine_corner(ball_pos)
+def determine_corner(ball_pos):
+
