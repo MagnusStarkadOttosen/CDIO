@@ -1,0 +1,2 @@
+Lower HSV: [35, 0, 0]
+Upper HSV: [85, 255, 255]
