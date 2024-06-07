@@ -57,7 +57,7 @@ def detect_balls(image, min_radius=15,max_radius=25):
                                minRadius=min_radius, maxRadius=max_radius)
     if circles is not None:
         circles = np.round(circles[0, :]).astype("int")
-        print("balls count: ", len(circles))
+        # print("balls count: ", len(circles))
     else:
         print("No balls detected.")
 

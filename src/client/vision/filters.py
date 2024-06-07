@@ -173,7 +173,7 @@ def filter_image_white(image):
 
 def filter_for_yellow(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    lower_yellow = np.array([29, 29, 253])
+    lower_yellow = np.array([0, 26, 245])
     upper_yellow = np.array([35, 255, 255])
 
     mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
