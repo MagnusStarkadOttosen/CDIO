@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-from src.client.field.collect_from_corner import check_corners
+#from src.client.field.collect_from_corner import check_corners
 from src.client.vision.shape_detection import detect_balls
 
 

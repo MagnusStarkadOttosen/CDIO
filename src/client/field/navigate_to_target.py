@@ -7,12 +7,10 @@ from src.client.vision.shape_detection import detect_robot
 
 
 FINAL_POINTS = (0,0)
-PIVOT_POINT = (300, 600)
+PIVOT_POINTS = [(300, 600), (1500, 600)]
 
-def navigate_to_target(camera, client_pc, dst_size=(1200, 1800), tolerance=1):
+def navigate_to_target(camera, client_pc, target_point, dst_size=(1200, 1800), tolerance=1):
     is_robot_moving = False
-
-
 
     while True:
         # Take image
@@ -27,13 +25,13 @@ def navigate_to_target(camera, client_pc, dst_size=(1200, 1800), tolerance=1):
         robot_pos, robot_direction = detect_robot(gen_warped_image)
 
         # If robot at target, stop robot and break
-        if are_points_close(robot_pos, PIVOT_POINT, tolerance=100):
+        if are_points_close(robot_pos, target_point, tolerance=100):
             client_pc.send_command("stop")
             is_robot_moving = False
             break
 
         # Calculate degrees to turn
-        angle = rotate_vector_to_point(robot_pos, robot_direction, PIVOT_POINT)
+        angle = rotate_vector_to_point(robot_pos, robot_direction, target_point)
         tolerance = 10
         # Check if angle needs to change
         if angle < -tolerance or angle > tolerance:
@@ -47,5 +45,5 @@ def navigate_to_target(camera, client_pc, dst_size=(1200, 1800), tolerance=1):
             is_robot_moving = True
     print("Robot done moving")
 
-def navigat_to_pivot()
-    navigate_to_target(PIVOT_POINT)
+def navigat_to_pivot(camera, client_pc, pivot_point):
+    navigate_to_target(camera, client_pc, pivot_point)
