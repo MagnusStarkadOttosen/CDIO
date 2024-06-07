@@ -3,7 +3,7 @@ import numpy as np
 
 from src.client.field.robot import calc_vector_direction
 from src.client.vision.filters import clean_the_image, convert_hsv, filter_image_green, filter_image_red, temp_filter_for_red_wall
-from src.client.field.coordinate_system import find_corner_points_full, find_corners, find_lines, warp_perspective
+from src.client.field.coordinate_system import calculate_slope, find_corner_points_full, find_corners, find_lines, is_near_90_degrees, warp_perspective
 from src.client.vision.filters import apply_gray, apply_canny
 from src.client.field.coordinate_system import find_intersection
 
@@ -52,17 +52,54 @@ def detect_obstacles(image):
     red_image = temp_filter_for_red_wall(gen_warped_image)
     clean_image = clean_the_image(red_image)
     edge_image, lines = find_lines(clean_image, resolution=5, doVerbose=True)
-   
     intersections=[]
     if lines is not None:
        for i in range(len(lines)):
            for j in range(i + 1, len(lines)):
-               inter = find_intersection(lines[i], lines[j])
-               if inter is not None:
+               l1 = lines[i][0]
+               l2 = lines[j][0]  
+               slope1 = calculate_slope(l1)
+               slope2 = calculate_slope(l2)
+               if is_near_90_degrees(slope1, slope2, tolerance=5,zero_tolerance=0.1):
+                inter = find_intersection(l1, l2)
+                if inter is not None and inter not in intersections:
                    intersections.append(inter)
+                   print(f"Intersection found: {inter}") 
+                   cv2.circle(clean_image, inter, radius=5, color=(255, 0, 0), thickness=-1) 
+    grouped_points = group_close_points(intersections)
+    midpoint = calculate_midpoints(grouped_points)
 
-    return intersections
+    output_folder_path = 'images/outputObstacle/'
+    re_image_path = output_folder_path + "re_image.jpg"
+    cv2.imwrite(re_image_path, clean_image)
+    # print(f"Total intersections found: {len(intersections)}")
+    # print(f"midpoint: {midpoint}")
+    return  intersections, midpoint
 
+def group_close_points(points, distance_threshold=10):
+    groups = []
+    for point in points:
+        added = False
+        for group in groups:
+            if np.linalg.norm(np.array(point) - np.array(group[0])) < distance_threshold:
+                group.append(point)
+                added = True
+                break
+        if not added:
+            groups.append([point])
+    return groups
+# fine the midpoint of the groups
+
+def calculate_midpoints(groups):
+    midpoint = [0][0]
+    for group in groups:
+        x = 0
+        y = 0
+        for point in group:
+            x += point[0]
+            y += point[1]
+        midpoint = (x // len(group), y // len(group))
+    return midpoint
 
 class Shapes: # TODO opløs Shapes klasse
     def __init__(self, image):
