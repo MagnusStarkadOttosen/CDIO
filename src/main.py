@@ -88,14 +88,15 @@ class Main:
         time.sleep(5)  # TODO use on_for_degrees in deliver command server-side
         self.client.send_command("start_collect")
 
-    def _navigate_to_target(self, robot_pos, robot_direction):
-        target_direction = calc_vector_direction(robot_pos, self.target_pos)
+    def _navigate_to_target(self, robot_pos, robot_direction, path):
+        for (x, y) in path:
+            target_direction = calc_vector_direction((x, y), robot_pos)
 
-        if are_points_close(robot_pos, self.target_pos):
-            self.client.send_command("stop")
-            return
+            if are_points_close(robot_pos, self.target_pos):
+                self.client.send_command("stop")
+                return
 
-        deg = calc_degrees_to_rotate(robot_direction, target_direction)
+            deg = calc_degrees_to_rotate(robot_direction, target_direction)
 
-        if abs(deg) > TOLERANCE:
-            self.client.send_command(f"turn {deg}")
+            if abs(deg) > TOLERANCE:
+                self.client.send_command(f"turn {deg}")
