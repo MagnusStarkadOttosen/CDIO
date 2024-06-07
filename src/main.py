@@ -10,6 +10,7 @@ from src.client.vision.camera import capture_image, initialize_camera
 from src.client.vision.filters import filter_image_white, filter_image_orange
 from src.client.vision.pathfinder import find_nearest_ball
 from src.client.vision.shape_detection import detect_balls, detect_robot
+from src.client.search_targetpoint import a_star_search
 
 WHITE_BALL_COUNT = 10
 ROBOT_CAPACITY = 6
@@ -29,6 +30,7 @@ class Main:
         self.collect_orange_ball = False
         self.target_pos = None
         self.camera = initialize_camera(index=2)
+        self.grid = None
 
     def main_loop(self):
         final_points = self._initialize_field()
@@ -41,6 +43,20 @@ class Main:
         self.client.send_command("stop_collect")
 
     def _initialize_field(self):
+        self.grid = [
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        ]
         capture_image(self.camera, "test.jpg")
         image = cv2.imread("images/capturedImage/test.jpg")
         final_points = find_corner_points_full(image)
@@ -78,8 +94,9 @@ class Main:
             self.balls = detect_balls(filter_image(warped_img))
             if not self.balls:
                 return
-            self.target_pos = find_nearest_ball(robot_pos, self.balls)
+            self.target_pos = find_nearest_ball(robot_pos, self.balls) # TODO handle target being null
 
+        path = a_star_search
         self._navigate_to_target(robot_pos, robot_direction)
 
     def _deliver_balls(self):
