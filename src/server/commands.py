@@ -46,7 +46,7 @@ class Commands:
         self.tank_drive.off()
 
     def turn_left(self, speed):
-        self.tank_drive(speed, -speed)
+        self.tank_drive.on(speed, -speed)
 
 
 def convert_distance_to_degrees(distance_to_move):
