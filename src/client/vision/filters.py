@@ -93,7 +93,7 @@ def filter_image_green(image):
     # mask1 = cv2.inRange(hsv, lower_green1, upper_green1)
     # mask2 = cv2.inRange(hsv, lower_green2, upper_green2)
     # mask = cv2.bitwise_or(mask1, mask2)
-    lower_green = np.array([35, 70, 50])
+    lower_green = np.array([35, 0, 0])
     upper_green = np.array([92, 255, 255])
 
     mask = cv2.inRange(hsv, lower_green, upper_green)
@@ -170,3 +170,15 @@ def filter_image_white(image):
     white_image = cv2.bitwise_and(image, image, mask=mask)
 
     return white_image
+
+def filter_for_yellow(image):
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    lower_yellow = np.array([29, 29, 253])
+    upper_yellow = np.array([35, 255, 255])
+
+    mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
+
+
+    yellow_image = cv2.bitwise_and(image, image, mask=mask)
+
+    return yellow_image

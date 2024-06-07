@@ -2,22 +2,24 @@ import cv2
 import numpy as np
 
 from src.client.field.robot import calc_vector_direction
-from src.client.vision.filters import convert_hsv, filter_image_green, filter_image_red
+from src.client.vision.filters import convert_hsv, filter_for_yellow, filter_image_green, filter_image_red
 from src.client.field.coordinate_system import find_corners
 from src.client.vision.filters import apply_gray, apply_canny
 
 
 def detect_robot(image):
-    green_dot = detect_balls(filter_image_green(image))
+    green_dot = detect_balls(filter_image_green(image),min_radius=40, max_radius=45)
     if green_dot is None:  # TODO Proper error handling for green_dot
         print("No green dot.")
+        return None, None
     print("green dot found ", len(green_dot))
 
-    red_dot = detect_balls(filter_image_red(image))
-    if red_dot is None:  # TODO Proper error handling for red_dot
-        print("No red dot.")
-    print("red dot found ", len(red_dot))
-    robot_pos = (red_dot[0][0], red_dot[0][1])
+    yellow_dot = detect_balls(filter_for_yellow(image),min_radius=40, max_radius=45)
+    if yellow_dot is None:  # TODO Proper error handling for red_dot
+        print("No yellow dot.")
+        return None, None
+    print("yellow dot found ", len(yellow_dot))
+    robot_pos = (yellow_dot[0][0], yellow_dot[0][1])
     robot_direction = calc_vector_direction(green_dot[0], robot_pos)
 
     return robot_pos, robot_direction
