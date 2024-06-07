@@ -12,13 +12,13 @@ def detect_robot(image):
     if green_dot is None:  # TODO Proper error handling for green_dot
         print("No green dot.")
         return None, None
-    print("green dot found ", len(green_dot))
+    # print("green dot found ", len(green_dot))
 
     yellow_dot = detect_balls(filter_for_yellow(image),min_radius=40, max_radius=45)
     if yellow_dot is None:  # TODO Proper error handling for red_dot
         print("No yellow dot.")
         return None, None
-    print("yellow dot found ", len(yellow_dot))
+    # print("yellow dot found ", len(yellow_dot))
     robot_pos = (yellow_dot[0][0], yellow_dot[0][1])
     robot_direction = calc_vector_direction(green_dot[0], robot_pos)
 

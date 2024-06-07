@@ -8,6 +8,7 @@ from src.client.vision.shape_detection import detect_robot
 
 client_pc = ClientPC()
 
+turnSpeed = 5
 
 dst_size = (1200, 1800)
 tolerance = 10
@@ -46,16 +47,24 @@ try:
         angle = rotate_vector_to_point(robot_pos, robot_direction, target_point)
         # print("after angle")
         #Check if angle need to change
-        if angle < -tolerance or angle > tolerance:
-            isRobot_turning = True
-            print("start rotating")
-            if isRobot_moving:
-                client_pc.send_command("stop")
-                isRobot_moving = False
-            client_pc.send_command(f"turn {angle}")
-        
-        if angle > -tolerance or angle < tolerance:
+        while angle < -tolerance or angle > tolerance:
+            ret, frame = cap.read()
+            gen_warped_image = warp_perspective(frame, final_points, dst_size)
+            robot_pos, robot_direction = detect_robot(gen_warped_image)
+            print(f"after robot pos {robot_pos} and direction {robot_direction}")
+            if robot_pos is None or robot_direction is None:
+                continue
+            angle = rotate_vector_to_point(robot_pos, robot_direction, target_point)
+            print(f"angle: {angle}")
+            if not isRobot_turning:
+                isRobot_turning = True
+                client_pc.send_command(f"turn_left {turnSpeed}")
+            else:
+                isRobot_turning = False
+        if isRobot_turning:
             isRobot_turning = False
+            client_pc.send_command("stop")
+
         # print("after if 2")
         if not isRobot_moving and not isRobot_turning:
             client_pc.send_command("start_drive")
