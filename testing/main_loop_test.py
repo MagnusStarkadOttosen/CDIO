@@ -32,7 +32,7 @@ class TestMainLoop(unittest.TestCase):
         client_pc.send_command(f"exit")
 
 
-    def move(self):
+def move(self):
         client_pc = ClientPC()
 
         client_pc.send_command("start_collect")
