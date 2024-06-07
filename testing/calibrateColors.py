@@ -86,13 +86,15 @@ cv2.namedWindow('Lower Bounds')
 cv2.namedWindow('Upper Bounds')
 cv2.namedWindow('Result')
 cv2.namedWindow('warped')
+cv2.resizeWindow('warped', 1200, 1800)
 
 # Color presets and current color
 colors = {
     'green': {'LowerH': 35, 'LowerS': 100, 'LowerV': 100, 'UpperH': 85, 'UpperS': 255, 'UpperV': 255},
     'red': {'LowerH': 0, 'LowerS': 100, 'LowerV': 100, 'UpperH': 10, 'UpperS': 255, 'UpperV': 255},
     'orange': {'LowerH': 10, 'LowerS': 100, 'LowerV': 100, 'UpperH': 25, 'UpperS': 255, 'UpperV': 255},
-    'white': {'LowerH': 0, 'LowerS': 0, 'LowerV': 200, 'UpperH': 179, 'UpperS': 30, 'UpperV': 255}
+    'white': {'LowerH': 0, 'LowerS': 0, 'LowerV': 200, 'UpperH': 179, 'UpperS': 30, 'UpperV': 255},
+    'yellow': {'LowerH': 25, 'LowerS': 100, 'LowerV': 100, 'UpperH': 35, 'UpperS': 255, 'UpperV': 255}
 }
 current_color = 'green'
 
@@ -138,7 +140,7 @@ while True:
     # Detect and count balls
     circles = detect_balls(res)
     ball_count = len(circles)
-    circles2 = detect_balls(gen_warped_frame)
+    circles2 = detect_balls(gen_warped_frame,min_radius=40, max_radius=45)
     ball_count2 = len(circles2)
     
     # Display circles
@@ -164,8 +166,8 @@ while True:
         show_circles = not show_circles
     elif key == ord('l'): # Toggle lines
         show_lines = not show_lines
-    elif key in [ord('g'), ord('r'), ord('o'), ord('w')]:  # Preset selection keys
-        preset_keys = {'g': 'green', 'r': 'red', 'o': 'orange', 'w': 'white'}
+    elif key in [ord('g'), ord('r'), ord('o'), ord('w'), ord('y')]:  # Preset selection keys
+        preset_keys = {'g': 'green', 'r': 'red', 'o': 'orange', 'w': 'white', 'y': 'yellow'}
         current_color = preset_keys[chr(key)]
         for k in colors[current_color]:
             window = 'Lower Bounds' if 'Lower' in k else 'Upper Bounds'
