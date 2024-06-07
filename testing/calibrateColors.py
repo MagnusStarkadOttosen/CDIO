@@ -1,6 +1,13 @@
 import os
+import sys
 import cv2
 import numpy as np
+
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if project_root not in sys.path:
+    sys.path.append(project_root)
+
+from src.client.field.coordinate_system import find_corner_points_full, warp_perspective
 
 def find_lines(image, resolution=1, doVerbose=False):
     
@@ -18,6 +25,7 @@ def find_lines(image, resolution=1, doVerbose=False):
     return image, lines
 
 def detect_balls(image, min_radius=15,max_radius=25):
+    #normalized = cv2.normalize(frame, None, 0, 255, cv2.NORM_MINMAX)
     # Convert to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
@@ -29,8 +37,8 @@ def detect_balls(image, min_radius=15,max_radius=25):
 
     # Detect circles
     circles = cv2.HoughCircles(edges, cv2.HOUGH_GRADIENT,
-                               dp=1.2, minDist=30,
-                               param1=50, param2=30,
+                               dp=1.75, minDist=9,
+                               param1=30, param2=35,
                                minRadius=min_radius, maxRadius=max_radius)
     if circles is not None:
         circles = np.round(circles[0, :]).astype("int")
@@ -66,12 +74,18 @@ def load_color_presets(color, base_filename="hsv_presets"):
         return None, None
 
 # Capture from camera
-cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+cap = cv2.VideoCapture(2, cv2.CAP_DSHOW)
+dst_size = (1200, 1800)
+ret, frame = cap.read()
+
+lower_bound, upper_bound = load_color_presets("default")
+final_points = find_corner_points_full(frame, doVerbose=True)
 
 # Create windows
 cv2.namedWindow('Lower Bounds')
 cv2.namedWindow('Upper Bounds')
 cv2.namedWindow('Result')
+cv2.namedWindow('warped')
 
 # Color presets and current color
 colors = {
@@ -93,7 +107,8 @@ for k, v in colors[current_color].items():
     cv2.createTrackbar(k, window, v, 179 if 'H' in k else 255, nothing)
     
 # Load saved presets if available
-lower_bound, upper_bound = load_color_presets(current_color)
+# lower_bound, upper_bound = load_color_presets(current_color)
+lower_bound, upper_bound = load_color_presets("default")
 if lower_bound is not None and upper_bound is not None:
     cv2.setTrackbarPos('LowerH', 'Lower Bounds', lower_bound[0])
     cv2.setTrackbarPos('LowerS', 'Lower Bounds', lower_bound[1])
@@ -114,6 +129,8 @@ while True:
     mask = cv2.inRange(hsv, lower_bound, upper_bound)
     res = cv2.bitwise_and(frame, frame, mask=mask)
     
+    gen_warped_frame = warp_perspective(res, final_points, dst_size)
+
     # Display lines
     if show_lines:
         lines = find_lines(res)
@@ -121,16 +138,22 @@ while True:
     # Detect and count balls
     circles = detect_balls(res)
     ball_count = len(circles)
+    circles2 = detect_balls(gen_warped_frame)
+    ball_count2 = len(circles2)
     
     # Display circles
     if circles is not None and show_circles:
         for (x, y, r) in circles:
             cv2.circle(res, (x, y), r, (255, 255, 0), 4)
+    # Display circles
+    if circles2 is not None and show_circles:
+        for (x, y, r) in circles2:
+            cv2.circle(gen_warped_frame, (x, y), r, (255, 255, 0), 4)      
     
     cv2.putText(res, f"Balls detected: {ball_count}", (10,30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-    
-    
+    cv2.putText(gen_warped_frame, f"Balls detected: {ball_count2}", (10,30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     cv2.imshow('Result', res)
+    cv2.imshow('warped', gen_warped_frame)
 
     key = cv2.waitKey(1) & 0xFF
     if key == ord('q'):
