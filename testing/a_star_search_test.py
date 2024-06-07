@@ -1,7 +1,7 @@
 
 
     # Define the source and destination cells
-from src.client.h.a_star_search import a_star_search
+from src.client.search_targetpoint.a_star_search import a_star_search
 
 
 src = [3, 4]
