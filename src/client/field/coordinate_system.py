@@ -5,7 +5,6 @@ import numpy as np
 from src.client.vision.filters import *
 from sklearn.cluster import KMeans
 
-
 def find_corners(masked_image):
     corners = cv2.goodFeaturesToTrack(cv2.cvtColor(masked_image, cv2.COLOR_BGR2GRAY), 4, 0.01, 10)
     corners = np.int0(corners)
@@ -23,13 +22,13 @@ def map_to_coordinate_system(image, point, origin, scale):
 
 def warp_perspective(image, src_points, dst_size):
     height, width = dst_size
-
+    
     pts_dst = np.array([[0, 0], [width, 0], [width, height], [0, height]], dtype="float32")
-
+    
     M = cv2.getPerspectiveTransform(src_points, pts_dst)
-
+    
     warped_image = cv2.warpPerspective(image, M, (width, height))
-
+    
     return warped_image
 
 
@@ -38,10 +37,10 @@ def draw_grid(image, real_world_size, grid_spacing_cm):
 
     scale_x = width / real_world_size[1]
     scale_y = height / real_world_size[0]
-
+    
     num_x_lines = int(real_world_size[1] / grid_spacing_cm)
     num_y_lines = int(real_world_size[0] / grid_spacing_cm)
-
+    
     image_with_grid = image.copy()
 
     for i in range(num_x_lines + 1):
@@ -55,11 +54,12 @@ def draw_grid(image, real_world_size, grid_spacing_cm):
     return image_with_grid
 
 
-def find_lines(image, resolution=1, doVerbose=False):
+def find_lines(image, resolution=2, doVerbose=False):
+    
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     edges = cv2.Canny(gray, 50, 150, apertureSize=3)
-    lines = cv2.HoughLinesP(edges, resolution, np.pi / 180, 100, minLineLength=100, maxLineGap=150)
-
+    lines = cv2.HoughLinesP(edges, resolution, np.pi/180, 100, minLineLength=100, maxLineGap=150)
+    
     if lines is not None:
         for line in lines:
             x1, y1, x2, y2 = line[0]
@@ -69,17 +69,15 @@ def find_lines(image, resolution=1, doVerbose=False):
 
     return image, lines
 
-
 def find_intersection(l1, l2):
     x1, y1, x2, y2 = l1
     x3, y3, x4, y4 = l2
     den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
     if den == 0:
-        return None
-    px = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / den
-    py = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / den
+        return None 
+    px = ((x1*y2 - y1*x2) * (x3 - x4) - (x1 - x2) * (x3*y4 - y3*x4)) / den
+    py = ((x1*y2 - y1*x2) * (y3 - y4) - (y1 - y2) * (x3*y4 - y3*x4)) / den
     return int(px), int(py)
-
 
 def is_near_90_degrees(slope1, slope2, tolerance=5):
     if slope1 == np.inf and slope2 == 0:
@@ -92,41 +90,40 @@ def is_near_90_degrees(slope1, slope2, tolerance=5):
     angle_deg = np.degrees(angle)
     return 85 <= angle_deg <= 95
 
-
 def calculate_slope(line):
     x1, y1, x2, y2 = line
     if x2 == x1:
-        return np.inf
+        return np.inf  
     return (y2 - y1) / (x2 - x1)
 
-
-# This takes the image finds the corner points
+#This takes the image finds the corner points
 def find_corner_points_full(image, doVerbose=False):
-    # Filter for red wall
+    #Filter for red wall
     red_image = temp_filter_for_red_wall(image)
-    # Clean up small defects
-    clean_image = clean_the_image(red_image)
-    # Find the lines on the image
-    edge_image, lines = find_lines(clean_image)
-
-    lines = np.array(lines)
-    lines = lines.reshape(-1, 4)
-
+    #Clean up small defects
+    # clean_image = clean_the_image(red_image)
+    #Find the lines on the image
+    edge_image, lines = find_lines(red_image)
+    
+    
+    # lines = np.array(lines)
+    # lines = lines.reshape(-1, 4)
+    
     intersection_points = []
     for i in range(len(lines)):
-        for j in range(i + 1, len(lines)):
-            slope1 = calculate_slope(lines[i])
-            slope2 = calculate_slope(lines[j])
+        for j in range(i+1, len(lines)):
+            slope1 = calculate_slope(lines[i][0])
+            slope2 = calculate_slope(lines[j][0])
             if is_near_90_degrees(slope1, slope2):
-                intersection = find_intersection(lines[i], lines[j])
+                intersection = find_intersection(lines[i][0], lines[j][0])
                 if intersection:
                     intersection_points.append(intersection)
                     # print(f"Intersection point: {intersection}") 
-                    cv2.circle(clean_image, intersection, radius=5, color=(255, 0, 0), thickness=-1)
-
+                    cv2.circle(edge_image, intersection, radius=5, color=(255, 0, 0), thickness=-1) 
+    
     height, width, _ = image.shape
     center_x, center_y = width // 2, height // 2
-
+    
     quadrants = {1: [], 2: [], 3: [], 4: []}
 
     # Categorize points into quadrants
@@ -140,54 +137,52 @@ def find_corner_points_full(image, doVerbose=False):
             quadrants[3].append(point)  # Quadrant III
         elif x > center_x and y > center_y:
             quadrants[4].append(point)  # Quadrant IV
-
+    
     # Find the closest point to the center in each quadrant
     closest_points = []
     for q in [2, 1, 4, 3]:
         if quadrants[q]:  # Check if the list is not empty
             # closest_point = min(quadrants[q], key=lambda point: distance_between_points(point, (center_x, center_y)))
-            closest_point = min(quadrants[q],
-                                key=lambda point: np.sqrt((point[0] - center_x) ** 2 + (point[1] - center_y) ** 2))
+            closest_point = min(quadrants[q], key=lambda point: np.sqrt((point[0]-center_x) ** 2 + (point[1]-center_y) ** 2))
             closest_points.append(closest_point)
-
-    # An array of the 4 points in the corners
+    
+    #An array of the 4 points in the corners
     final_points = np.array(closest_points, dtype="float32")
-
-    # This is to print the images for visual inspection
+    
+    #This is to print the images for visual inspection
     if doVerbose == True:
-        # Desired output size (dimensions in pixels for the warped image)
-        dst_size = (1200, 1800)  # width, height
-        gen_warped_image = warp_perspective(image, final_points, dst_size)
-        images = [red_image, clean_image, edge_image, gen_warped_image]
-        printImagesFromWarping(images)
-
+        images = [red_image, image, edge_image, image]
+        printImagesFromWarping(images, final_points)
+    
     return final_points
 
-
-# This prints the images for visual inspection
-def printImagesFromWarping(images):
+#This prints the images for visual inspection
+def printImagesFromWarping(images, final_points):
     output_folder_path = 'images/outputObstacle/'
-
+    
     red_image_path = output_folder_path + "red_image.jpg"
     cv2.imwrite(red_image_path, images[0])
-
+    
     clean_image_path = output_folder_path + "clean_image.jpg"
     cv2.imwrite(clean_image_path, images[1])
 
     edge_image_path = output_folder_path + "edge_image.jpg"
     cv2.imwrite(edge_image_path, images[2])
 
+    #Desired output size (dimensions in pixels for the warped image)
+    dst_size = (1200, 1800)  # width, height
+    gen_warped_image = warp_perspective(images[3], final_points, dst_size)
+    
     gen_warped_image_path = output_folder_path + "gen_warped_image.jpg"
-    cv2.imwrite(gen_warped_image_path, images[3])
-
-
+    cv2.imwrite(gen_warped_image_path, gen_warped_image)
+    
 def cluster_lines_into_4(image, lines):
     if lines is None or len(lines) == 0:
         print("No lines detected.")
         return
 
     lines = lines.reshape(-1, 4)
-
+    
     angles = np.array([calculate_angle(line) for line in lines])
     midpoints = np.array([((x1 + x2) / 2, (y1 + y2) / 2) for x1, y1, x2, y2 in lines])
     # midpoints = np.array([(x1 + x2) / 2.0 for x1, y1, x2, y2 in lines]), np.array([(y1 + y2) / 2.0 for x1, y1, x2, y2 in lines])
@@ -206,7 +201,7 @@ def cluster_lines_into_4(image, lines):
 
         avg_line = np.mean(cluster_lines, axis=0)
         averaged_lines.append(avg_line)
-
+        
     if averaged_lines is not None:
         for x1, y1, x2, y2 in averaged_lines:
             cv2.line(image, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
@@ -215,12 +210,10 @@ def cluster_lines_into_4(image, lines):
     return image
     # for x1, y1, x2, y2 in averaged_lines:
     #     print(f"Line from ({int(x1)}, {int(y1)}) to ({int(x2)}, {int(y2)})")
-
-
+    
 def calculate_angle(line):
     x1, y1, x2, y2 = line
     return np.arctan2(y2 - y1, x2 - x1)
-
 
 def calculate_line_features(lines):
     """Calculate features for clustering: angle and distance from the origin."""
@@ -234,13 +227,12 @@ def calculate_line_features(lines):
         distances.append(distance)
     return np.array(angles), np.array(distances)
 
-
 def cluster_lines(image, lines):
     angles, distances = calculate_line_features(lines.reshape(-1, 4))
     # Normalize angles to range [0, π] for undirected lines
     angles = np.mod(angles, np.pi)
     features = np.vstack((angles, distances)).T
-
+    
     # K-means clustering
     kmeans = KMeans(n_clusters=4, random_state=42).fit(features)
     labels = kmeans.labels_
@@ -261,11 +253,9 @@ def cluster_lines(image, lines):
         x1, y1, x2, y2 = line.astype(int)
         cv2.line(image, (x1, y1), (x2, y2), (0, 255, 0), 2)
         print(f"Line from ({x1}, {y1}) to ({x2}, {y2})")
-
+    
     return image
 
-
-def are_points_close(point1, point2, tolerance=5):
+def are_points_close(point1, point2, tolerance = 5):
     distance = math.sqrt((point2[0] - point1[0]) ** 2 + (point2[1] - point1[1]) ** 2)
     return distance <= tolerance
-
