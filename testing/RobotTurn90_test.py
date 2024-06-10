@@ -18,7 +18,7 @@ from src.client.pc_client import ClientPC
 from src.client.vision.camera import capture_image, close_camera, initialize_camera
 from src.client.vision.shape_detection import detect_robot
 
-client_pc = ClientPC()
+# client_pc = ClientPC()
 
 
 dst_size = (1200, 1800)

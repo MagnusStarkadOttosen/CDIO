@@ -1,10 +1,13 @@
 import time
+
 import cv2
 import numpy as np
 
+from src.client.field.collect_from_corner import is_ball_in_corner, check_corners, robot_movement_based_on_corners
 from src.client.field.coordinate_system import are_points_close, find_corner_points_full, warp_perspective
-from src.client.field.field import Field
+# from src.client.field.field import Field
 from src.client.field.robot import calc_vector_direction, calc_degrees_to_rotate
+from src.client.h.a_star_search import a_star_search
 from src.client.pc_client import ClientPC
 from src.client.vision.camera import capture_image, initialize_camera
 from src.client.vision.filters import filter_image_white, filter_image_orange
@@ -16,6 +19,14 @@ WHITE_BALL_COUNT = 10
 ROBOT_CAPACITY = 6
 TOLERANCE = 10
 DST_SIZE = (1200, 1800)
+PIVOT_POINTS = [(300, 600), (1500, 600)]
+CORNERS = {
+    "top_left": (0, 0),
+    "bottom_left": (0, 1200),
+    "top_right": (1800, 0),
+    "bottom_right": (1800, 1200)
+}
+
 
 
 def _detect_initial_balls(final_points):
@@ -95,7 +106,15 @@ class Main:
             if not self.balls:
                 self.collect_orange_ball = False
                 return
-            self.target_pos = self.balls[0][:2]
+            self.target_pos = find_nearest_ball(robot_pos, self.balls)
+            #self.target_pos = self.balls[0][:2]
+        if is_ball_in_corner(self.balls):
+            corner_result = check_corners(self.balls, threshold=50)
+            pivot_points, corner_points = robot_movement_based_on_corners(corner_result)
+            path = a_star_search(self.grid,robot_pos,pivot_points)
+            self._navigate_to_target(robot_pos, path)
+            self._navigate_to_target(robot_pos, corner_points)
+
         else:
             self.balls = detect_balls(filter_image(warped_img))
             if not self.balls:

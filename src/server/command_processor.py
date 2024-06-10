@@ -11,7 +11,8 @@ actions_functions = {
     "deliver": commands.run_collector_counterclockwise,
     "stop_collect": commands.stop_collector,
     "stop": commands.stop,
-    "start_drive": commands.drive_inf
+    "start_drive": commands.drive_inf,
+    "turn_left": commands.turn_left
 }
 
 
