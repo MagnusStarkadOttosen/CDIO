@@ -7,7 +7,6 @@ from src.client.field.collect_from_corner import is_ball_in_corner, check_corner
 from src.client.field.coordinate_system import are_points_close, find_corner_points_full, warp_perspective
 # from src.client.field.field import Field
 from src.client.field.robot import calc_vector_direction, calc_degrees_to_rotate
-from src.client.h.a_star_search import a_star_search
 from src.client.pc_client import ClientPC
 from src.client.vision.camera import capture_image, initialize_camera
 from src.client.vision.filters import filter_image_white, filter_image_orange
@@ -111,7 +110,7 @@ class Main:
         if is_ball_in_corner(self.balls):
             corner_result = check_corners(self.balls, threshold=50)
             pivot_points, corner_points = robot_movement_based_on_corners(corner_result)
-            path = a_star_search(self.grid,robot_pos,pivot_points)
+            path = find_path(self.grid,robot_pos,pivot_points)
             self._navigate_to_target(robot_pos, path)
             self._navigate_to_target(robot_pos, corner_points)
 
