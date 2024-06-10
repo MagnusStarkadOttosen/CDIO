@@ -257,7 +257,25 @@ def cluster_lines(image, lines):
     
     return image
 
-def are_points_close(point1, point2, tolerance = 5):
+
+def are_points_close(point1, point2, tolerance=5):
+    print("inside are points close", point1, point2)
+    print(f"point1: {point1}, type: {type(point1)}")
+    print(f"point2: {point2}, type: {type(point2)}")
+
+    # Ensure both points are tuples of length 2
+    if not (isinstance(point1, tuple) and isinstance(point2, tuple)):
+        raise ValueError("Both point1 and point2 must be tuples")
+    if len(point1) != 2 or len(point2) != 2:
+        raise ValueError("Both point1 and point2 must have exactly two elements")
+
     distance = math.sqrt((point2[0] - point1[0]) ** 2 + (point2[1] - point1[1]) ** 2)
+    print(f"Calculated distance: {distance}")
     return distance <= tolerance
+# def are_points_close(point1, point2, tolerance = 5):
+#     print("inside are points close",point1,point2)
+#     print(f"point1: {point1}, type: {type(point1)}")
+#     print(f"point2: {point2}, type: {type(point2)}")
+#     distance = math.sqrt((point2[0] - point1[0]) ** 2 + (point2[1] - point1[1]) ** 2)
+#     return distance <= tolerance
 

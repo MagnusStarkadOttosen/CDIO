@@ -20,6 +20,7 @@ def navigate_to_target(camera, client_pc, target_point, dst_size=(1200, 1800), t
         corner_point = find_corner_points_full(image)
         # Warp image
         gen_warped_image = warp_perspective(image, corner_point, dst_size)
+        print(f"Target point: {target_point}, type: {type(target_point)}")
 
         # Find robot
         robot_pos, robot_direction = detect_robot(gen_warped_image)
