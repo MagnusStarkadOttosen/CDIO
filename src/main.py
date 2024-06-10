@@ -114,6 +114,11 @@ class Main:
     def _navigate_to_target(self, robot_pos, robot_direction, path):
         for (x, y) in path:
             while True:
+                ret, frame = self.camera.read()
+                final_points = find_corner_points_full(frame, doVerbose=False)
+                warped_img = warp_perspective(frame, final_points, DST_SIZE)
+
+                robot_pos, robot_direction = detect_robot(warped_img)
                 target_direction = calc_vector_direction((x, y), robot_pos)
 
                 if are_points_close(robot_pos, (x, y)):
