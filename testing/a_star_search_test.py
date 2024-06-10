@@ -5,7 +5,7 @@ from src.client.search_targetpoint.a_star_search import a_star_search
 
 
 src = [3, 4]
-dest = [8, 10]  
+dest = [1, 2]  
 
 # Define the grid (1 for unblocked, 0 for blocked)
 grid = [
