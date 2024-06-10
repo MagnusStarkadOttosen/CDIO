@@ -22,9 +22,9 @@ def map_to_coordinate_system(image, point, origin, scale):
 
 def warp_perspective(image, src_points, dst_size):
     height, width = dst_size
-    
+
     pts_dst = np.array([[0, 0], [width, 0], [width, height], [0, height]], dtype="float32")
-    
+
     M = cv2.getPerspectiveTransform(src_points, pts_dst)
     
     warped_image = cv2.warpPerspective(image, M, (width, height))
@@ -148,32 +148,34 @@ def find_corner_points_full(image, doVerbose=False):
     
     #An array of the 4 points in the corners
     final_points = np.array(closest_points, dtype="float32")
-    
+    print(final_points.size)
     #This is to print the images for visual inspection
     if doVerbose == True:
         #Desired output size (dimensions in pixels for the warped image)
-        dst_size = (1200, 1800)  # width, height
-        gen_warped_image = warp_perspective(image, final_points, dst_size)
-        images = [red_image, clean_image, edge_image, gen_warped_image]
-        printImagesFromWarping(images)
+        
+        images = [image, red_image, clean_image, edge_image]
+        printImagesFromWarping(images, final_points)
     
     return final_points
 
 #This prints the images for visual inspection
-def printImagesFromWarping(images):
+def printImagesFromWarping(images, final_points):
     output_folder_path = 'images/outputObstacle/'
     
     red_image_path = output_folder_path + "red_image.jpg"
-    cv2.imwrite(red_image_path, images[0])
+    cv2.imwrite(red_image_path, images[1])
     
     clean_image_path = output_folder_path + "clean_image.jpg"
-    cv2.imwrite(clean_image_path, images[1])
+    cv2.imwrite(clean_image_path, images[2])
 
     edge_image_path = output_folder_path + "edge_image.jpg"
-    cv2.imwrite(edge_image_path, images[2])
+    cv2.imwrite(edge_image_path, images[3])
     
+    dst_size = (1200, 1800)  # width, height
+    gen_warped_image = warp_perspective(images[0], final_points, dst_size)
+
     gen_warped_image_path = output_folder_path + "gen_warped_image.jpg"
-    cv2.imwrite(gen_warped_image_path, images[3])
+    cv2.imwrite(gen_warped_image_path, gen_warped_image)
     
 def cluster_lines_into_4(image, lines):
     if lines is None or len(lines) == 0:
@@ -255,6 +257,25 @@ def cluster_lines(image, lines):
     
     return image
 
-def are_points_close(point1, point2, tolerance = 5):
+
+def are_points_close(point1, point2, tolerance=5):
+    print("inside are points close", point1, point2)
+    print(f"point1: {point1}, type: {type(point1)}")
+    print(f"point2: {point2}, type: {type(point2)}")
+
+    # Ensure both points are tuples of length 2
+    if not (isinstance(point1, tuple) and isinstance(point2, tuple)):
+        raise ValueError("Both point1 and point2 must be tuples")
+    if len(point1) != 2 or len(point2) != 2:
+        raise ValueError("Both point1 and point2 must have exactly two elements")
+
     distance = math.sqrt((point2[0] - point1[0]) ** 2 + (point2[1] - point1[1]) ** 2)
+    print(f"Calculated distance: {distance}")
     return distance <= tolerance
+# def are_points_close(point1, point2, tolerance = 5):
+#     print("inside are points close",point1,point2)
+#     print(f"point1: {point1}, type: {type(point1)}")
+#     print(f"point2: {point2}, type: {type(point2)}")
+#     distance = math.sqrt((point2[0] - point1[0]) ** 2 + (point2[1] - point1[1]) ** 2)
+#     return distance <= tolerance
+

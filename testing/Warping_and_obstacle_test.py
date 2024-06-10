@@ -81,18 +81,18 @@ if image is not None:
     print("test")
     
     # edge_image2 = cluster_lines_into_4(gen_warped_image, lines)
-    edge_image2 = cluster_lines(gen_warped_image, lines)
+    # edge_image2 = cluster_lines(gen_warped_image, lines)
 
-    red_image_name = 'red3_' + image_name
-    red_image_path = output_folder_path + red_image_name
-    cv2.imwrite(red_image_path, edge_image2)
+    # red_image_name = 'red3_' + image_name
+    # red_image_path = output_folder_path + red_image_name
+    # cv2.imwrite(red_image_path, edge_image2)
 
     white_image = filter_image_white(gen_warped_image)
     white_image_name = 'white_' + image_name
     white_image_path = output_folder_path + white_image_name
     cv2.imwrite(white_image_path, white_image)
 
-    balls = detect_balls(white_image)
+    balls = detect_balls(green_image)
 
     
     

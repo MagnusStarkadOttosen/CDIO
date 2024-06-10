@@ -53,7 +53,7 @@ try:
         robot_pos, robot_direction = detect_robot(gen_warped_image)
         print(f"after robot pos {robot_pos} and direction {robot_direction}")
         #if robot at target stop robot and break
-        if are_points_close(robot_pos, target_point):
+        if are_points_close(robot_pos, target_point, tolerance=100):
             client_pc.send_command("stop")
             isRobot_moving = False
             break
