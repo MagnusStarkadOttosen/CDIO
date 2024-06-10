@@ -54,7 +54,7 @@ def draw_grid(image, real_world_size, grid_spacing_cm):
     return image_with_grid
 
 
-def find_lines(image, resolution=1, doVerbose=False):
+def find_lines(image, resolution=2, doVerbose=False):
     
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     edges = cv2.Canny(gray, 50, 150, apertureSize=3)
@@ -101,25 +101,25 @@ def find_corner_points_full(image, doVerbose=False):
     #Filter for red wall
     red_image = temp_filter_for_red_wall(image)
     #Clean up small defects
-    clean_image = clean_the_image(red_image)
+    # clean_image = clean_the_image(red_image)
     #Find the lines on the image
-    edge_image, lines = find_lines(clean_image)
+    edge_image, lines = find_lines(red_image)
     
     
-    lines = np.array(lines)
-    lines = lines.reshape(-1, 4)
+    # lines = np.array(lines)
+    # lines = lines.reshape(-1, 4)
     
     intersection_points = []
     for i in range(len(lines)):
         for j in range(i+1, len(lines)):
-            slope1 = calculate_slope(lines[i])
-            slope2 = calculate_slope(lines[j])
+            slope1 = calculate_slope(lines[i][0])
+            slope2 = calculate_slope(lines[j][0])
             if is_near_90_degrees(slope1, slope2):
-                intersection = find_intersection(lines[i], lines[j])
+                intersection = find_intersection(lines[i][0], lines[j][0])
                 if intersection:
                     intersection_points.append(intersection)
                     # print(f"Intersection point: {intersection}") 
-                    cv2.circle(clean_image, intersection, radius=5, color=(255, 0, 0), thickness=-1) 
+                    cv2.circle(edge_image, intersection, radius=5, color=(255, 0, 0), thickness=-1) 
     
     height, width, _ = image.shape
     center_x, center_y = width // 2, height // 2
@@ -151,16 +151,13 @@ def find_corner_points_full(image, doVerbose=False):
     
     #This is to print the images for visual inspection
     if doVerbose == True:
-        #Desired output size (dimensions in pixels for the warped image)
-        dst_size = (1200, 1800)  # width, height
-        gen_warped_image = warp_perspective(image, final_points, dst_size)
-        images = [red_image, clean_image, edge_image, gen_warped_image]
-        printImagesFromWarping(images)
+        images = [red_image, image, edge_image, image]
+        printImagesFromWarping(images, final_points)
     
     return final_points
 
 #This prints the images for visual inspection
-def printImagesFromWarping(images):
+def printImagesFromWarping(images, final_points):
     output_folder_path = 'images/outputObstacle/'
     
     red_image_path = output_folder_path + "red_image.jpg"
@@ -171,9 +168,13 @@ def printImagesFromWarping(images):
 
     edge_image_path = output_folder_path + "edge_image.jpg"
     cv2.imwrite(edge_image_path, images[2])
+
+    #Desired output size (dimensions in pixels for the warped image)
+    dst_size = (1200, 1800)  # width, height
+    gen_warped_image = warp_perspective(images[3], final_points, dst_size)
     
     gen_warped_image_path = output_folder_path + "gen_warped_image.jpg"
-    cv2.imwrite(gen_warped_image_path, images[3])
+    cv2.imwrite(gen_warped_image_path, gen_warped_image)
     
 def cluster_lines_into_4(image, lines):
     if lines is None or len(lines) == 0:

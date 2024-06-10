@@ -1,7 +1,7 @@
 import cv2
 
 def test_webcam():
-    cap = cv2.VideoCapture(2)  # Index 0 is usually the default first webcam
+    cap = cv2.VideoCapture(2, cv2.CAP_DSHOW)  # Index 0 is usually the default first webcam
     if not cap.isOpened():
         print("Cannot open camera")
         exit()

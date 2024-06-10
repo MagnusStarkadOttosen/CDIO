@@ -1,6 +1,6 @@
-LowerH 17
-LowerS 90
-LowerV 100
-UpperH 51
+LowerH 0
+LowerS 45
+LowerV 239
+UpperH 179
 UpperS 255
 UpperV 255
