@@ -35,7 +35,7 @@ def _detect_initial_balls(final_points):
     return detect_balls(warped_img)
 
 
-class Main:
+class MainLoop:
     def __init__(self):
         self.client = ClientPC()
         self.balls = None
@@ -58,7 +58,6 @@ class Main:
         self._collect_remaining_balls(final_points)
 
         self.client.send_command("stop_collect")
-
 
     def _initialize_field(self):
         self.grid = [
