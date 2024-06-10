@@ -111,8 +111,8 @@ class Main:
             corner_result = check_corners(self.balls, threshold=50)
             pivot_points, corner_points = robot_movement_based_on_corners(corner_result)
             path = find_path(self.grid,robot_pos,pivot_points)
-            self._navigate_to_target(robot_pos, path)
-            self._navigate_to_target(robot_pos, corner_points)
+            self._navigate_to_target(path)
+            self._navigate_to_target(corner_points)
 
         else:
             self.balls = detect_balls(filter_image(warped_img))
@@ -121,7 +121,7 @@ class Main:
             self.target_pos = find_nearest_ball(robot_pos, self.balls) # TODO handle target being null
 
         path = find_path(self.grid, robot_pos, self.target_pos)
-        self._navigate_to_target(robot_pos, robot_direction, path)
+        self._navigate_to_target(path)
 
     def _deliver_balls(self):
         self.client.send_command("stop")
@@ -129,7 +129,7 @@ class Main:
         time.sleep(5)  # TODO use on_for_degrees in deliver command server-side
         self.client.send_command("start_collect")
 
-    def _navigate_to_target(self, robot_pos, robot_direction, path):
+    def _navigate_to_target(self, path):
         for (x, y) in path:
             while True:
                 ret, frame = self.camera.read()
