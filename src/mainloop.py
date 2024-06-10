@@ -28,13 +28,6 @@ CORNERS = {
     "bottom_right": (1800, 1200)
 }
 
-
-
-def _detect_initial_balls(final_points):
-    warped_img = warp_perspective(cv2.imread("images/capturedImage/test.jpg"), final_points, DST_SIZE)
-    return detect_balls(warped_img)
-
-
 class MainLoop:
     def __init__(self):
         self.client = ClientPC()
@@ -42,6 +35,7 @@ class MainLoop:
         self.collect_orange_ball = False
         self.target_pos = None
         self.camera = initialize_camera(index=2)
+        self.final_points = None
         self.grid = None
         self.robot_is_moving = False
         self.robot_is_turning = False
@@ -50,16 +44,16 @@ class MainLoop:
         self.at_goal = False
 
     def start_main_loop(self):
-        final_points = self._initialize_field()
-        self.balls = _detect_initial_balls(final_points)
+        self.initialize_field()
+        self.balls = self._detect_initial_balls()
 
-        self._collect_white_balls(final_points)
-        self._collect_and_deliver_orange_ball(final_points)
-        self._collect_remaining_balls(final_points)
+        self._collect_white_balls()
+        self._collect_and_deliver_orange_ball()
+        self._collect_remaining_balls()
 
         self.client.send_command("stop_collect")
 
-    def _initialize_field(self):
+    def initialize_field(self):
         self.grid = [
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -76,31 +70,32 @@ class MainLoop:
         ]
 
         ret, frame = self.camera.read()
-        final_points = find_corner_points_full(frame, doVerbose=False)
-        # capture_image(self.camera, "test.jpg")
-        # image = cv2.imread("images/capturedImage/test.jpg")
-        # final_points = find_corner_points_full(image)
-        return final_points
+        self.final_points = find_corner_points_full(frame, doVerbose=False)
 
-    def _collect_white_balls(self, final_points):
+    def _detect_initial_balls(self):
+        ret, frame = self.camera.read()
+        warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
+        return detect_balls(warped_img)
+
+    def _collect_white_balls(self):
         while len(self.balls) > WHITE_BALL_COUNT - ROBOT_CAPACITY - 1:
-            self._collect_ball(final_points, filter_image_white)
+            self._collect_ball(filter_image_white)
 
-    def _collect_and_deliver_orange_ball(self, final_points):
+    def _collect_and_deliver_orange_ball(self):
         self.collect_orange_ball = True
         while self.collect_orange_ball:
-            self._collect_ball(final_points, filter_image_orange)
+            self._collect_ball(filter_image_orange)
         self._deliver_balls()
 
-    def _collect_remaining_balls(self, final_points):
+    def _collect_remaining_balls(self):
         while len(self.balls) > 0:
-            self._collect_ball(final_points, filter_image_white)
+            self._collect_ball(filter_image_white)
         self._deliver_balls()
 
-    def _collect_ball(self, final_points, filter_image):
+    def _collect_ball(self, filter_image):
         ret, frame = self.camera.read()
         # final_points = find_corner_points_full(frame, doVerbose=False)
-        warped_img = warp_perspective(frame, final_points, DST_SIZE)
+        warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
 
         robot_pos, robot_direction = detect_robot(warped_img)
 
@@ -137,8 +132,8 @@ class MainLoop:
         for (x, y) in path:
             while True:
                 ret, frame = self.camera.read()
-                final_points = find_corner_points_full(frame, doVerbose=False)
-                warped_img = warp_perspective(frame, final_points, DST_SIZE)
+                #final_points = find_corner_points_full(frame, doVerbose=False)
+                warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
 
                 robot_pos, robot_direction = detect_robot(warped_img)
 
@@ -153,7 +148,7 @@ class MainLoop:
                 angle = calc_degrees_to_rotate(robot_direction, target_direction)
 
                 while angle < -TOLERANCE or angle > TOLERANCE:
-                    self._course_correction(final_points)
+                    self._course_correction()
 
                 if self.robot_is_turning:
                     self.robot_is_turning = False
@@ -163,9 +158,9 @@ class MainLoop:
                     self.client.send_command("start_drive")
                     self.robot_is_moving = True
 
-    def _course_correction(self, final_points): # TODO read final points only once at start?
+    def _course_correction(self): # TODO read final points only once at start?
         ret, frame = self.camera.read()
-        gen_warped_image = warp_perspective(frame, final_points, DST_SIZE)
+        gen_warped_image = warp_perspective(frame, self.final_points, DST_SIZE)
         robot_pos, robot_direction = detect_robot(gen_warped_image)
         print(f"after robot pos {robot_pos} and direction {robot_direction}")
         if robot_pos is None or robot_direction is None:
