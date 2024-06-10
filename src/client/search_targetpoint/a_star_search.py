@@ -4,7 +4,7 @@ import heapq
 
 # Define the Cell class
 class Cell:
-    def __init__(self):
+    def _init_(self):
         self.parent_i = 0  # Parent cell's row index
         self.parent_j = 0  # Parent cell's column index
         self.f = float('inf')  # Total cost of the cell (g + h)
