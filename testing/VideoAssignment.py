@@ -135,6 +135,7 @@ try:
         #deliver
         client_pc.send_command("stop")
         client_pc.send_command("deliver")
+        break
 
         
 except KeyboardInterrupt:
