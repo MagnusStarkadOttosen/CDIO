@@ -1,7 +1,7 @@
 import cv2
 
 from src.client.field.coordinate_system import find_corner_points_full, warp_perspective
-from src.client.field.collect_from_corner import collect_from_corner
+from src.client.field.collect_from_corner import is_ball_in_corner
 from src.client.field.navigate_to_target import navigate_to_target
 from src.client.pc_client import ClientPC
 from src.client.vision.camera import initialize_camera, capture_image
@@ -39,4 +39,4 @@ def deliver_balls_to_goal(final_point, camera, client_pc , target_point, dst_siz
     if robot_pos != target_point:
         navigate_to_target()
     # Navigate the robot to the delivery point
-    collect_from_corner(client_pc, target_point, camera)
+    is_ball_in_corner(client_pc, target_point, camera)

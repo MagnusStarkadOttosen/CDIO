@@ -1,11 +1,13 @@
 import time
 
 import cv2
-import numpy as np
+# import numpy as np
 
+from src.client.field.collect_from_corner import is_ball_in_corner, check_corners, robot_movement_based_on_corners
 from src.client.field.coordinate_system import are_points_close, find_corner_points_full, warp_perspective
-from src.client.field.field import Field
+# from src.client.field.field import Field
 from src.client.field.robot import calc_vector_direction, calc_degrees_to_rotate
+from src.client.h.a_star_search import a_star_search
 from src.client.pc_client import ClientPC
 from src.client.vision.camera import capture_image, initialize_camera
 from src.client.vision.filters import filter_image_white, filter_image_orange
@@ -16,6 +18,10 @@ WHITE_BALL_COUNT = 10
 ROBOT_CAPACITY = 6
 TOLERANCE = 1
 DST_SIZE = (1200, 1800)
+CORNERS = [(0, 0), (0, 1200), (1800, 0), (1800, 1200)]
+PIVOT_POINTS = [(300, 600), (1500, 600)]
+
+
 
 
 class Main:
@@ -46,6 +52,29 @@ class Main:
         self._deliver_balls_loop()
         self.client.send_command("stop_collect")
 
+    def _initialize_field(self):
+        self.grid = [
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        ]
+
+        ret, frame = self.camera.read()
+        final_points = find_corner_points_full(frame, doVerbose=False)
+        # capture_image(self.camera, "test.jpg")
+        # image = cv2.imread("images/capturedImage/test.jpg")
+        # final_points = find_corner_points_full(image)
+        return final_points
+
     def _collect_ball(self, final_points):  # TODO break up _collect_ball in smaller functions
         capture_image(self.camera, "test.jpg")
         image = cv2.imread("images/capturedImage/test.jpg")
@@ -60,6 +89,13 @@ class Main:
             if self.balls is None:
                 return
             self.target_pos = find_nearest_ball(robot_pos, self.balls)
+        if is_ball_in_corner(self.balls):
+            corner_result = check_corners(self.balls, threshold=50)
+            pivot_points, corner_points = robot_movement_based_on_corners(corner_result)
+            path = a_star_search(self.grid,robot_pos,pivot_points)
+            self._navigate_to_target(robot_pos, path)
+            self._navigate_to_target(robot_pos, corner_points)
+
         else:
             self.balls = detect_balls(filter_image_orange(warped_img))
             if self.balls is None:

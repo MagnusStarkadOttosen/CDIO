@@ -5,7 +5,7 @@ from src.client.field.collect_from_corner import (
     calculate_distance,
     check_corners,
     get_ball_coordinates,
-    robot_action_based_on_corners
+    robot_movement_based_on_corners
 )
 
 # Hardcoded mock data for testing
