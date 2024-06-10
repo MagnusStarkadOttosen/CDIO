@@ -7,6 +7,7 @@ from src.client.field.collect_from_corner import is_ball_in_corner, check_corner
 from src.client.field.coordinate_system import are_points_close, find_corner_points_full, warp_perspective
 # from src.client.field.field import Field
 from src.client.field.robot import calc_vector_direction, calc_degrees_to_rotate
+from src.client.pathfinding.CalculateCommandList import rotate_vector_to_point
 from src.client.pc_client import ClientPC
 from src.client.vision.camera import capture_image, initialize_camera
 from src.client.vision.filters import filter_image_white, filter_image_orange
@@ -17,6 +18,7 @@ from src.client.search_targetpoint.a_star_search import find_path
 WHITE_BALL_COUNT = 10
 ROBOT_CAPACITY = 6
 TOLERANCE = 10
+TURN_SPEED = 3
 DST_SIZE = (1200, 1800)
 PIVOT_POINTS = [(300, 600), (1500, 600)]
 CORNERS = {
@@ -43,6 +45,9 @@ class Main:
         self.grid = None
         self.robot_is_moving = False
         self.robot_is_turning = False
+        self.target_found = False
+        self.ball_collected = False
+        self.at_goal = False
 
     def main_loop(self):
         final_points = self._initialize_field()
@@ -139,24 +144,43 @@ class Main:
                 robot_pos, robot_direction = detect_robot(warped_img)
                 target_direction = calc_vector_direction((x, y), robot_pos)
 
-                if are_points_close(robot_pos, (x, y)):
+                if are_points_close(robot_pos, self.target_pos, tolerance=20):
                     self.client.send_command("stop")
                     self.robot_is_moving = False
+                    self.at_goal = True
                     break
 
                 angle = calc_degrees_to_rotate(robot_direction, target_direction)
 
-                if angle < -TOLERANCE or angle > TOLERANCE:
-                    self.robot_is_turning = True
-                    print("start rotating")
-                    if self.robot_is_moving:
-                        self.client.send_command("stop")
-                        self.robot_is_moving = False
-                    self.client.send_command(f"turn {angle}")
+                while angle < -TOLERANCE or angle > TOLERANCE:
+                    self._course_correction(final_points)
 
-                if angle > -TOLERANCE or angle < TOLERANCE:
+                if self.robot_is_turning:
                     self.robot_is_turning = False
+                    self.client.send_command("stop")
 
                 if not self.robot_is_moving and not self.robot_is_turning:
                     self.client.send_command("start_drive")
                     self.robot_is_moving = True
+
+
+    def _course_correction(self, final_points): # TODO read final points only once at start?
+        ret, frame = self.camera.read()
+        gen_warped_image = warp_perspective(frame, final_points, DST_SIZE)
+        robot_pos, robot_direction = detect_robot(gen_warped_image)
+        print(f"after robot pos {robot_pos} and direction {robot_direction}")
+        if robot_pos is None or robot_direction is None:
+            return
+        angle = rotate_vector_to_point(robot_pos, robot_direction, self.target_pos)
+        print(f"angle: {angle}")
+        if not self.robot_is_turning and angle < 0:
+            self.robot_is_turning = True
+            self.robot_is_moving = False
+            self.client.send_command(f"turn_left {-TURN_SPEED}")
+        elif not self.robot_is_turning and angle >= 0:
+            self.robot_is_turning = True
+            self.robot_is_moving = False
+            self.client.send_command(f"turn_left {TURN_SPEED}")
+        else:
+            self.robot_is_turning = False
+
