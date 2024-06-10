@@ -1,7 +1,7 @@
 
 
     # Define the source and destination cells
-from src.client.search_targetpoint.a_star_search import a_star_search
+from src.client.search_targetpoint.a_star_search import find_path
 
 
 src = [3, 4]
@@ -24,10 +24,10 @@ grid = [
     ]
 
 # Run the A* search algorithm
-asdf = a_star_search(grid, src, dest)
+asdf = find_path(grid, src, dest)
 if asdf:
     for(i, j) in asdf:
        grid[i][j] = 3
     for row in grid:
         print("".join(str(cell) for cell in row))
-
+print(asdf)

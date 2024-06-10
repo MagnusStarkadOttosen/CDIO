@@ -10,7 +10,7 @@ from src.client.vision.camera import capture_image, initialize_camera
 from src.client.vision.filters import filter_image_white, filter_image_orange
 from src.client.vision.pathfinder import find_nearest_ball
 from src.client.vision.shape_detection import detect_balls, detect_robot
-from src.client.search_targetpoint import a_star_search
+from src.client.search_targetpoint.a_star_search import find_path
 
 WHITE_BALL_COUNT = 10
 ROBOT_CAPACITY = 6
@@ -102,8 +102,8 @@ class Main:
                 return
             self.target_pos = find_nearest_ball(robot_pos, self.balls) # TODO handle target being null
 
-        path = a_star_search
-        self._navigate_to_target(robot_pos, robot_direction)
+        path = find_path(self.grid, robot_pos, self.target_pos)
+        self._navigate_to_target(robot_pos, robot_direction, path)
 
     def _deliver_balls(self):
         self.client.send_command("stop")

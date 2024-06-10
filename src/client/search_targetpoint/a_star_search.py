@@ -92,7 +92,7 @@ def get_direction(p1, p2):
 
 
 # Implement the A* search algorithm
-def a_star_search(grid, src, dest):
+def find_path(grid, src, dest):
     # Check if the source and destination are valid
     if not is_valid(src[0], src[1]) or not is_valid(dest[0], dest[1]):
         print("Source or destination is invalid")
