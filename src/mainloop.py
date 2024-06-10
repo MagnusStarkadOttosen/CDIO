@@ -49,7 +49,7 @@ class MainLoop:
         self.ball_collected = False
         self.at_goal = False
 
-    def main_loop(self):
+    def start_main_loop(self):
         final_points = self._initialize_field()
         self.balls = _detect_initial_balls(final_points)
 
