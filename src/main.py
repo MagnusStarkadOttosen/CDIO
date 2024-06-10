@@ -60,9 +60,12 @@ class Main:
             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         ]
-        capture_image(self.camera, "test.jpg")
-        image = cv2.imread("images/capturedImage/test.jpg")
-        final_points = find_corner_points_full(image)
+
+        ret, frame = self.camera.read()
+        final_points = find_corner_points_full(frame, doVerbose=False)
+        # capture_image(self.camera, "test.jpg")
+        # image = cv2.imread("images/capturedImage/test.jpg")
+        # final_points = find_corner_points_full(image)
         return final_points
 
     def _collect_white_balls(self, final_points):
@@ -81,9 +84,9 @@ class Main:
         self._deliver_balls()
 
     def _collect_ball(self, final_points, filter_image):
-        capture_image(self.camera, "test.jpg")
-        image = cv2.imread("images/capturedImage/test.jpg")
-        warped_img = warp_perspective(image, final_points, DST_SIZE)
+        ret, frame = self.camera.read()
+        final_points = find_corner_points_full(frame, doVerbose=False)
+        warped_img = warp_perspective(frame, final_points, DST_SIZE)
 
         robot_pos, robot_direction = detect_robot(warped_img)
 
