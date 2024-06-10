@@ -14,7 +14,7 @@ from src.client.search_targetpoint import a_star_search
 
 WHITE_BALL_COUNT = 10
 ROBOT_CAPACITY = 6
-TOLERANCE = 1
+TOLERANCE = 10
 DST_SIZE = (1200, 1800)
 
 
@@ -31,6 +31,8 @@ class Main:
         self.target_pos = None
         self.camera = initialize_camera(index=2)
         self.grid = None
+        self.robot_is_moving = False
+        self.robot_is_turning = False
 
     def main_loop(self):
         final_points = self._initialize_field()
@@ -41,6 +43,7 @@ class Main:
         self._collect_remaining_balls(final_points)
 
         self.client.send_command("stop_collect")
+
 
     def _initialize_field(self):
         self.grid = [
@@ -107,14 +110,27 @@ class Main:
 
     def _navigate_to_target(self, robot_pos, robot_direction, path):
         for (x, y) in path:
-            while(True):
+            while True:
                 target_direction = calc_vector_direction((x, y), robot_pos)
 
-                if are_points_close(robot_pos, self.target_pos):
+                if are_points_close(robot_pos, (x, y)):
                     self.client.send_command("stop")
-                    return
+                    self.robot_is_moving = False
+                    break
 
-                deg = calc_degrees_to_rotate(robot_direction, target_direction)
+                angle = calc_degrees_to_rotate(robot_direction, target_direction)
 
-                if abs(deg) > TOLERANCE:
-                    self.client.send_command(f"turn {deg}")
+                if angle < -TOLERANCE or angle > TOLERANCE:
+                    self.robot_is_turning = True
+                    print("start rotating")
+                    if self.robot_is_moving:
+                        self.client.send_command("stop")
+                        self.robot_is_moving = False
+                    self.client.send_command(f"turn {angle}")
+
+                if angle > -TOLERANCE or angle < TOLERANCE:
+                    self.robot_is_turning = False
+
+                if not self.robot_is_moving and not self.robot_is_turning:
+                    self.client.send_command("start_drive")
+                    self.robot_is_moving = True
