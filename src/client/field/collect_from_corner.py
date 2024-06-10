@@ -6,7 +6,13 @@ import numpy as np
 from src.client.field.navigate_to_target import *
 from src.client.pc_client import ClientPC
 
-CORNERS = [(0, 0), (0, 1200), (1800, 0), (1800, 1200)]
+
+CORNERS = {
+    "top_left": (0, 0),
+    "bottom_left": (0, 1200),
+    "top_right": (1800, 0),
+    "bottom_right": (1800, 1200)
+}
 PIVOT_POINTS = [(300, 600), (1500, 600)]
 IMAGE_SIZE = [1200,1800]
 
@@ -27,17 +33,17 @@ def is_ball_in_corner(ball_coords):
 def check_corners(ball_coords, threshold=50):
 
         corner_result = {
-            (0, 0): False,  # top_left
-            (IMAGE_SIZE[1], 0): False,  # top_right
-            (0, IMAGE_SIZE[0]): False,  # bottom_left
-            (IMAGE_SIZE[1], IMAGE_SIZE[0]): False  # bottom_right
+            "top_left": False,
+            "top_right": False,
+            "bottom_left": False,
+            "bottom_right": False
         }
 
         x, y, radius = ball_coords
-        for corner_coords in corner_result:
+        for corner_name, corner_coords in CORNERS.items():
             if np.linalg.norm(np.array([x, y]) - np.array(corner_coords)) < threshold:
-                print(f"Ball at ({x}, {y}) is near the corner at {corner_coords}.")
-                corner_result[corner_coords] = True
+                print(f"Ball at ({x}, {y}) is near the {corner_name} corner.")
+                corner_result[corner_name] = True
 
         return corner_result
 
@@ -57,3 +63,4 @@ def robot_movement_based_on_corners(corner_results):
         return PIVOT_POINTS[1], CORNERS[3]
     else:
         print("No ball near any corner")
+        return False

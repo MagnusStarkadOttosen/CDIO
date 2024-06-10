@@ -18,9 +18,13 @@ WHITE_BALL_COUNT = 10
 ROBOT_CAPACITY = 6
 TOLERANCE = 1
 DST_SIZE = (1200, 1800)
-CORNERS = [(0, 0), (0, 1200), (1800, 0), (1800, 1200)]
 PIVOT_POINTS = [(300, 600), (1500, 600)]
-
+CORNERS = {
+    "top_left": (0, 0),
+    "bottom_left": (0, 1200),
+    "top_right": (1800, 0),
+    "bottom_right": (1800, 1200)
+}
 
 
 
