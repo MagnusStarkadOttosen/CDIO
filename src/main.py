@@ -100,7 +100,7 @@ class Main:
 
     def _collect_ball(self, final_points, filter_image):
         ret, frame = self.camera.read()
-        final_points = find_corner_points_full(frame, doVerbose=False)
+        # final_points = find_corner_points_full(frame, doVerbose=False)
         warped_img = warp_perspective(frame, final_points, DST_SIZE)
 
         robot_pos, robot_direction = detect_robot(warped_img)
@@ -110,8 +110,8 @@ class Main:
             if not self.balls:
                 self.collect_orange_ball = False
                 return
-            self.target_pos = find_nearest_ball(robot_pos, self.balls)
-            #self.target_pos = self.balls[0][:2]
+            self.target_pos = self.balls[0][:2]
+
         if is_ball_in_corner(self.balls):
             corner_result = check_corners(self.balls, threshold=50)
             pivot_points, corner_points = robot_movement_based_on_corners(corner_result)
@@ -142,13 +142,14 @@ class Main:
                 warped_img = warp_perspective(frame, final_points, DST_SIZE)
 
                 robot_pos, robot_direction = detect_robot(warped_img)
-                target_direction = calc_vector_direction((x, y), robot_pos)
 
                 if are_points_close(robot_pos, self.target_pos, tolerance=20):
                     self.client.send_command("stop")
                     self.robot_is_moving = False
                     self.at_goal = True
                     break
+
+                target_direction = calc_vector_direction((x, y), robot_pos)
 
                 angle = calc_degrees_to_rotate(robot_direction, target_direction)
 
@@ -162,7 +163,6 @@ class Main:
                 if not self.robot_is_moving and not self.robot_is_turning:
                     self.client.send_command("start_drive")
                     self.robot_is_moving = True
-
 
     def _course_correction(self, final_points): # TODO read final points only once at start?
         ret, frame = self.camera.read()
