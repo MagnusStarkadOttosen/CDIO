@@ -10,10 +10,12 @@ from src.client.field.robot import calc_vector_direction, calc_degrees_to_rotate
 from src.client.pathfinding.CalculateCommandList import rotate_vector_to_point
 from src.client.pc_client import ClientPC
 from src.client.vision.camera import capture_image, initialize_camera
-from src.client.vision.filters import filter_image_white, filter_image_orange
+from src.client.vision.filters import filter_image
 from src.client.vision.pathfinder import find_nearest_ball
 from src.client.vision.shape_detection import detect_balls, detect_robot
 from src.client.search_targetpoint.a_star_search import find_path
+from src.client.hsvLoad import read_hsv_values
+
 
 WHITE_BALL_COUNT = 10
 ROBOT_CAPACITY = 6
@@ -42,6 +44,11 @@ class MainLoop:
         self.target_found = False
         self.ball_collected = False
         self.at_target = False
+        self.green = read_hsv_values("hsv_presets_green.txt")
+        self.orange = read_hsv_values("hsv_presets_orange.txt")
+        self.red = read_hsv_values("hsv_presets_red.txt")
+        self.white = read_hsv_values("hsv_presets_white.txt")
+        self.yellow = read_hsv_values("hsv_presets_yellow.txt")
 
     def start_main_loop(self):
         self.initialize_field()
@@ -79,35 +86,35 @@ class MainLoop:
 
     def _collect_white_balls(self):
         while len(self.balls) > WHITE_BALL_COUNT - ROBOT_CAPACITY - 1:
-            self._collect_ball(filter_image_white)
+            self._collect_ball()
 
     def _collect_and_deliver_orange_ball(self):
         self.collect_orange_ball = True
         while self.collect_orange_ball:
-            self._collect_ball(filter_image_orange)
+            self._collect_ball()
         self._deliver_balls()
 
     def _collect_remaining_balls(self):
         while len(self.balls) > 0:
-            self._collect_ball(filter_image_white)
+            self._collect_ball()
         self._deliver_balls()
 
-    def _collect_ball(self, filter_image):
+    def _collect_ball(self):
         ret, frame = self.camera.read()
         # final_points = find_corner_points_full(frame, doVerbose=False)
         warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
 
-        robot_pos, robot_direction = detect_robot(warped_img)
+        robot_pos, robot_direction = detect_robot(warped_img, self.green, self.yellow)
 
         # if filter_image.equals(filter_image_orange):
         if self.collect_orange_ball:
-            self.balls = detect_balls(filter_image(warped_img))
+            self.balls = detect_balls(filter_image(warped_img, self.orange))
             if not self.balls:
                 self.collect_orange_ball = False
                 return
             self.target_pos = self.balls[0][:2]
         else:
-            self.balls = detect_balls(filter_image(warped_img))
+            self.balls = detect_balls(filter_image(warped_img, self.white))
             if not self.balls:
                 return
             self.target_pos = find_nearest_ball(robot_pos, self.balls) # TODO handle target being null

@@ -3,7 +3,6 @@ from src.client.search_targetpoint.a_star_search import find_path
 from src.mainloop import MainLoop
 from src.client.vision.shape_detection import detect_balls, detect_robot
 
-
 WHITE_BALL_COUNT = 10
 ROBOT_CAPACITY = 6
 TOLERANCE = 10
@@ -29,12 +28,14 @@ def test_nav_to_target_detected_path(ml):
 
     robot_pos, robot_direction = detect_robot(warped_img)
     print(f"robot_pos: {robot_pos}, robot_direction: {robot_direction}")
-    path = find_path(ml.grid, robot_pos, ml.target_pos)
+    ml.target_position = (ml.balls[0][0], ml.balls[0][1])
+    print(f"target_position: {ml.target_position}")
+    path = find_path(ml.grid, robot_pos, ml.target_position)
     print(path)
     ml._navigate_to_target(path)
 
 
-def test_collect_nearest_ball(ml):
+def test_collect_nearest_ball(ml): # many white balls on field
     ml._collect_ball("filter_image_white")
 
 
