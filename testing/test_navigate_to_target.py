@@ -76,7 +76,7 @@ try:
             continue
 
         #point to goal
-        if ml.at_goal:
+        if ml.at_target:
             target_point = (0,600)
             angle = rotate_vector_to_point(robot_pos, robot_direction, target_point)
             while angle < -tolerance or angle > tolerance:

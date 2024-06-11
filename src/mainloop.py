@@ -41,7 +41,7 @@ class MainLoop:
         self.robot_is_turning = False
         self.target_found = False
         self.ball_collected = False
-        self.at_goal = False
+        self.at_target = False
 
     def start_main_loop(self):
         self.initialize_field()
@@ -141,7 +141,7 @@ class MainLoop:
                 if are_points_close(robot_pos, self.target_pos, tolerance=20):
                     self.client.send_command("stop")
                     self.robot_is_moving = False
-                    self.at_goal = True
+                    self.at_target = True
                     break
 
                 target_direction = calc_vector_direction((x, y), robot_pos)
