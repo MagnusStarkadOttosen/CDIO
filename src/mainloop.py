@@ -99,28 +99,29 @@ class MainLoop:
 
         robot_pos, robot_direction = detect_robot(warped_img)
 
+        # if filter_image.equals(filter_image_orange):
         if self.collect_orange_ball:
             self.balls = detect_balls(filter_image_orange(warped_img))
             if not self.balls:
                 self.collect_orange_ball = False
                 return
             self.target_pos = self.balls[0][:2]
+        else:
+            self.balls = detect_balls(filter_image_white(warped_img))
+            if not self.balls:
+                return
+            self.target_pos = find_nearest_ball(robot_pos, self.balls) # TODO handle target being null
+            print(f"Nearest ball pos : {self.target_pos[0]},{self.target_pos[1]}")
 
         if is_ball_in_corner(self.balls):
             corner_result = check_corners(self.balls, threshold=50)
             pivot_points, corner_points = robot_movement_based_on_corners(corner_result)
-            path = find_path(self.grid,robot_pos,pivot_points)
+            path = find_path(self.grid, robot_pos, pivot_points)
             self._navigate_to_target(path)
             self._navigate_to_target(corner_points)
-
         else:
-            self.balls = detect_balls(filter_image(warped_img))
-            if not self.balls:
-                return
-            self.target_pos = find_nearest_ball(robot_pos, self.balls) # TODO handle target being null
-
-        path = find_path(self.grid, robot_pos, self.target_pos)
-        self._navigate_to_target(path)
+            path = find_path(self.grid, robot_pos, self.target_pos)
+            self._navigate_to_target(path)
 
     def _deliver_balls(self):
         self.client.send_command("stop")
