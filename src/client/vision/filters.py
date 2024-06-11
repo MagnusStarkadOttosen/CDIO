@@ -1,3 +1,4 @@
+from deprecated import deprecated
 import cv2
 import numpy as np
 
@@ -49,7 +50,7 @@ def convert_hsv(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     return hsv
 
-
+@deprecated
 def filter_image_by_color(image, color):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     lower1 = colors[color][0]
@@ -65,7 +66,7 @@ def filter_image_by_color(image, color):
 
     return img
 
-
+@deprecated
 def filter_image_red(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     lower_red1 = np.array([0, 70, 50])
@@ -81,7 +82,7 @@ def filter_image_red(image):
 
     return red_image
 
-
+@deprecated
 def filter_image_green(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
@@ -102,7 +103,7 @@ def filter_image_green(image):
 
     return green_image
 
-
+@deprecated
 def filter_image_orange(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
@@ -142,7 +143,7 @@ def erode_image(image, i=1):
     return img_erosion
 
 
-# TODO: find a set of values that work for both walls and balls
+@deprecated
 def temp_filter_for_red_wall(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     lower_red1 = np.array([0, 175, 186])
@@ -158,7 +159,7 @@ def temp_filter_for_red_wall(image):
 
     return red_image
 
-
+@deprecated
 def filter_image_white(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
@@ -171,6 +172,7 @@ def filter_image_white(image):
 
     return white_image
 
+@deprecated
 def filter_for_yellow(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     lower_yellow = np.array([0, 26, 245])
@@ -184,3 +186,13 @@ def filter_for_yellow(image):
 
     return yellow_image
 
+def filter_image(image, hsv_values):
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+    lower_bound = np.array([hsv_values['LowerH'], hsv_values['LowerS'], hsv_values['LowerV']])
+    upper_bound = np.array([hsv_values['UpperH'], hsv_values['UpperS'], hsv_values['UpperV']])
+
+    mask = cv2.inRange(hsv, lower_bound, upper_bound)
+    filtered_image = cv2.bitwise_and(image, image, mask=mask)
+    
+    return filtered_image 
