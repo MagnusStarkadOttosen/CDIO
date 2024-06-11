@@ -44,6 +44,9 @@ class Commands:
     def drive_inf(self):
         self.tank_drive.on(SpeedPercent(10), SpeedPercent(10))
 
+    def drive_back(self):
+        self.tank_drive.on(SpeedPercent(-10), SpeedPercent(-10))
+
     # def turn(degrees_to_rotate):
     #     self.turn_by_x_degrees(degrees_to_rotate)
     #     print('Turning this many degrees: ', degrees_to_rotate)  # Placeholder

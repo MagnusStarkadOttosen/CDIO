@@ -50,7 +50,13 @@ if is_ball_in_corner(ball_coords_2):
 
     temp = [pivot_points, corner_points]
     print(f"temp: {temp}")
+    main_loop.client.send_command("start_collect")
     main_loop._navigate_to_target(temp)
+    main_loop.client.send_command("drive_back")
+    temp_2 = [corner_points, pivot_points]
+    main_loop._navigate_to_target(temp_2)
+    main_loop.client.send_command("stop")
+
 
     # main_loop._navigate_to_target(pivot_points)
     # main_loop._navigate_to_target(corner_points)

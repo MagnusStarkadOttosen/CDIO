@@ -12,7 +12,8 @@ actions_functions = {
     "stop_collect": commands.stop_collector,
     "stop": commands.stop,
     "start_drive": commands.drive_inf,
-    "turn_left": commands.turn_left
+    "turn_left": commands.turn_left,
+    "drive_back": commands.drive_back
 }
 
 
