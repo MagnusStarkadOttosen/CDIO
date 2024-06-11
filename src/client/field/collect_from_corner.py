@@ -60,7 +60,9 @@ def robot_movement_based_on_corners(corner_results):
         return PIVOT_POINTS[0], CORNERS[1]
     elif corner_results["top_right"]:
         print("Ball is near the top-right corner. Robot action: move to PIVOT_POINT 1 and then navigate to top-right.")
-        return PIVOT_POINTS[1], CORNERS[2]
+        print(f"pivot: {PIVOT_POINTS[1]} corner: {(1800, 0)}")
+        
+        return PIVOT_POINTS[1], (1800, 0)
     elif corner_results["bottom_right"]:
         print("Ball is near the bottom-right corner. Robot action: move to PIVOT_POINT 1 and then navigate to bottom-right.")
         return PIVOT_POINTS[1], CORNERS[3]

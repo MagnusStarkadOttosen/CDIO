@@ -1,3 +1,4 @@
+import numpy as np
 from src.client.field import navigate_to_target
 from src.client.field.collect_from_corner import robot_movement_based_on_corners, check_corners, is_ball_in_corner
 from src.client.pc_client import ClientPC
@@ -8,7 +9,7 @@ from src.client.vision.shape_detection import detect_balls, detect_robot
 
 
 print("Test collecting from corners.")
-client_pc = ClientPC()
+# client_pc = ClientPC()
 
 
 IMAGE_SIZE = [1200, 1800]
@@ -28,29 +29,37 @@ CORNERS = {
     "bottom_right": (1800, 1200)
 }
 
-try:
+# try:
     # corner_results = check_corners(ball_coords)
     # robot_movement_based_on_corners(corner_results)
-    main_loop = MainLoop()
-    if is_ball_in_corner(ball_coords_1):
-        corner_result = check_corners(ball_coords_1, threshold=50)
-        pivot_points, corner_points = robot_movement_based_on_corners(corner_result)
-        main_loop._navigate_to_target(pivot_points)
-        main_loop._navigate_to_target(corner_points)
-    else:
-        print("Ball is not in any corners.")
+main_loop = MainLoop()
+main_loop.initialize_field()
+if is_ball_in_corner(ball_coords_1):
+    corner_result = check_corners(ball_coords_1, threshold=50)
+    pivot_points, corner_points = robot_movement_based_on_corners(corner_result)
+    main_loop._navigate_to_target(pivot_points)
+    main_loop._navigate_to_target(corner_points)
+else:
+    print("Ball is not in any corners.")
+if is_ball_in_corner(ball_coords_2):
+    print("adasdsdfksdjfsdkjfdfhksd")
+    corner_result_2 = check_corners(ball_coords_2, threshold=50)
+    print("saddfsd19243284")
+    pivot_points, corner_points = robot_movement_based_on_corners(corner_result_2)
+    print(f"pivot: {pivot_points} corner: {corner_points}")
 
-    if is_ball_in_corner(ball_coords_2):
-        corner_result_2 = check_corners(ball_coords_2, threshold=50)
-        pivot_points, corner_points = robot_movement_based_on_corners(corner_result_2)
-        main_loop._navigate_to_target(pivot_points)
-        main_loop._navigate_to_target(corner_points)
+    temp = [pivot_points, corner_points]
+    print(f"temp: {temp}")
+    main_loop._navigate_to_target(temp)
 
-    else:
-        print("Ball is not in any corners.")
-    print("Delivery process started successfully.")
-except Exception as e:
-    print(f"An error occurred during the delivery process: {str(e)}")
+    # main_loop._navigate_to_target(pivot_points)
+    # main_loop._navigate_to_target(corner_points)
+
+else:
+    print("Ball is not in any corners.")
+print("Delivery process started successfully.")
+# except Exception as e:
+#     print(f"An error occurred during the delivery process: {str(e)}")
 
 
 
