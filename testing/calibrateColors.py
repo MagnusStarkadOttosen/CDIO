@@ -253,10 +253,10 @@ while True:
 
     # Display lines
     # if show_lines:
-    linestest = find_lines(res)
+    # linestest = find_lines(res)
 
     # if show_intesections:
-    find_intersections(res, linestest)
+    # find_intersections(res, linestest)
     # newfind_intersections(res, linestest)
     
     # Detect and count balls

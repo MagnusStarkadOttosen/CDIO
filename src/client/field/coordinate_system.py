@@ -97,9 +97,9 @@ def calculate_slope(line):
     return (y2 - y1) / (x2 - x1)
 
 #This takes the image finds the corner points
-def find_corner_points_full(image, doVerbose=False):
+def find_corner_points_full(image, hsv_values, doVerbose=False):
     #Filter for red wall
-    red_image = temp_filter_for_red_wall(image)
+    red_image = filter_image(image, hsv_values)
     #Clean up small defects
     # clean_image = clean_the_image(red_image)
     #Find the lines on the image

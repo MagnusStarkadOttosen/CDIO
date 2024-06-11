@@ -18,7 +18,8 @@ CORNERS = {
 
 
 def test_nav_to_target_hardcoded_path(ml):
-    path = [(200, 600), (50, 600)]
+    path = [(1200, 600), (600, 600)]
+    ml.target_pos = (50,600)
     ml._navigate_to_target(path)
 
 
@@ -41,7 +42,7 @@ def test_collect_nearest_ball(ml): # many white balls on field
 
 main_loop = MainLoop()
 main_loop.initialize_field()
-main_loop._detect_initial_balls()
+# main_loop._detect_initial_balls()
 test_nav_to_target_hardcoded_path(main_loop)
 # test_nav_to_target_detected_path(main_loop)
 # test_collect_nearest_ball(main_loop)

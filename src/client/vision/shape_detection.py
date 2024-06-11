@@ -18,6 +18,7 @@ def detect_robot(image, green_hsv_values, yellow_hsv_values):
     if yellow_dot is None:  # TODO Proper error handling for red_dot
         print("No yellow dot.")
         return None, None
+    print(f"what yellow detectfinds {yellow_dot}")
     # print("yellow dot found ", len(yellow_dot))
     robot_pos = (yellow_dot[0][0], yellow_dot[0][1])
     robot_direction = calc_vector_direction(green_dot[0], robot_pos)
