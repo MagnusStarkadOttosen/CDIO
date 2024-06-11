@@ -10,8 +10,16 @@ if project_root not in sys.path:
 
 from src.client.field.coordinate_system import calculate_slope, find_corner_points_full, find_intersection, is_near_90_degrees, warp_perspective
 
-warp = False
+warp = True
 edges = False
+
+def read_hsv_values(filename):
+    hsv_values = {}
+    with open(filename, 'r') as file:
+        for line in file:
+            key, value = line.strip().split()
+            hsv_values[key] = int(value)
+    return hsv_values
 
 def find_lines(image, resolution=1, doVerbose=False):
     
@@ -184,7 +192,8 @@ cv2.imwrite(frame_path, frame)
 
 lower_bound, upper_bound = load_color_presets("default")
 if warp:
-    final_points = find_corner_points_full(frame, doVerbose=True)
+    red_hsv_values = read_hsv_values('hsv_presets_red.txt')
+    final_points = find_corner_points_full(frame, red_hsv_values, doVerbose=True)
 
 # Create windows
 cv2.namedWindow('Lower Bounds')

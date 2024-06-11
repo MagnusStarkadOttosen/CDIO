@@ -148,7 +148,8 @@ class MainLoop:
                 warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
                 print(f"yellow hsv values: {self.yellow}")
                 robot_pos, robot_direction = detect_robot(warped_img, self.green, self.yellow)
-
+                if robot_pos is None or robot_direction is None:
+                    continue
                 if are_points_close(robot_pos, (x,y), tolerance=40):
                     print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
                     self.client.send_command("stop")

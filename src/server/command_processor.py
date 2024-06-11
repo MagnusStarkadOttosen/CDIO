@@ -5,7 +5,7 @@ from src.server.commands_stub import CommandsStub
 
 commands = Commands()  # Robot()
 actions_functions = {
-    # "move": commands.drive,
+    "move": commands.drive,
     "turn": commands.turn_by_x_degrees,
     "start_collect": commands.run_collector_clockwise,
     "deliver": commands.run_collector_counterclockwise,

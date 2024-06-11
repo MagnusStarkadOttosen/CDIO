@@ -42,7 +42,7 @@ def check_corners(ball_coords, threshold=50):
             "bottom_right": False
         }
 
-        x, y, radius = ball_coords
+        x, y = ball_coords
         for corner_name, corner_coords in CORNERS.items():
             if np.linalg.norm(np.array([x, y]) - np.array(corner_coords)) < threshold:
                 print(f"Ball at ({x}, {y}) is near the {corner_name} corner.")
