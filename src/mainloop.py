@@ -101,13 +101,13 @@ class MainLoop:
 
         # if filter_image.equals(filter_image_orange):
         if self.collect_orange_ball:
-            self.balls = detect_balls(filter_image_orange(warped_img))
+            self.balls = detect_balls(filter_image(warped_img))
             if not self.balls:
                 self.collect_orange_ball = False
                 return
             self.target_pos = self.balls[0][:2]
         else:
-            self.balls = detect_balls(filter_image_white(warped_img))
+            self.balls = detect_balls(filter_image(warped_img))
             if not self.balls:
                 return
             self.target_pos = find_nearest_ball(robot_pos, self.balls) # TODO handle target being null
