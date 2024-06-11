@@ -112,7 +112,7 @@ def filter_image_orange(image):
     mask_orange = cv2.inRange(hsv, lower_orange, upper_orange)
 
     orange_image = cv2.bitwise_and(image, image, mask=mask_orange)
-
+    print("filter orange")
     return orange_image
 
 def sharpen_image(image):
@@ -168,7 +168,7 @@ def filter_image_white(image):
     mask = cv2.inRange(hsv, lower_white, upper_white)
 
     white_image = cv2.bitwise_and(image, image, mask=mask)
-
+    print("white image")
     return white_image
 
 def filter_for_yellow(image):
