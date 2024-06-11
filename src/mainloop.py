@@ -197,4 +197,10 @@ class MainLoop:
                 self.robot_is_turning = False
         self.robot_is_turning = False
         self.client.send_command("stop")
+    
+    def temp(self):
+        ret, frame = self.camera.read()
+        warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
+        robot_pos, robot_direction = detect_robot(warped_img, self.green, self.yellow)
+        return robot_pos, robot_direction
 

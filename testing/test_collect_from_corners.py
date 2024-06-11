@@ -19,7 +19,7 @@ ball_coords_2 = (1790, 10)
 
 WHITE_BALL_COUNT = 10
 ROBOT_CAPACITY = 6
-TOLERANCE = 10
+TOLERANCE = 2
 TURN_SPEED = 3
 DST_SIZE = (1200, 1800)
 PIVOT_POINTS = [(300, 600), (1500, 600)]
@@ -54,17 +54,17 @@ if is_ball_in_corner(ball_coords_2):
     main_loop.client.send_command("start_collect")
     main_loop._navigate_to_target(temp)
 
-    angle = rotate_vector_to_point(robot_pos, robot_direction, (x, y))
-    print(f"after robot pos {robot_pos} and direction {robot_direction} and target {(x, y)} and angle: {angle}")
+
+    robot_pos, robot_direction = main_loop.temp()
+    angle = rotate_vector_to_point(robot_pos, robot_direction, ball_coords_2)
+    print(f"after robot pos {robot_pos} and direction {robot_direction} and target {ball_coords_2} and angle: {angle}")
     if angle < -TOLERANCE or angle > TOLERANCE:
         print(f"asdsdkjfsdkjfsdkj {angle}")
         main_loop._course_correction(angle, ball_coords_2)
 
-    main_loop.client.send_command
+    main_loop.client.send_command("move 60")
 
-
-
-    main_loop.client.send_command("drive_back")
+    main_loop.client.send_command("move -50")
     
     main_loop.client.send_command("stop")
 
