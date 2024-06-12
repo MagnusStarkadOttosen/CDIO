@@ -1,6 +1,7 @@
 import numpy as np
 
-buffer_points = [(100, 100), (1700, 100), (1700, 1100), (100, 1100)]
+#buffer_points = [(100, 100), (1700, 100), (1700, 1100), (100, 1100)]
+buffer_points = [(200, 200), (1600, 200), (1600, 1000), (200, 1000)]
 buffer_distance = 100
 
 # Determine the top-left and bottom-right points of the rectangle
