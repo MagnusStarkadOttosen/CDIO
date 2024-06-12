@@ -1,6 +1,7 @@
 import numpy as np
 from src.client.field import navigate_to_target
 from src.client.field.collect_from_corner import robot_movement_based_on_corners, check_corners, is_ball_in_corner
+from src.client.pathfinding.CalculateCommandList import rotate_vector_to_point
 from src.client.pc_client import ClientPC
 from src.mainloop import MainLoop
 from src.client.field.coordinate_system import warp_perspective
@@ -13,12 +14,12 @@ print("Test collecting from corners.")
 
 
 IMAGE_SIZE = [1200, 1800]
-ball_coords_1 = (1690, 574, 5)
-ball_coords_2 = (1790, 10, 5)
+ball_coords_1 = (1690, 574)
+ball_coords_2 = (1790, 10)
 
 WHITE_BALL_COUNT = 10
 ROBOT_CAPACITY = 6
-TOLERANCE = 10
+TOLERANCE = 2
 TURN_SPEED = 3
 DST_SIZE = (1200, 1800)
 PIVOT_POINTS = [(300, 600), (1500, 600)]
@@ -48,9 +49,25 @@ if is_ball_in_corner(ball_coords_2):
     pivot_points, corner_points = robot_movement_based_on_corners(corner_result_2)
     print(f"pivot: {pivot_points} corner: {corner_points}")
 
-    temp = [pivot_points, corner_points]
+    temp = [pivot_points]
     print(f"temp: {temp}")
+    main_loop.client.send_command("start_collect")
     main_loop._navigate_to_target(temp)
+
+
+    robot_pos, robot_direction = main_loop.temp()
+    angle = rotate_vector_to_point(robot_pos, robot_direction, ball_coords_2)
+    print(f"after robot pos {robot_pos} and direction {robot_direction} and target {ball_coords_2} and angle: {angle}")
+    if angle < -TOLERANCE or angle > TOLERANCE:
+        print(f"asdsdkjfsdkjfsdkj {angle}")
+        main_loop._course_correction(angle, ball_coords_2)
+
+    main_loop.client.send_command("move 60")
+
+    main_loop.client.send_command("move -50")
+    
+    main_loop.client.send_command("stop")
+
 
     # main_loop._navigate_to_target(pivot_points)
     # main_loop._navigate_to_target(corner_points)

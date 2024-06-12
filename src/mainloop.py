@@ -125,7 +125,11 @@ class MainLoop:
             pivot_points, corner_points = robot_movement_based_on_corners(corner_result)
             path = find_path(self.grid, robot_pos, pivot_points)
             self._navigate_to_target(path)
+            self.client.send_command("start_collect")
             self._navigate_to_target(corner_points)
+            self._navigate_to_target(path)
+            self.client.send_command("stop_collect")
+            self.client.send_command("stop")
         else:
             path = find_path(self.grid, robot_pos, self.target_pos)
             self._navigate_to_target(path)
@@ -144,8 +148,9 @@ class MainLoop:
                 warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
                 print(f"yellow hsv values: {self.yellow}")
                 robot_pos, robot_direction = detect_robot(warped_img, self.green, self.yellow)
-
-                if are_points_close(robot_pos, (x,y), tolerance=20):
+                if robot_pos is None or robot_direction is None:
+                    continue
+                if are_points_close(robot_pos, (x,y), tolerance=40):
                     print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
                     self.client.send_command("stop")
                     self.robot_is_moving = False
@@ -192,4 +197,10 @@ class MainLoop:
                 self.robot_is_turning = False
         self.robot_is_turning = False
         self.client.send_command("stop")
+    
+    def temp(self):
+        ret, frame = self.camera.read()
+        warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
+        robot_pos, robot_direction = detect_robot(warped_img, self.green, self.yellow)
+        return robot_pos, robot_direction
 

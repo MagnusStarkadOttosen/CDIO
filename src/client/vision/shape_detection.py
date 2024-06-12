@@ -21,7 +21,7 @@ def detect_robot(image, green_hsv_values, yellow_hsv_values):
     print(f"what yellow detectfinds {yellow_dot}")
     # print("yellow dot found ", len(yellow_dot))
     robot_pos = (yellow_dot[0][0], yellow_dot[0][1])
-    robot_direction = calc_vector_direction(green_dot[0], robot_pos)
+    robot_direction = calc_vector_direction(robot_pos, green_dot[0])
 
     return robot_pos, robot_direction
 
