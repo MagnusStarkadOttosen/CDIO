@@ -4,8 +4,8 @@ import heapq
 # Define the Cell class
 class Cell:
 	def __init__(self):
-		self.parent_i = 0 # Parent cell's colomn index
-		self.parent_j = 0 # Parent cell's row index
+		self.parent_i = 0 # Parent cell's row index
+		self.parent_j = 0 # Parent cell's column index
 		self.f = float('inf') # Total cost of the cell (g + h)
 		self.g = float('inf') # Cost from start to this cell
 		self.h = 0 # Heuristic cost from this cell to destination
@@ -23,7 +23,7 @@ def is_unblocked(grid, col, row):
 	return grid[col][row] == 0
 
 # Check if a cell is the destination
-def is_destination(col, row, dest):
+def is_destination(row, col, dest):
 	return col == dest[0] and row == dest[1] 
 
 # Calculate the heuristic value of a cell (Euclidean distance to destination)
