@@ -29,16 +29,17 @@ def test_nav_to_target_detected_path(ml):
     ret, frame = ml.camera.read()
     warped_img = warp_perspective(frame, ml.final_points, DST_SIZE)
 
-    robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.orange)
+    robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color)
     print(f"robot_pos: {robot_pos}, robot_direction: {robot_direction}")
-    ml.target_position = (ml.balls[0][0], ml.balls[0][1])
-    print(f"target_position: {ml.target_position}")
+    # ml.target_pos = (ml.balls[0][0], ml.balls[0][1])
+    print(f"target_position: {ml.target_pos}")
 
     red_hsv_values = read_hsv_values('hsv_presets_red.txt')
     grid_navmesh = GenerateNavMesh(warped_img, red_hsv_values)
 
     robotCell = coordinate_to_cell(robot_pos[0], robot_pos[1], 30)
-    targetCell = coordinate_to_cell(ml.target_position[0], ml.target_position[1], 30)
+    targetCell = coordinate_to_cell(1800, 1200, 30)
+    print(f"robotCell: {robotCell}, targetCell: {targetCell}")
 
     path = find_path(grid_navmesh, robotCell, targetCell)
     print(path)

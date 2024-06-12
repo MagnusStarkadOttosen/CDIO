@@ -44,7 +44,7 @@ class MainLoop:
         self.target_found = False
         self.ball_collected = False
         self.at_target = False
-        self.direction_color = read_hsv_values("hsv_presets_orange.txt")
+        self.direction_color = read_hsv_values("hsv_presets_white.txt")
         self.orange = read_hsv_values("hsv_presets_orange.txt")
         self.pivot_color = read_hsv_values("hsv_presets_white.txt")
         self.red = read_hsv_values("hsv_presets_red.txt")
