@@ -15,7 +15,8 @@ edges = False
 
 def read_hsv_values(filename):
     hsv_values = {}
-    with open(filename, 'r') as file:
+    temp = "C:/Users/bayou/PycharmProjects/CDIO/hsv_presets_red.txt"
+    with open(temp, 'r') as file:
         for line in file:
             key, value = line.strip().split()
             hsv_values[key] = int(value)
@@ -178,7 +179,7 @@ def load_color_presets(color, base_filename="hsv_presets"):
         return None, None
 
 # Capture from camera
-cap = cv2.VideoCapture(2, cv2.CAP_DSHOW)
+cap = cv2.VideoCapture(1,cv2.CAP_DSHOW)
 dst_size = (1200, 1800)
 ret, frame = cap.read()
 
