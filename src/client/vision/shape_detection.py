@@ -7,21 +7,22 @@ from src.client.field.coordinate_system import find_corners
 from src.client.vision.filters import apply_gray, apply_canny
 
 
-def detect_robot(image, blue_hsv_values, orange_hsv_values):
-    blue_dot = detect_balls(filter_image(image, blue_hsv_values), min_radius=40, max_radius=45)
-    if blue_dot is None:  # TODO Proper error handling for green_dot
-        print("No blue dot.")
+def detect_robot(image, direction_color, pivot_color):
+    direction_dot = detect_balls(filter_image(image, direction_color), min_radius=40, max_radius=65)
+    if len(direction_dot) == 0:  # TODO Proper error handling for green_dot
+        print("No direction dot.")
         return None, None
+    print(f"what direction detectfinds {direction_dot}")
     # print("green dot found ", len(green_dot))
 
-    orange_dot = detect_balls(filter_image(image, orange_hsv_values), min_radius=40, max_radius=45)
-    if orange_dot is None:  # TODO Proper error handling for red_dot
-        print("No orange dot.")
+    pivot_dot = detect_balls(filter_image(image, pivot_color), min_radius=40, max_radius=45)
+    if pivot_dot is None:  # TODO Proper error handling for red_dot
+        print("No pivot dot.")
         return None, None
-    print(f"what orange detectfinds {orange_dot}")
-    # print("yellow dot found ", len(orange_dot))
-    robot_pos = (orange_dot[0][0], orange_dot[0][1])
-    robot_direction = calc_vector_direction(robot_pos, blue_dot[0])
+    print(f"what pivot detectfinds {pivot_dot}")
+    # print("yellow dot found ", len(pivot_dot))
+    robot_pos = (pivot_dot[0][0], pivot_dot[0][1])
+    robot_direction = calc_vector_direction(robot_pos, direction_dot[0])
 
     return robot_pos, robot_direction
 
