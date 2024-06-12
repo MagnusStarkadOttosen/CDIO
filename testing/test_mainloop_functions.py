@@ -20,8 +20,8 @@ CORNERS = {
 
 
 def test_nav_to_target_hardcoded_path(ml):
-    path = [(1200, 600), (600, 600)]
-    ml.target_pos = (50,600)
+    path = [(300, 600), (1500, 600)]
+    ml.target_pos = (100,600)
     ml._navigate_to_target(path)
 
 
@@ -29,7 +29,7 @@ def test_nav_to_target_detected_path(ml):
     ret, frame = ml.camera.read()
     warped_img = warp_perspective(frame, ml.final_points, DST_SIZE)
 
-    robot_pos, robot_direction = detect_robot(warped_img, ml.green, ml.yellow)
+    robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.orange)
     print(f"robot_pos: {robot_pos}, robot_direction: {robot_direction}")
     ml.target_position = (ml.balls[0][0], ml.balls[0][1])
     print(f"target_position: {ml.target_position}")
