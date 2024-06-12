@@ -3,18 +3,21 @@ import heapq
 
 
 # Define the Cell class
+#The cell class stores the information of:
+#The coordinates to the cell before it
+#The cost it takes from the start to the cell
 class Cell:
-    def _init_(self):
+    def __init__(self):
         self.parent_i = 0  # Parent cell's row index
         self.parent_j = 0  # Parent cell's column index
         self.f = float('inf')  # Total cost of the cell (g + h)
         self.g = float('inf')  # Cost from start to this cell
         self.h = 0  # Heuristic cost from this cell to destination
 
-
+#TODO: This need to come from the grid and not hardcoded
 # Define the size of the grid
-ROW = 12
-COL = 18
+ROW = 40
+COL = 60
 
 
 # Check if a cell is valid (within the grid)
@@ -23,6 +26,7 @@ def is_valid(row, col):
 
 
 # Check if a cell is unblocked
+#Checks if the cell is one of the cells that can be walked opon
 def is_unblocked(grid, row, col):
     return grid[row][col] == 0
 
