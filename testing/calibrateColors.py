@@ -273,7 +273,7 @@ while True:
     circles = detect_balls(res)
     ball_count = len(circles)
     if warp:
-        circles2 = detect_balls(gen_warped_frame,min_radius=40, max_radius=45)
+        circles2 = detect_balls(gen_warped_frame,min_radius=60, max_radius=65)
         ball_count2 = len(circles2)
         circles3 = detect_balls(gen_warped_frame)
         ball_count2 = len(circles3)
