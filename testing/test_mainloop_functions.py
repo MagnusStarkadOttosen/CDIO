@@ -18,8 +18,8 @@ CORNERS = {
 
 
 def test_nav_to_target_hardcoded_path(ml):
-    path = [(1200, 600), (600, 600)]
-    ml.target_pos = (50,600)
+    path = [(600, 600), (100, 600)]
+    ml.target_pos = (100, 600)
     ml._navigate_to_target(path)
 
 
