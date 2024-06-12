@@ -1,24 +1,6 @@
-import cv2
-import numpy as np
+from src.mainloop import MainLoop
 
-def main_loop():
-    get_image
-    modify_image
-    update_robot_position
-    plan_path
-    move_robot
+ml = MainLoop()
+ml.start_main_loop()
 
-def get_image():
-        pass
-    
-def modify_image(image):
-        pass
 
-def update_robot_position():
-        pass
-
-def plan_path():
-        pass
-
-def move_robot():
-        pass
