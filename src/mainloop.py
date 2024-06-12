@@ -36,7 +36,7 @@ class MainLoop:
         self.balls = None
         self.collect_orange_ball = False
         self.target_pos = None
-        self.camera = cv2.VideoCapture(2, cv2.CAP_DSHOW)
+        self.camera = cv2.VideoCapture(1, cv2.CAP_DSHOW)
         self.final_points = None
         self.grid = None
         self.robot_is_moving = False
@@ -44,11 +44,11 @@ class MainLoop:
         self.target_found = False
         self.ball_collected = False
         self.at_target = False
-        self.green = read_hsv_values("hsv_presets_green.txt")
+        self.direction_color = read_hsv_values("hsv_presets_orange.txt")
         self.orange = read_hsv_values("hsv_presets_orange.txt")
+        self.pivot_color = read_hsv_values("hsv_presets_white.txt")
         self.red = read_hsv_values("hsv_presets_red.txt")
         self.white = read_hsv_values("hsv_presets_white.txt")
-        self.yellow = read_hsv_values("hsv_presets_yellow.txt")
 
     def start_main_loop(self):
         self.initialize_field()
@@ -104,7 +104,7 @@ class MainLoop:
         # final_points = find_corner_points_full(frame, doVerbose=False)
         warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
 
-        robot_pos, robot_direction = detect_robot(warped_img, self.green, self.yellow)
+        robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color)
 
         # if filter_image.equals(filter_image_orange):
         if self.collect_orange_ball:
@@ -146,8 +146,8 @@ class MainLoop:
                 ret, frame = self.camera.read()
                 #final_points = find_corner_points_full(frame, doVerbose=False)
                 warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
-                print(f"yellow hsv values: {self.yellow}")
-                robot_pos, robot_direction = detect_robot(warped_img, self.green, self.yellow)
+                print(f"orange hsv values: {self.pivot_color}")
+                robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color)
                 if robot_pos is None or robot_direction is None:
                     continue
                 if are_points_close(robot_pos, (x,y), tolerance=40):
@@ -178,8 +178,8 @@ class MainLoop:
         while angle < -TOLERANCE or angle > TOLERANCE:
             ret, frame = self.camera.read()
             gen_warped_image = warp_perspective(frame, self.final_points, DST_SIZE)
-            print(f"yellow hsv values: {self.yellow}")
-            robot_pos, robot_direction = detect_robot(gen_warped_image, self.green, self.yellow)
+            print(f"pivot_color hsv values: {self.pivot_color}")
+            robot_pos, robot_direction = detect_robot(gen_warped_image, self.direction_color, self.pivot_color)
             print(f"in correction robot pos {robot_pos} and direction {robot_direction} and target {target} and angle: {angle}")
             if robot_pos is None or robot_direction is None:
                 continue
@@ -201,6 +201,6 @@ class MainLoop:
     def temp(self):
         ret, frame = self.camera.read()
         warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
-        robot_pos, robot_direction = detect_robot(warped_img, self.green, self.yellow)
+        robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color)
         return robot_pos, robot_direction
 

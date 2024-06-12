@@ -5,7 +5,7 @@ def find_camera_index():
     max_test_index = 10  # Set a reasonable limit to prevent endless loops
 
     while index <= max_test_index:
-        cap = cv2.VideoCapture(index)
+        cap = cv2.VideoCapture(index, cv2.CAP_DSHOW)
         if not cap.isOpened():
             print(f"No camera found at index {index}.")
         else:
