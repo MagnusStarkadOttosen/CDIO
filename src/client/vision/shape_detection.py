@@ -7,21 +7,21 @@ from src.client.field.coordinate_system import find_corners
 from src.client.vision.filters import apply_gray, apply_canny
 
 
-def detect_robot(image, green_hsv_values, yellow_hsv_values):
-    green_dot = detect_balls(filter_image(image, green_hsv_values),min_radius=40, max_radius=45)
-    if green_dot is None:  # TODO Proper error handling for green_dot
-        print("No green dot.")
+def detect_robot(image, blue_hsv_values, orange_hsv_values):
+    blue_dot = detect_balls(filter_image(image, blue_hsv_values), min_radius=40, max_radius=45)
+    if blue_dot is None:  # TODO Proper error handling for green_dot
+        print("No blue dot.")
         return None, None
     # print("green dot found ", len(green_dot))
 
-    yellow_dot = detect_balls(filter_image(image, yellow_hsv_values),min_radius=40, max_radius=45)
-    if yellow_dot is None:  # TODO Proper error handling for red_dot
-        print("No yellow dot.")
+    orange_dot = detect_balls(filter_image(image, orange_hsv_values), min_radius=40, max_radius=45)
+    if orange_dot is None:  # TODO Proper error handling for red_dot
+        print("No orange dot.")
         return None, None
-    print(f"what yellow detectfinds {yellow_dot}")
-    # print("yellow dot found ", len(yellow_dot))
-    robot_pos = (yellow_dot[0][0], yellow_dot[0][1])
-    robot_direction = calc_vector_direction(robot_pos, green_dot[0])
+    print(f"what orange detectfinds {orange_dot}")
+    # print("yellow dot found ", len(orange_dot))
+    robot_pos = (orange_dot[0][0], orange_dot[0][1])
+    robot_direction = calc_vector_direction(robot_pos, blue_dot[0])
 
     return robot_pos, robot_direction
 
