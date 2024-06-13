@@ -10,7 +10,7 @@ if project_root not in sys.path:
 
 from src.client.field.coordinate_system import calculate_slope, find_corner_points_full, find_intersection, is_near_90_degrees, warp_perspective
 
-warp = True
+warp = False
 edges = False
 
 def read_hsv_values(filename):
@@ -262,11 +262,11 @@ while True:
         cv2.imshow('edges', edgesim)
 
     # Display lines
-    # if show_lines:
-    # linestest = find_lines(res)
+    if show_lines:
+        linestest = find_lines(res)
 
-    # if show_intesections:
-    # find_intersections(res, linestest)
+    if show_intesections:
+        find_intersections(res, linestest)
     # newfind_intersections(res, linestest)
     
     # Detect and count balls
@@ -276,7 +276,10 @@ while True:
         circles2 = detect_balls(gen_warped_frame,min_radius=60, max_radius=65)
         ball_count2 = len(circles2)
         circles3 = detect_balls(gen_warped_frame)
-        ball_count2 = len(circles3)
+        ball_count3 = len(circles3)
+        circles4 = detect_balls(gen_warped_frame, min_radius=40, max_radius=45)
+        ball_count4 = len(circles2)
+
     
     # Display circles
     if circles is not None and show_circles:
@@ -289,7 +292,10 @@ while True:
                 cv2.circle(gen_warped_frame, (x, y), r, (255, 255, 0), 4)
         if circles3 is not None and show_circles:
             for (x, y, r) in circles3:
-                cv2.circle(gen_warped_frame, (x, y), r, (255, 0, 0), 4)    
+                cv2.circle(gen_warped_frame, (x, y), r, (255, 0, 0), 4)
+        if circles4 is not None and show_circles:
+            for (x, y, r) in circles4:
+                cv2.circle(gen_warped_frame, (x, y), r, (0, 0, 255), 4)
     
     cv2.putText(res, f"Balls detected: {ball_count}", (10,30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     if warp:
