@@ -10,7 +10,7 @@ if project_root not in sys.path:
 
 from src.client.field.coordinate_system import calculate_slope, find_corner_points_full, find_intersection, is_near_90_degrees, warp_perspective
 
-warp = False
+warp = True
 edges = False
 
 def read_hsv_values(filename):
@@ -277,7 +277,7 @@ while True:
         ball_count2 = len(circles2)
         circles3 = detect_balls(gen_warped_frame)
         ball_count3 = len(circles3)
-        circles4 = detect_balls(gen_warped_frame, min_radius=40, max_radius=45)
+        circles4 = detect_balls(gen_warped_frame, min_radius=45, max_radius=50)
         ball_count4 = len(circles2)
 
     
