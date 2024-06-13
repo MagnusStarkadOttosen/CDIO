@@ -41,10 +41,7 @@ def GenerateNavMesh(image, hsv_values):
             if white_pixels / total_pixels >= 0.75:
                 navmesh[y // grid_size, x // grid_size] = 1
 
-    # Invert the mesh to work with a star
-    inverted_navmesh = np.logical_not(navmesh).astype(np.uint8)
-
-    return inverted_navmesh
+    return navmesh
 
 # Converts the coordinates from the image to the cell
 def coordinate_to_cell(x, y, grid_size):
@@ -90,12 +87,16 @@ def astar(navmesh, start, goal):
             (current[0] + 1, current[1]),
             (current[0] - 1, current[1]),
             (current[0], current[1] + 1),
-            (current[0], current[1] - 1)
+            (current[0], current[1] - 1),
+            (current[0] + 1, current[1] + 1),
+            (current[0] - 1, current[1] - 1),
+            (current[0] + 1, current[1] - 1),
+            (current[0] - 1, current[1] + 1)
         ]
         
         for neighbor in neighbors:
-            if 0 <= neighbor[0] < navmesh.shape[0] and 0 <= neighbor[1] < navmesh.shape[1]:
-                if navmesh[neighbor[0], neighbor[1]] == 1:  # Check if neighbor is walkable
+            if 0 <= neighbor[1] < navmesh.shape[0] and 0 <= neighbor[0] < navmesh.shape[1]:
+                if navmesh[neighbor[1], neighbor[0]] == 1:  # Check if neighbor is walkable
                     tentative_g_cost = g_costs[current] + 1
                     if neighbor not in g_costs or tentative_g_cost < g_costs[neighbor]:
                         g_costs[neighbor] = tentative_g_cost
@@ -104,3 +105,42 @@ def astar(navmesh, start, goal):
                         came_from[neighbor] = current
     
     return None  # Path not found
+
+def is_walkable(navmesh, start, end):
+    x0, y0 = start
+    x1, y1 = end
+    dx = abs(x1 - x0)
+    dy = abs(y1 - y0)
+    sx = 1 if x0 < x1 else -1
+    sy = 1 if y0 < y1 else -1
+    err = dx - dy
+    while True:
+        if navmesh[y0, x0] == 0:
+            return False
+        if (x0, y0) == (x1, y1):
+            break
+        e2 = err * 2
+        if e2 > -dy:
+            err -= dy
+            x0 += sx
+        if e2 < dx:
+            err += dx
+            y0 += sy
+    return True
+
+def optimize_path(navmesh, path):
+    if not path:
+        return path
+
+    optimized_path = [path[0]]
+    i = 0
+
+    while i < len(path) - 1:
+        for j in range(len(path) - 1, i, -1):
+            if is_walkable(navmesh, path[i], path[j]):
+                optimized_path.append(path[j])
+                i = j
+                break
+        i += 1
+
+    return optimized_path
