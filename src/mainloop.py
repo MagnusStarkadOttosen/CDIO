@@ -2,7 +2,7 @@ import time
 
 import cv2
 import numpy as np
-
+from client.search_targetpoint.obstacle_search import is_ball_in_obstacle, obstacle_Search
 from src.client.field.collect_from_corner import is_ball_in_corner, check_corners, robot_movement_based_on_corners
 from src.client.field.coordinate_system import are_points_close, find_corner_points_full, warp_perspective
 # from src.client.field.field import Field
@@ -12,8 +12,8 @@ from src.client.pc_client import ClientPC
 from src.client.vision.camera import capture_image, initialize_camera
 from src.client.vision.filters import filter_image
 from src.client.vision.pathfinder import find_nearest_ball
-from src.client.vision.shape_detection import detect_balls, detect_robot
-# from src.client.search_targetpoint.a_star_search import find_path
+from src.client.vision.shape_detection import detect_balls, detect_obstacles, detect_robot
+from src.client.search_targetpoint.a_star_search import find_path
 from src.client.hsvLoad import read_hsv_values
 
 
@@ -44,7 +44,7 @@ class MainLoop:
         self.target_found = False
         self.ball_collected = False
         self.at_target = False
-        self.direction_color = read_hsv_values("hsv_presets_orange.txt")
+        self.direction_color = read_hsv_values("hsv_presets_white.txt")
         self.orange = read_hsv_values("hsv_presets_orange.txt")
         self.pivot_color = read_hsv_values("hsv_presets_white.txt")
         self.red = read_hsv_values("hsv_presets_red.txt")
@@ -79,6 +79,10 @@ class MainLoop:
         ret, frame = self.camera.read()
         self.final_points = find_corner_points_full(frame, self.red, doVerbose=True)
 
+    def _detect_obstacles(self):
+        ret, frame = self.camera.read()
+        warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
+        return detect_obstacles(warped_img)
     def _detect_initial_balls(self):
         ret, frame = self.camera.read()
         warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
@@ -123,22 +127,41 @@ class MainLoop:
         if is_ball_in_corner(self.balls):
             corner_result = check_corners(self.balls, threshold=50)
             pivot_points, corner_points = robot_movement_based_on_corners(corner_result)
-            # path = find_path(self.grid, robot_pos, pivot_points)
-            # self._navigate_to_target(path)
+            path = find_path(self.grid, robot_pos, pivot_points)
+            self._navigate_to_target(path)
             self.client.send_command("start_collect")
             self._navigate_to_target(corner_points)
-            # self._navigate_to_target(path)
+            self._navigate_to_target(path)
             self.client.send_command("stop_collect")
             self.client.send_command("stop")
-        # else:
-            # path = find_path(self.grid, robot_pos, self.target_pos)
-            # self._navigate_to_target(path)
+        elif is_ball_in_obstacle(self.balls, midpoint):
+            midpoint=self._detect_obstacles()
+            target_point = obstacle_Search(self.balls, 0, 1, midpoint)
+            target=  obstacle_Search(self.balls, 1, 0, midpoint)
+            path= [target_point]
+            self._navigate_to_target(path)
+            self.client.send_command("start_collect")
+            angle = rotate_vector_to_point(robot_pos, robot_direction,target)
+            print(f"after robot pos {robot_pos} and direction {robot_direction} and target {target} and angle: {angle}")
+            if angle < -TOLERANCE or angle > TOLERANCE:
+                self._course_correction(angle, target)
+            self.client.send_command("move 7")
+            self.client.send_command("move -7")
+            self.client.send_command("stop_collect")
+            self.client.send_command("stop")
+           
+        else:
+            path = find_path(self.grid, robot_pos, self.target_pos)
+            self._navigate_to_target(path)
 
     def _deliver_balls(self):
-        self.client.send_command("stop")
+        path_to_goal_A= []
+        goal_A_pivot_point= (60,600)
+        goal_A_point = (10,600)
+        path_to_goal_A.append(goal_A_pivot_point)
+        path_to_goal_A.append(goal_A_point)
+        self._navigate_to_target(path_to_goal_A)
         self.client.send_command("deliver")
-        time.sleep(5)  # TODO use on_for_degrees in deliver command server-side
-        self.client.send_command("start_collect")
 
     def _navigate_to_target(self, path):
         for (x, y) in path:

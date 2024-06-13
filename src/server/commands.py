@@ -1,4 +1,5 @@
 import math
+import time
 
 from ev3dev2.motor import (OUTPUT_A, OUTPUT_B, OUTPUT_D, MoveTank, SpeedPercent, MediumMotor)
 
@@ -20,7 +21,12 @@ class Commands:
 
     def stop_collector(self): self.collector_motor.off(brake=True)
 
-    def run_collector_counterclockwise(self): self.collector_motor.on(-55)
+    def run_collector_counterclockwise(self):
+        self.collector_motor.on(-55)
+        time.sleep(20)
+        self.collector_motor.off()
+
+
 
     # Function to turn the robot by x degrees
     def turn_by_x_degrees(self, degrees):

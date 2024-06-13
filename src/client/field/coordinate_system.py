@@ -73,6 +73,24 @@ def find_lines(image, resolution=2, doVerbose=False):
 def find_intersection(l1, l2):
     x1, y1, x2, y2 = l1
     x3, y3, x4, y4 = l2
+    if x1 == x2:
+        # if the first line is vertical
+        x = x1
+        if x3 != x4: # if the second line is not vertical
+            slope2 = (y4 - y3) / (x4 - x3)
+            y = slope2 * x  + y3 - slope2 * x3
+            return (int(x), int(y))
+        else:
+            return None
+    elif x3 == x4:
+        #  if the second line is vertical
+        x = x3
+        if x1 != x2:  # if the first line is not vertical
+            slope1 = (y2 - y1) / (x2 - x1)
+            y = slope1 *x + y1 - slope1 * x1
+            return (int(x), int(y))
+        else:
+            return None
     den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
     if den == 0:
         return None 
@@ -80,22 +98,24 @@ def find_intersection(l1, l2):
     py = ((x1*y2 - y1*x2) * (y3 - y4) - (y1 - y2) * (x3*y4 - y3*x4)) / den
     return int(px), int(py)
 
-def is_near_90_degrees(slope1, slope2, tolerance=5):
-    if slope1 == np.inf and slope2 == 0:
+def is_near_90_degrees(slope1, slope2, tolerance=5,zero_tolerance=1e-2):
+    if (slope1 == np.inf and abs(slope2) <= zero_tolerance) or (slope2 == np.inf and abs(slope1) <= zero_tolerance):
         return True
-    if slope2 == np.inf and slope1 == 0:
+    if (abs(slope1) <= zero_tolerance and slope2 == np.inf) or (abs(slope2) <= zero_tolerance and slope1 == np.inf):
         return True
     if slope1 == np.inf or slope2 == np.inf:
         return False
+    
     angle = np.abs(np.arctan((slope2 - slope1) / (1 + slope1 * slope2)))
     angle_deg = np.degrees(angle)
-    return 85 <= angle_deg <= 95
+    return 90 - tolerance <= angle_deg <= 90 + tolerance
 
 def calculate_slope(line):
     x1, y1, x2, y2 = line
-    if x2 == x1:
-        return np.inf  
-    return (y2 - y1) / (x2 - x1)
+    if x2-x1!=0:
+        return (y2 - y1) / (x2 - x1)
+    else:
+        return np.inf
 
 #This takes the image finds the corner points
 def find_corner_points_full(image, hsv_values, doVerbose=False):

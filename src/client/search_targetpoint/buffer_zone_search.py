@@ -1,6 +1,4 @@
-# This function is used to search the target point in the buffer zone
-# The buffer zone is the area around the border of the image
-# The target point is the point that is 250 pixels away from the border
+
 
 def buffer_zone_search(ball_dot, i, j):
     target_point = [0][0]

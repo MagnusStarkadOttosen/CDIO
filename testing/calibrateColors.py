@@ -220,8 +220,8 @@ current_color = 'green'
 
 # Toggle for circles and lines
 show_circles = False
-show_lines = True
-show_intesections = True
+show_lines = False
+show_intesections = False
 
 
 # Initialize trackbars for the initial color (green)

@@ -2,13 +2,13 @@ import unittest
 
 import cv2
 
-from src.client.vision.shape_detection import detect_balls
+from src.client.vision.shape_detection import detect_balls, detect_obstacles
 from testing.image_generation import write_image_to_file
 from src.client.vision.filters import filter_image_red, filter_image_green, filter_image_by_color, filter_image_orange, filter_image_white
 
 
 
-class TestBallDetection(unittest.TestCase):
+class TestDetection(unittest.TestCase):
     def test_detect_balls_vector_drawing(self):
         image_name = "three_balls_extra_skewed.jpg"
         image = cv2.imread('images/' + image_name)
@@ -109,3 +109,6 @@ def print_image(image, balls, image_name):
         write_image_to_file('circles_detected_' + image_name, image)
     else:
         print("No balls detected to draw on the image.")
+
+
+        
