@@ -88,8 +88,8 @@ def group_close_points(points, distance_threshold=10):
         if not added:
             groups.append([point])
     return groups
-# fine the midpoint of the groups
 
+# fine the midpoint of the groups
 def calculate_midpoints(groups):
     midpoint = [0][0]
     for group in groups:
