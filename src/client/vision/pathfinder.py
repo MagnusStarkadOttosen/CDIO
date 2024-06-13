@@ -3,7 +3,6 @@ import numpy as np
 
 from src.client.utilities import convert_px_to_cm, convert_px_cm_temp, get_distance
 from src.client.vision.shape_detection import Shapes
-from src.client.field.robot import get_degrees_to_rotation
 
 
 class Route:
@@ -15,11 +14,30 @@ class Route:
         self.drivingMode = drivingMode
 
 
-def balls_are_remaining(shapes):
-    if shapes.circles is not None:
+def balls_are_remaining(circles):
+    if circles is not None:
         return True
     else:
         return False
+
+
+def find_nearest_ball(robot_pos, circles):
+    ball_pos = (220, 388)  # hard-coded placeholder
+    # ball_pos = np.array([0, 0])
+    # nearest = 300000
+    # for (x, y, r) in circles:
+    #     # width_cm, height_cm = convert_px_cm(circle.x, circle.y)
+    #     # ball = np.array([width_cm, height_cm])
+    #     # print(f"width : {width_cm} heigth: {height_cm}")
+    #     dist = get_distance(robot_pos, np.array([x, y]))
+    #     # print("dist before if: ", dist)
+    #     if dist < nearest:
+    #         ball_pos[0] = x
+    #         ball_pos[1] = y
+    #         # print("dist: ", dist)
+    #         nearest = dist
+    #         print(f"current nearest dist: {nearest}")
+    return ball_pos
 
 
 def findNearestBall(robotpostition, shape: Shapes):
@@ -31,7 +49,6 @@ def findNearestBall(robotpostition, shape: Shapes):
             # width_cm, height_cm = convert_px_cm(circle.x, circle.y)
             # ball = np.array([width_cm, height_cm])
             # print(f"width : {width_cm} heigth: {height_cm}")
-            print
             dist = get_distance(robotpostition, np.array([x, y]))
             print("dist before if: ", dist)
             if (dist < nearest):
@@ -72,7 +89,7 @@ def straightDrive(robotPostion, shape: Shapes):
     if route:
         target_pos = np.array([route.x, route.y])
         route.drivingmode = "straightDrive"
-        route.newAngle = get_degrees_to_rotation(robotPostion, (route.x, route.y))
+        # route.newAngle = get_degrees_to_rotation(robotPostion, (route.x, route.y))
     return route, target_pos
 
 

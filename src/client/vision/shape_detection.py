@@ -2,30 +2,32 @@ import cv2
 import numpy as np
 
 from src.client.field.robot import calc_vector_direction
-from src.client.vision.filters import clean_the_image, convert_hsv, filter_image_green, filter_image_red, temp_filter_for_red_wall
+from src.client.vision.filters import clean_the_image, convert_hsv, filter_for_yellow, filter_image, filter_image_green, filter_image_red, temp_filter_for_red_wall
 from src.client.field.coordinate_system import calculate_slope, find_corner_points_full, find_corners, find_lines, is_near_90_degrees, warp_perspective
 from src.client.vision.filters import apply_gray, apply_canny
 from src.client.field.coordinate_system import find_intersection
 
 
-def detect_robot(image):
-    green_dot = detect_balls(filter_image_green(image),
-                             min_radius=25, max_radius=35)
-    if green_dot is None:  # TODO Proper error handling for green_dot
-        print("No green dot.")
+def detect_robot(image, direction_color, pivot_color):
+    direction_dot = detect_balls(filter_image(image, direction_color), min_radius=40, max_radius=45)
+    if len(direction_dot) == 0:  # TODO Proper error handling for green_dot
+        print("No direction dot.")
+        return None, None
+    print(f"what direction detectfinds {direction_dot}")
+    # print("green dot found ", len(green_dot))
 
-    red_dot = detect_balls(filter_image_red(image),
-                           min_radius=25, max_radius=35)
-    if red_dot is None:  # TODO Proper error handling for red_dot
-        print("No red dot.")
-
-    robot_pos = (red_dot[0][0], red_dot[0][1])
-    robot_direction = calc_vector_direction(green_dot[0], robot_pos)
+    pivot_dot = detect_balls(filter_image(image, pivot_color), min_radius=60, max_radius=65)
+    if len(pivot_dot) == 0:  # TODO Proper error handling for red_dot
+        print("No pivot dot.")
+        return None, None
+    print(f"what pivot detectfinds {pivot_dot}")
+    # print("yellow dot found ", len(pivot_dot))
+    robot_pos = (pivot_dot[0][0], pivot_dot[0][1])
+    robot_direction = calc_vector_direction(direction_dot[0], robot_pos)
 
     return robot_pos, robot_direction
 
-
-def detect_balls(image, min_radius=15, max_radius=25):
+def detect_egg(image, min_radius=45,max_radius=55):
     # Convert to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
@@ -34,7 +36,7 @@ def detect_balls(image, min_radius=15, max_radius=25):
 
     # Detect circles
     circles = cv2.HoughCircles(edges, cv2.HOUGH_GRADIENT,
-                               dp=1.75, minDist=9,
+                               dp=1.75, minDist=60,
                                param1=30, param2=35,
                                minRadius=min_radius, maxRadius=max_radius)
     if circles is not None:
@@ -44,6 +46,15 @@ def detect_balls(image, min_radius=15, max_radius=25):
         print("No balls detected.")
 
     return circles
+def detect_balls(image, min_radius=15,max_radius=25):
+    # Convert to grayscale
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # Apply Gaussian blur
+    blurred = cv2.GaussianBlur(gray, (9, 9), 2)
+
+    # Apply edge detection
+    edges = cv2.Canny(blurred, 50, 150)
 
 def detect_obstacles(image):
     dst_size = (1200, 1800)  # width, height
@@ -101,7 +112,23 @@ def calculate_midpoints(groups):
         midpoint = (x // len(group), y // len(group))
     return midpoint
 
-class Shapes: # TODO opløs Shapes klasse
+    # Detect circles
+    circles = cv2.HoughCircles(edges, cv2.HOUGH_GRADIENT,
+                               dp=1.75, minDist=9,
+                               param1=30, param2=35,
+                               minRadius=min_radius, maxRadius=max_radius)
+    if circles is not None:
+        circles = np.round(circles[0, :]).astype("int")
+        # print("balls count: ", len(circles))
+    else:
+        print("No balls detected.")
+        circles = np.array([])
+
+    return circles
+
+
+
+class Shapes:  # TODO opløs Shapes klasse
     def __init__(self, image):
         self.original_image = image
         self.image = None
@@ -109,6 +136,7 @@ class Shapes: # TODO opløs Shapes klasse
         self.image = apply_gray(image)
         self.circles = None
         self.lines = None
+
     #
     # def detect_balls(self):
     #     balls = 0
@@ -205,4 +233,3 @@ class Shapes: # TODO opløs Shapes klasse
     #         for corner in corners:
     #             x, y = tuple(corner.ravel())
     #             # cv2.circle(image_to_draw_on, (x, y), 5, (0, 255, 0), -1)  # Draw green circles at each corner
-

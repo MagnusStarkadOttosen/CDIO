@@ -24,14 +24,14 @@ def rotate_vector_to_point(robot_pos, robot_direction, target):
 
     #Calculate the determinant to find the rotation direction
     determinant = robot_direction[0] * direction[1] - robot_direction[1] * direction[0]
-    if(determinant > 0): #CounterClockwise
+    if(determinant < 0): #CounterClockwise
         angle_degrees *= -1
 
     return angle_degrees
 
 #test
-robot_pos = (1, 1)
-robot_direction = (0, 1)
-target_point = (3, 3)
+robot_pos = (158, 983)
+robot_direction = (0, -161)
+target_point = (900, 600)
 angle = rotate_vector_to_point(robot_pos, robot_direction, target_point)
 print(f"Rotate by {angle:.2f} degrees")
