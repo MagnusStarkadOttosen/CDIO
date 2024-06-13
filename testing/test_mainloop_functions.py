@@ -1,6 +1,6 @@
 from src.client.field.coordinate_system import warp_perspective
 from src.client.hsvLoad import read_hsv_values
-from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, cells_to_coordinates, coordinate_to_cell
+from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, astar, cells_to_coordinates, coordinate_to_cell, optimize_path
 from src.client.search_targetpoint.a_star_search import find_path
 from src.mainloop import MainLoop
 from src.client.vision.shape_detection import detect_balls, detect_robot
@@ -35,18 +35,20 @@ def test_nav_to_target_detected_path(ml):
     print(f"target_position: {ml.target_pos}")
 
     red_hsv_values = read_hsv_values('hsv_presets_red.txt')
-    grid_navmesh = GenerateNavMesh(warped_img, red_hsv_values)
+    navmesh = GenerateNavMesh(warped_img, red_hsv_values)
 
     robotCell = coordinate_to_cell(robot_pos[0], robot_pos[1], 30)
-    targetCell = coordinate_to_cell(1800, 1200, 30)
+    targetCell = coordinate_to_cell(1200, 600, 30)
     print(f"robotCell: {robotCell}, targetCell: {targetCell}")
 
-    path = find_path(grid_navmesh, robotCell, targetCell)
+    path = astar(navmesh, robotCell, targetCell)
     print(path)
-    newPath = cells_to_coordinates(path, 30)
-    print(newPath)
+    optimized_path = optimize_path(path, 30)
+    print(optimized_path)
 
-    ml._navigate_to_target(newPath)
+    coord_path = cells_to_coordinates(optimized_path, 30)
+
+    ml._navigate_to_target(coord_path)
 
 
 def test_collect_nearest_ball(ml): # many white balls on field
