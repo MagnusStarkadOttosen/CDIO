@@ -141,7 +141,7 @@ class MainLoop:
         path_to_goal_A.append(goal_A_pivot_point)
         path_to_goal_A.append(goal_A_point)
         self._navigate_to_target(path_to_goal_A)
-        self.client.send_command("start_collect")
+        self.client.send_command("deliver")
 
     def _navigate_to_target(self, path):
         for (x, y) in path:
