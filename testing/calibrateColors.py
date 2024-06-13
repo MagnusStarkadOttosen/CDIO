@@ -220,8 +220,8 @@ current_color = 'green'
 
 # Toggle for circles and lines
 show_circles = False
-show_lines = True
-show_intesections = True
+show_lines = False
+show_intesections = False
 
 
 # Initialize trackbars for the initial color (green)
@@ -262,11 +262,11 @@ while True:
         cv2.imshow('edges', edgesim)
 
     # Display lines
-    # if show_lines:
-    # linestest = find_lines(res)
+    if show_lines:
+        linestest = find_lines(res)
 
-    # if show_intesections:
-    # find_intersections(res, linestest)
+    if show_intesections:
+        find_intersections(res, linestest)
     # newfind_intersections(res, linestest)
     
     # Detect and count balls
