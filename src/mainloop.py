@@ -155,9 +155,12 @@ class MainLoop:
             self._navigate_to_target(path)
 
     def _deliver_balls(self):
-        self.client.send_command("stop")
-        self.client.send_command("deliver")
-        time.sleep(5)  # TODO use on_for_degrees in deliver command server-side
+        path_to_goal_A= []
+        goal_A_pivot_point= (60,600)
+        goal_A_point = (10,600)
+        path_to_goal_A.append(goal_A_pivot_point)
+        path_to_goal_A.append(goal_A_point)
+        self._navigate_to_target(path_to_goal_A)
         self.client.send_command("start_collect")
 
     def _navigate_to_target(self, path):
