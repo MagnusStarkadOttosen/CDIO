@@ -4,8 +4,8 @@
 from src.client.search_targetpoint.a_star_search import find_path
 
 
-src = [2, 1]
-dest = [8, 3]
+src = [3, 4]
+dest = [1, 2]  
 
 # Define the grid (1 for unblocked, 0 for blocked)
 grid = [

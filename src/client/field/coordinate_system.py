@@ -24,6 +24,7 @@ def warp_perspective(image, src_points, dst_size):
     height, width = dst_size
     
     pts_dst = np.array([[0, 0], [width, 0], [width, height], [0, height]], dtype="float32")
+    print(f"src_points: {src_points} pts_dst: {pts_dst} ")
     
     M = cv2.getPerspectiveTransform(src_points, pts_dst)
     
