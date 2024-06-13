@@ -133,9 +133,12 @@ def astar(navmesh, start, goal):
             (current[0] + 1, current[1]),
             (current[0] - 1, current[1]),
             (current[0], current[1] + 1),
-            (current[0], current[1] - 1)
+            (current[0], current[1] - 1),
+            (current[0] + 1, current[1] + 1),
+            (current[0] - 1, current[1] - 1),
+            (current[0] + 1, current[1] - 1),
+            (current[0] - 1, current[1] + 1)
         ]
-        
         for neighbor in neighbors:
             if 0 <= neighbor[1] < navmesh.shape[0] and 0 <= neighbor[0] < navmesh.shape[1]:
                 if navmesh[neighbor[1], neighbor[0]] == 1:  # Check if neighbor is walkable
@@ -177,11 +180,14 @@ def cell_to_image_coordinates(cell_x, cell_y, grid_size):
     bottom_right = ((cell_x + 1) * grid_size, (cell_y + 1) * grid_size)
     return top_left, bottom_right
 
-def overlay_path_on_image(image, navmesh, path, grid_size):
+def overlay_path_on_image(image, path, grid_size):
     overlay = image.copy()
-    for (cell_x, cell_y) in path:
-        top_left, bottom_right = cell_to_image_coordinates(cell_x, cell_y, grid_size)
-        cv2.rectangle(overlay, top_left, bottom_right, (255, 0, 0), -1)  # Blue color for path
+    for i in range(len(path) - 1):
+        start_cell = path[i]
+        end_cell = path[i + 1]
+        start_coord = (start_cell[0] * grid_size + grid_size // 2, start_cell[1] * grid_size + grid_size // 2)
+        end_coord = (end_cell[0] * grid_size + grid_size // 2, end_cell[1] * grid_size + grid_size // 2)
+        cv2.arrowedLine(overlay, start_coord, end_coord, (255, 0, 0), 2, tipLength=0.3)
     combined_image = cv2.addWeighted(image, 0.7, overlay, 0.3, 0)
     return combined_image
 
@@ -204,6 +210,61 @@ def draw_start_goal_on_image(image, start, goal, grid_size):
     combined_image = cv2.addWeighted(image, 0.7, overlay, 0.3, 0)
     return combined_image
 
+def optimize_path(navmesh, path):
+    if not path:
+        return []
+
+    def is_straight_line(p1, p2, p3):
+        return (p1[0] - p2[0]) * (p2[1] - p3[1]) == (p1[1] - p2[1]) * (p2[0] - p3[0])
+    
+    optimized_path = [path[0]]
+    for i in range(1, len(path) - 1):
+        if not is_straight_line(path[i - 1], path[i], path[i + 1]):
+            optimized_path.append(path[i])
+    optimized_path.append(path[-1])
+    
+    return optimized_path
+
+def is_walkable(navmesh, start, end):
+    x0, y0 = start
+    x1, y1 = end
+    dx = abs(x1 - x0)
+    dy = abs(y1 - y0)
+    sx = 1 if x0 < x1 else -1
+    sy = 1 if y0 < y1 else -1
+    err = dx - dy
+    while True:
+        if navmesh[y0, x0] == 0:
+            return False
+        if (x0, y0) == (x1, y1):
+            break
+        e2 = err * 2
+        if e2 > -dy:
+            err -= dy
+            x0 += sx
+        if e2 < dx:
+            err += dx
+            y0 += sy
+    return True
+
+def smooth_path(navmesh, path):
+    if not path:
+        return path
+
+    smoothed_path = [path[0]]
+    i = 0
+
+    while i < len(path) - 1:
+        for j in range(len(path) - 1, i, -1):
+            if is_walkable(navmesh, path[i], path[j]):
+                smoothed_path.append(path[j])
+                i = j
+                break
+        i += 1
+
+    return smoothed_path
+
+
 start = (10, 10)
 goal = (50, 20)
 
@@ -219,10 +280,19 @@ else:
     if path:
         print("Path found:", path)
         pretty_print_navmesh(navmesh, path)
-        combined_image = overlay_path_on_image(image, navmesh, path, grid_size)
+
+        # optimize_path = path
+
+        # optimized_path = optimize_path(navmesh, path)
+        # print("Optimized Path:", optimized_path)
+
+        optimized_path = smooth_path(navmesh, path)
+        print("Optimized Path:", optimized_path)
+
+        combined_image = overlay_path_on_image(image, optimized_path, grid_size)
         combined_image = draw_start_goal_on_image(combined_image, start, goal, grid_size)
         combined_image = overlay_tried_cells_on_image(combined_image, tried_cells, grid_size)
-        cv2.imshow('Navmesh with Path', combined_image)
+        cv2.imshow('Navmesh with Optimized Path', combined_image)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
     else:
