@@ -13,7 +13,6 @@ from src.client.vision.camera import capture_image, initialize_camera
 from src.client.vision.filters import filter_image
 from src.client.vision.pathfinder import find_nearest_ball
 from src.client.vision.shape_detection import detect_balls, detect_obstacles, detect_robot
-# from src.client.search_targetpoint.a_star_search import find_path
 from src.client.hsvLoad import read_hsv_values
 
 

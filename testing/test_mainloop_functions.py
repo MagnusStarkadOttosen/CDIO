@@ -1,6 +1,7 @@
 from src.client.field.coordinate_system import warp_perspective
 from src.client.hsvLoad import read_hsv_values
-from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, astar, cells_to_coordinates, coordinate_to_cell, optimize_path
+from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, astar, cells_to_coordinates, coordinate_to_cell, \
+    optimize_path, find_path
 from src.mainloop import MainLoop
 from src.client.vision.shape_detection import detect_robot
 
@@ -73,6 +74,18 @@ def test_nav_to_target_detected_path(ml):
     print(f"coord_path: {coord_path}")
 
     ml._navigate_to_target(coord_path)
+
+
+def test_nav_to_target_with_find_path(ml):
+    ret, frame = ml.camera.read()
+    warped_img = warp_perspective(frame, ml.final_points, DST_SIZE)
+    print(f"testing colors {ml.direction_color}")
+    robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color)
+    while robot_pos is None or robot_direction is None:
+        robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color)
+
+    print(f"robot_pos: {robot_pos}, robot_direction: {robot_direction}")
+    path = find_path()
 
 
 def test_collect_nearest_ball(ml): # many white balls on field
