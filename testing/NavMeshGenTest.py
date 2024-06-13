@@ -1,11 +1,10 @@
+import heapq
 import cv2
 import numpy as np
 from scipy.spatial import Delaunay
 from shapely.geometry import Polygon, Point
 from shapely.ops import unary_union
 import matplotlib.pyplot as plt
-
-from src.client.search_targetpoint.a_star_search import find_path
 
 # Paths
 input_folder_path = 'originalImages/'
@@ -16,59 +15,6 @@ output_image_path = output_folder_path + 'NavMesh_' + image_name
 
 # Load the image
 image = cv2.imread(input_image_path)
-
-# # Convert to grayscale
-# gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-# # Threshold the image to create a binary image
-# _, binary = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY_INV)
-
-# # Find contours
-# contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-# # Create vertices and polygons for the navmesh
-# vertices = []
-# for contour in contours:
-#     for point in contour:
-#         x, y = point[0]
-#         vertices.append((x, y))
-
-# # Perform Delaunay triangulation
-# points = np.array(vertices)
-# delaunay = Delaunay(points)
-# triangles = points[delaunay.simplices]
-
-# # Filter out small contours that cannot form valid polygons
-# filtered_contours = [contour for contour in contours if len(contour) >= 3]
-
-# # Create obstacle polygons
-# obstacle_polygons = [Polygon(contour[:, 0, :]) for contour in filtered_contours]
-# combined_obstacles = unary_union(obstacle_polygons)
-
-# # Function to check if a triangle intersects with any obstacle
-# def is_triangle_valid(triangle, obstacles):
-#     poly = Polygon(triangle)
-#     return not poly.intersects(obstacles)
-
-# # Filter valid triangles
-# valid_triangles = [tri for tri in triangles if is_triangle_valid(tri, combined_obstacles)]
-
-# # Create an output image to draw the navmesh
-# output_image = image.copy()
-
-# # Draw the valid triangles
-# for tri in valid_triangles:
-#     pts = np.array(tri, np.int32)
-#     pts = pts.reshape((-1, 1, 2))
-#     cv2.polylines(output_image, [pts], isClosed=True, color=(0, 255, 0), thickness=2)
-
-# # Save the resulting image
-# cv2.imwrite(output_image_path, output_image)
-
-# # Display the result
-# cv2.imshow('Navmesh', output_image)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
 
 
 def read_hsv_values(filename):
@@ -93,101 +39,10 @@ def inverted_filter_mask(image, hsv_values):
 
 
 
-
-
-
-
-
-
 # # def generate_navmesh(image):
 
 red_hsv_values = read_hsv_values('hsv_presets_red.txt')
 mask, inverted_red_mask = inverted_filter_mask(image, red_hsv_values)
-
-
-# # Downsample the image
-# downsample_factor = 100
-# small_image = inverted_red_mask[::downsample_factor, ::downsample_factor]
-
-# # Dilate the black areas
-# kernel_size = 3  # Adjust this to change the distance from black areas
-# kernel = np.ones((kernel_size, kernel_size), np.uint8)
-# dilated_image = cv2.dilate(1 - small_image, kernel)
-
-# # Invert the image to get the navmesh areas
-# navmesh = 1 - dilated_image
-
-# # Ensure navmesh stays away from edges
-# edge_padding = 1  # Adjust based on how far from the edges you want to stay
-# navmesh[:edge_padding, :] = 0
-# navmesh[-edge_padding:, :] = 0
-# navmesh[:, :edge_padding] = 0
-# navmesh[:, -edge_padding:] = 0
-
-# # Plot the results
-# plt.figure(figsize=(12, 8))
-# plt.subplot(1, 2, 1)
-# plt.title("Original Image")
-# plt.imshow(inverted_red_mask, cmap='gray')
-
-# plt.subplot(1, 2, 2)
-# plt.title("Navmesh")
-# plt.imshow(navmesh, cmap='gray')
-
-# plt.show()
-
-
-# # Find contours
-# contours, _ = cv2.findContours(inverted_red_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-# # Draw contours on the image to visualize the navmesh
-# navmesh = image.copy()
-# cv2.drawContours(navmesh, contours, -1, (0, 255, 0), 3)
-
-# # Display the images
-# cv2.imshow('Original Image', image)
-# cv2.imshow('Mask', inverted_red_mask)
-# # # cv2.imshow('Navmesh', navmesh)
-# # cv2.waitKey(0)
-# # cv2.destroyAllWindows()
-
-
-# gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-# height, width = gray.shape
-
-# # Create the navmesh grid
-# grid_size = 30  # Change this value to adjust the granularity of the navmesh
-# navmesh = np.zeros((height // grid_size, width // grid_size), dtype=np.uint8)
-
-# for y in range(0, height, grid_size):
-#         for x in range(0, width, grid_size):
-#             cell = inverted_red_mask[y:y + grid_size, x:x + grid_size]
-#             if np.any(cell == 255):  # If any part of the cell is walkable
-#                 navmesh[y // grid_size, x // grid_size] = 1
-
-# navmesh_img = np.zeros_like(image)
-# grid_size = 30
-# for y in range(navmesh.shape[0]):
-#     for x in range(navmesh.shape[1]):
-#         if navmesh[y, x] == 1:
-#             cv2.rectangle(navmesh_img, (x * grid_size, y * grid_size), ((x + 1) * grid_size, (y + 1) * grid_size), (0, 255, 0), -1)
-
-# # Overlay the navmesh on the original image
-# overlay = cv2.addWeighted(image, 0.5, navmesh_img, 0.5, 0)
-
-# # Display the images
-# cv2.imshow('Original Image', image)
-# # cv2.imshow('Walkable Area', inverted_filter_mask)
-# cv2.imshow('Navmesh', overlay)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
-    
-
-
-
-
-
-
 
 
 # Convert image to grayscale
@@ -236,22 +91,146 @@ for y in range(navmesh.shape[0]):
 overlay = cv2.addWeighted(image, 0.5, navmesh_img, 0.5, 0)
 
 # Display the images
-cv2.imshow('Original Image', image)
-cv2.imshow('Navmesh', overlay)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+# cv2.imshow('Original Image', image)
+# cv2.imshow('Navmesh', overlay)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
 np.set_printoptions(threshold=np.inf)
 inverted_navmesh = np.logical_not(navmesh).astype(np.uint8)
-print(inverted_navmesh)
+# print(inverted_navmesh)
 
-src = [10, 10]
-dest = [30, 30]
 
-# Run the A* search algorithm
-asdf = find_path(inverted_navmesh, src, dest)
-if asdf:
-    for(i, j) in asdf:
-       inverted_navmesh[j][i] = 3
-    for row in inverted_navmesh:
-        print("".join(str(cell) for cell in row))
-print(asdf)
+
+def heuristic(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+def astar(navmesh, start, goal):
+    # Priority queue to store (cost, current_node)
+    open_set = []
+    heapq.heappush(open_set, (0, start))
+    
+    # Dictionaries to store the cost from start to each node and the path
+    g_costs = {start: 0}
+    came_from = {start: None}
+
+    tried_cells = set()
+    
+    while open_set:
+        _, current = heapq.heappop(open_set)
+        tried_cells.add(current)
+        
+        if current == goal:
+            # Reconstruct the path
+            path = []
+            while current is not None:
+                path.append(current)
+                current = came_from[current]
+            path.reverse()
+            return path, tried_cells
+        
+        # Get neighbors
+        neighbors = [
+            (current[0] + 1, current[1]),
+            (current[0] - 1, current[1]),
+            (current[0], current[1] + 1),
+            (current[0], current[1] - 1)
+        ]
+        
+        for neighbor in neighbors:
+            if 0 <= neighbor[1] < navmesh.shape[0] and 0 <= neighbor[0] < navmesh.shape[1]:
+                if navmesh[neighbor[1], neighbor[0]] == 1:  # Check if neighbor is walkable
+                    tentative_g_cost = g_costs[current] + 1
+                    if neighbor not in g_costs or tentative_g_cost < g_costs[neighbor]:
+                        g_costs[neighbor] = tentative_g_cost
+                        f_cost = tentative_g_cost + heuristic(neighbor, goal)
+                        heapq.heappush(open_set, (f_cost, neighbor))
+                        came_from[neighbor] = current
+        print(f"Considering neighbor: {neighbor} - Walkable: {navmesh[neighbor[1], neighbor[0]] if 0 <= neighbor[1] < navmesh.shape[0] and 0 <= neighbor[0] < navmesh.shape[1] else 'Out of bounds'}")
+    
+    return None, tried_cells  # Path not found
+
+def pretty_print_navmesh(navmesh, path):
+    navmesh_copy = navmesh.copy()
+    for (x, y) in path:
+        navmesh_copy[y, x] = 2  # Mark the path with '2'
+
+    for row in navmesh_copy:
+        print(' '.join(str(cell) for cell in row))
+
+# Converts the coordinates from the image to the cell
+def coordinate_to_cell(x, y, grid_size):
+    cell_x = x // grid_size
+    cell_y = y // grid_size
+    return cell_x, cell_y
+
+# Converts the list of cells from a star to a list of coordinates
+def cells_to_coordinates(cells, grid_size):
+    coordinates = []
+    for cell_x, cell_y in cells:
+        top_left = (cell_x * grid_size, cell_y * grid_size)
+        bottom_right = ((cell_x + 1) * grid_size, (cell_y + 1) * grid_size)
+        coordinates.append((top_left, bottom_right))
+    return coordinates
+
+def cell_to_image_coordinates(cell_x, cell_y, grid_size):
+    top_left = (cell_x * grid_size, cell_y * grid_size)
+    bottom_right = ((cell_x + 1) * grid_size, (cell_y + 1) * grid_size)
+    return top_left, bottom_right
+
+def overlay_path_on_image(image, navmesh, path, grid_size):
+    overlay = image.copy()
+    for (cell_x, cell_y) in path:
+        top_left, bottom_right = cell_to_image_coordinates(cell_x, cell_y, grid_size)
+        cv2.rectangle(overlay, top_left, bottom_right, (255, 0, 0), -1)  # Blue color for path
+    combined_image = cv2.addWeighted(image, 0.7, overlay, 0.3, 0)
+    return combined_image
+
+def overlay_tried_cells_on_image(image, tried_cells, grid_size):
+    overlay = image.copy()
+    for (cell_x, cell_y) in tried_cells:
+        top_left, bottom_right = cell_to_image_coordinates(cell_x, cell_y, grid_size)
+        cv2.rectangle(overlay, top_left, bottom_right, (0, 255, 255), -1)  # Yellow color for tried cells
+    combined_image = cv2.addWeighted(image, 0.7, overlay, 0.3, 0)
+    return combined_image
+
+def draw_start_goal_on_image(image, start, goal, grid_size):
+    overlay = image.copy()
+    start_top_left, start_bottom_right = cell_to_image_coordinates(start[0], start[1], grid_size)
+    goal_top_left, goal_bottom_right = cell_to_image_coordinates(goal[0], goal[1], grid_size)
+    
+    cv2.rectangle(overlay, start_top_left, start_bottom_right, (0, 255, 255), -1)  # Yellow for start
+    cv2.rectangle(overlay, goal_top_left, goal_bottom_right, (0, 0, 255), -1)     # Red for goal
+    
+    combined_image = cv2.addWeighted(image, 0.7, overlay, 0.3, 0)
+    return combined_image
+
+start = (10, 10)
+goal = (50, 20)
+
+# Check if start and goal are walkable
+if navmesh[start[1], start[0]] == 0 or navmesh[goal[1], goal[0]] == 0:
+    print(f"Start or goal is not in a walkable area. Start walkable: {navmesh[start[1], start[0]]}, Goal walkable: {navmesh[goal[1], goal[0]]}")
+else:
+    print(f"Start cell: {start}")
+    print(f"Goal cell: {goal}")
+
+    path, tried_cells = astar(navmesh, start, goal)
+
+    if path:
+        print("Path found:", path)
+        pretty_print_navmesh(navmesh, path)
+        combined_image = overlay_path_on_image(image, navmesh, path, grid_size)
+        combined_image = draw_start_goal_on_image(combined_image, start, goal, grid_size)
+        combined_image = overlay_tried_cells_on_image(combined_image, tried_cells, grid_size)
+        cv2.imshow('Navmesh with Path', combined_image)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+    else:
+        print("No path found.")
+        pretty_print_navmesh(navmesh, [])
+        combined_image = draw_start_goal_on_image(image, start, goal, grid_size)
+        combined_image = overlay_tried_cells_on_image(combined_image, tried_cells, grid_size)
+        cv2.imshow('Navmesh with Path', combined_image)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+        

@@ -1,4 +1,5 @@
 
+import heapq
 import cv2
 import numpy as np
 
@@ -59,3 +60,47 @@ def cells_to_coordinates(cells, grid_size):
         bottom_right = ((cell_x + 1) * grid_size, (cell_y + 1) * grid_size)
         coordinates.append((top_left, bottom_right))
     return coordinates
+
+def heuristic(a, b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+def astar(navmesh, start, goal):
+    # Priority queue to store (cost, current_node)
+    open_set = []
+    heapq.heappush(open_set, (0, start))
+    
+    # Dictionaries to store the cost from start to each node and the path
+    g_costs = {start: 0}
+    came_from = {start: None}
+    
+    while open_set:
+        _, current = heapq.heappop(open_set)
+        
+        if current == goal:
+            # Reconstruct the path
+            path = []
+            while current is not None:
+                path.append(current)
+                current = came_from[current]
+            path.reverse()
+            return path
+        
+        # Get neighbors
+        neighbors = [
+            (current[0] + 1, current[1]),
+            (current[0] - 1, current[1]),
+            (current[0], current[1] + 1),
+            (current[0], current[1] - 1)
+        ]
+        
+        for neighbor in neighbors:
+            if 0 <= neighbor[0] < navmesh.shape[0] and 0 <= neighbor[1] < navmesh.shape[1]:
+                if navmesh[neighbor[0], neighbor[1]] == 1:  # Check if neighbor is walkable
+                    tentative_g_cost = g_costs[current] + 1
+                    if neighbor not in g_costs or tentative_g_cost < g_costs[neighbor]:
+                        g_costs[neighbor] = tentative_g_cost
+                        f_cost = tentative_g_cost + heuristic(neighbor, goal)
+                        heapq.heappush(open_set, (f_cost, neighbor))
+                        came_from[neighbor] = current
+    
+    return None  # Path not found

@@ -16,8 +16,8 @@ class Cell:
 
 #TODO: This need to come from the grid and not hardcoded
 # Define the size of the grid
-ROW = 40
-COL = 60
+ROW = 60
+COL = 40
 
 
 # Check if a cell is valid (within the grid)
