@@ -243,10 +243,10 @@ class MainLoop:
                     else:
                         self.client.send_command("start_drive 10")
 
-                    if are_points_close(robot_pos,self.target_pos,300):
-                         self.client.send_command("start_collect")
-                    else:
-                         self.client.send_command("stop_collect")
+                    # if are_points_close(robot_pos,self.target_pos,300):
+                    #      self.client.send_command("start_collect")
+                    # else:
+                    #      self.client.send_command("stop_collect")
 
 
     def _course_correction(self, angle, target, tol=10): # TODO read final points only once at start?

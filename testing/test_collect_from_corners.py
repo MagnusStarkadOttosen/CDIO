@@ -15,7 +15,8 @@ print("Test collecting from corners.")
 
 IMAGE_SIZE = [1200, 1800]
 ball_coords_1 = (1690, 574)
-ball_coords_2 = (1790, 10)
+ball_coords_2 = (1720, 1120)
+ball_coords_3 = (1600, 1000)
 
 WHITE_BALL_COUNT = 10
 ROBOT_CAPACITY = 6
@@ -43,20 +44,40 @@ main_loop.initialize_field()
 #     main_loop._navigate_to_target(corner_points)
 # else:
 #     print("Ball is not in any corners.")
+main_loop.client.send_command("start_drive 20")
 if is_ball_in_corner(ball_coords_2):
     print(f"There is a ball in {ball_coords_2} ")
-    corner_result_2 = check_corners(ball_coords_2, threshold=50)
-    print("saddfsd19243284")
+    corner_result_2 = check_corners(ball_coords_2, threshold=400)
+    print("corner ressult 2", corner_result_2)
     pivot_points, corner_points = robot_movement_based_on_corners(corner_result_2)
     print(f"pivot: {pivot_points} corner: {corner_points}")
 
-    temp = [pivot_points]
-    print(f"temp: {temp}")
+    # temp = [pivot_points]
+    # print(f"temp: {temp}")
+    print("before navigate_to_target")
     # main_loop.client.send_command("start_collect")
-    main_loop._navigate_to_target(temp)
+    main_loop._navigate_to_target([pivot_points])
+    print("after navigate_to_target")
+
     main_loop.client.send_command("stop")
+
+    robot_pos, robot_direction = main_loop.temp()
+
+    angle = rotate_vector_to_point(robot_pos, robot_direction, (1700,1200))
+
+    # angle = calc_degrees_to_rotate(robot_direction, target_direction)
+    # print(f"after robot pos {robot_pos} and direction {robot_direction} and target {(x, y)} and angle: {angle}")
+    tolerance = 1
+    if angle < -tolerance or angle > tolerance:
+        print(f"asdsdkjfsdkjfsdkj {angle}")
+        main_loop._course_correction(angle, (1700,1200), tol=tolerance)
+
     main_loop.client.send_command("start_collect")
-    main_loop._navigate_to_target(temp) # we are here
+    main_loop.client.send_command("move 50")
+    main_loop.client.send_command("move -50")
+    # main_loop._navigate_to_target(pivot_points)
+    main_loop.client.send_command("stop")
+
 
 
     # robot_pos, robot_direction = main_loop.temp()

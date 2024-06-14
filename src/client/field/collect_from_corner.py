@@ -27,7 +27,7 @@ def calculate_distance(corner_point, target_point):
 
 
 def is_ball_in_corner(ball_coords):
-    corner_results = check_corners(ball_coords, threshold=50)
+    corner_results = check_corners(ball_coords, threshold=400)
     print(f"Is ball in a corner? {any(corner_results.values())}")
     return any(corner_results.values())
 
@@ -65,7 +65,7 @@ def robot_movement_based_on_corners(corner_results):
         return PIVOT_POINTS[1], (1800, 0)
     elif corner_results["bottom_right"]:
         print("Ball is near the bottom-right corner. Robot action: move to PIVOT_POINT 1 and then navigate to bottom-right.")
-        return PIVOT_POINTS[1], CORNERS[3]
+        return PIVOT_POINTS[1], CORNERS["bottom_right"]
     else:
         print("No ball near any corner")
         return False

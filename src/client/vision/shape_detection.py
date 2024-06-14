@@ -68,10 +68,10 @@ def detect_balls(image, min_radius=15,max_radius=25):
     return []
 
 def detect_obstacles(image):
-    dst_size = (1200, 1800)  # width, height
-    corners = find_corner_points_full(image, doVerbose=True) 
-    gen_warped_image = warp_perspective(image, corners, dst_size)
-    red_image = temp_filter_for_red_wall(gen_warped_image)
+    # dst_size = (1200, 1800)  # width, height
+    # corners = find_corner_points_full(image, doVerbose=True)
+    # gen_warped_image = warp_perspective(image, corners, dst_size)
+    red_image = temp_filter_for_red_wall(image)
     clean_image = clean_the_image(red_image)
     edge_image, lines = find_lines(clean_image, resolution=5, doVerbose=True)
     intersections=[]
@@ -96,7 +96,7 @@ def detect_obstacles(image):
     cv2.imwrite(re_image_path, clean_image)
     # print(f"Total intersections found: {len(intersections)}")
     # print(f"midpoint: {midpoint}")
-    return  intersections, midpoint
+    return  midpoint
 
 def group_close_points(points, distance_threshold=10):
     groups = []
