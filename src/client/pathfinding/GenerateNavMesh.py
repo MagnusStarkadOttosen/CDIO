@@ -3,15 +3,45 @@ import heapq
 import cv2
 import numpy as np
 
+from src.client.hsvLoad import read_hsv_values
+from testing.test_mainloop_functions import pretty_print_navmesh
+
+
+def find_path(warped_img, robot_pos, target_pos):
+    red_hsv_values = read_hsv_values('hsv_presets_red.txt')
+    navmesh = GenerateNavMesh(warped_img, red_hsv_values)
+    pretty_print_navmesh(navmesh, [])
+    print("sdfdjsdjkjkdsfd")
+    robotCell = coordinate_to_cell(robot_pos[0], robot_pos[1], 30)
+
+    targetCell = coordinate_to_cell(target_pos[0], target_pos[1], 30)
+    print(f"robotCell: {robotCell}, targetCell: {targetCell}")
+    print(f"x: {robotCell[0]}, y: {robotCell[1]}")
+    print(f"asdasdas {navmesh[robotCell[1], robotCell[0]]}")
+
+    path = astar(navmesh, robotCell, targetCell)
+    # while path is None:
+    #     print("try again")
+    #     path = astar(navmesh, robotCell, targetCell)
+
+    print(f"path {path}")
+    optimized_path = optimize_path(navmesh, path)
+    print(f"optimized path: {optimized_path}")
+
+    coord_path = cells_to_coordinates(optimized_path, 30)
+
+    print(f"coord_path: {coord_path}")
+
+    return coord_path
+
 
 def GenerateNavMesh(image, hsv_values):
-
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     height, width = gray.shape
 
     # Define the grid size for the navmesh
     grid_size = 30
-    buffer_size = 100
+    buffer_size = 150
 
     # Find 
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
@@ -51,11 +81,7 @@ def coordinate_to_cell(x, y, grid_size):
 
 # Converts the list of cells from a star to a list of coordinates
 def cells_to_coordinates(cells, grid_size):
-    coordinates = []
-    for cell_x, cell_y in cells:
-        top_left = (cell_x * grid_size, cell_y * grid_size)
-        bottom_right = ((cell_x + 1) * grid_size, (cell_y + 1) * grid_size)
-        coordinates.append((top_left, bottom_right))
+    coordinates = [(x*grid_size,y*grid_size) for x, y in cells]
     return coordinates
 
 def heuristic(a, b):
