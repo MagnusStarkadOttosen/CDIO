@@ -20,7 +20,7 @@ robot_positions = [
 main_loop = MainLoop()
 main_loop.initialize_field()
 
-main_loop.client.send_command("start_drive")
+main_loop.client.send_command("start_drive 10")
 print("start_drive command sent")
 
 # Loop through each robot position and test it

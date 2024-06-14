@@ -1,6 +1,6 @@
 #buffer_points = [(100, 100), (1700, 100), (1700, 1100), (100, 1100)]
 buffer_points = [(200, 200), (1600, 200), (1600, 1000), (200, 1000)]
-buffer_distance = 300
+buffer_distance = 400
 
 # Determine the top-left and bottom-right points of the rectangle
 # green_zone_top_left = (min(point[0] for point in buffer_points), min(point[1] for point in buffer_points))

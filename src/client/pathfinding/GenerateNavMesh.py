@@ -3,8 +3,6 @@ import heapq
 import cv2
 import numpy as np
 
-from src.client.hsvLoad import read_hsv_values
-from testing.test_mainloop_functions import pretty_print_navmesh
 def GenerateNavMesh(image, hsv_values):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     height, width = gray.shape

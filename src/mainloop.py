@@ -2,7 +2,8 @@ import time
 
 import cv2
 
-from src.client.pathfinding.GenerateNavMesh import find_path
+from src.client.pathfinding.FindPath import find_path
+# from src.client.pathfinding.GenerateNavMesh import find_path
 from src.client.search_targetpoint.obstacle_search import is_ball_in_obstacle, obstacle_Search
 from src.client.field.collect_from_corner import is_ball_in_corner, check_corners, robot_movement_based_on_corners
 from src.client.field.coordinate_system import are_points_close, find_corner_points_full, warp_perspective
@@ -119,40 +120,41 @@ class MainLoop:
             self.target_pos = self.balls[0][:2]
         else:
             self.balls = detect_balls(filter_image(warped_img, self.white))
-            if not self.balls:
+            if len(self.balls) == 0:
                 return
+            print(self.balls)
             self.target_pos = find_nearest_ball(robot_pos, self.balls) # TODO handle target being null
             print(f"Nearest ball pos : {self.target_pos[0]},{self.target_pos[1]}")
 
-        if is_ball_in_corner(self.balls):
-            corner_result = check_corners(self.balls, threshold=50)
-            pivot_points, corner_points = robot_movement_based_on_corners(corner_result)
-            path = find_path(self.grid, robot_pos, pivot_points)
-            self._navigate_to_target(path)
-            self.client.send_command("start_collect")
-            self._navigate_to_target(corner_points)
-            self._navigate_to_target(path)
-            self.client.send_command("stop_collect")
-            self.client.send_command("stop")
-        elif is_ball_in_obstacle(self.balls, midpoint):
-            midpoint=self._detect_obstacles()
-            target_point = obstacle_Search(self.balls, 0, 1, midpoint)
-            target=  obstacle_Search(self.balls, 1, 0, midpoint)
-            path= [target_point]
-            self._navigate_to_target(path)
-            self.client.send_command("start_collect")
-            angle = rotate_vector_to_point(robot_pos, robot_direction,target)
-            print(f"after robot pos {robot_pos} and direction {robot_direction} and target {target} and angle: {angle}")
-            if angle < -TOLERANCE or angle > TOLERANCE:
-                self._course_correction(angle, target)
-            self.client.send_command("move 7")
-            self.client.send_command("move -7")
-            self.client.send_command("stop_collect")
-            self.client.send_command("stop")
+        # if is_ball_in_corner(self.balls):
+        #     corner_result = check_corners(self.balls, threshold=50)
+        #     pivot_points, corner_points = robot_movement_based_on_corners(corner_result)
+        #     # path = find_path(self.grid, robot_pos, pivot_points)
+        #     # self._navigate_to_target(path)
+        #     self.client.send_command("start_collect")
+        #     self._navigate_to_target(corner_points)
+        #     # self._navigate_to_target(path)
+        #     self.client.send_command("stop_collect")
+        #     self.client.send_command("stop")
+        # # elif is_ball_in_obstacle(self.balls, midpoint):
+        #     midpoint=self._detect_obstacles()
+        #     target_point = obstacle_Search(self.balls, 0, 1, midpoint)
+        #     target=  obstacle_Search(self.balls, 1, 0, midpoint)
+        #     path= [target_point]
+        #     self._navigate_to_target(path)
+        #     self.client.send_command("start_collect")
+        #     angle = rotate_vector_to_point(robot_pos, robot_direction,target)
+        #     print(f"after robot pos {robot_pos} and direction {robot_direction} and target {target} and angle: {angle}")
+        #     if angle < -TOLERANCE or angle > TOLERANCE:
+        #         self._course_correction(angle, target)
+        #     self.client.send_command("move 7")
+        #     self.client.send_command("move -7")
+        #     self.client.send_command("stop_collect")
+        #     self.client.send_command("stop")
            
-        else:
-            path = find_path(warped_img, robot_pos, self.target_pos)
-            self._navigate_to_target(path)
+        #else:
+        path = find_path(warped_img, robot_pos, self.target_pos)
+        self._navigate_to_target(path)
 
     def _deliver_balls(self):
         ret, frame = self.camera.read()
@@ -209,9 +211,10 @@ class MainLoop:
 
                 # angle = calc_degrees_to_rotate(robot_direction, target_direction)
                 print(f"after robot pos {robot_pos} and direction {robot_direction} and target {(x, y)} and angle: {angle}")
-                if angle < -TOLERANCE or angle > TOLERANCE:
+                tolerance = 10
+                if angle < -tolerance or angle > tolerance:
                     print(f"asdsdkjfsdkjfsdkj {angle}")
-                    self._course_correction(angle, (x,y))
+                    self._course_correction(angle, (x,y), tol=tolerance)
 
                 # if self.robot_is_turning:
                 #     self.robot_is_turning = False
@@ -222,8 +225,8 @@ class MainLoop:
                     self.robot_is_moving = True
 
                 if self.robot_is_moving:
-                    if are_points_close(robot_pos,(x,y),100):
-                        self.client.send_command("start_drive 30")
+                    if are_points_close(robot_pos,(x,y),300):
+                        self.client.send_command("start_drive 10")
                     else:
                         self.client.send_command("start_drive 10")
 
