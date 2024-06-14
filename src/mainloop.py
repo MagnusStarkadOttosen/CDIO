@@ -221,12 +221,12 @@ class MainLoop:
                     self.robot_is_moving = True
 
                 if self.robot_is_moving:
-                    if are_points_close(robot_pos,(x,y),100):
+                    if are_points_close(robot_pos,(x,y),300):
                         self.client.send_command("start_drive 30")
                     else:
                         self.client.send_command("start_drive 10")
 
-                    if are_points_close(robot_pos,self.target_pos,100):
+                    if are_points_close(robot_pos,self.target_pos,300):
                          self.client.send_command("start_collect")
                     else:
                          self.client.send_command("stop_collect")
