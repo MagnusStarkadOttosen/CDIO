@@ -143,8 +143,8 @@ class MainLoop:
             self.client.send_command("start_collect")
             angle = rotate_vector_to_point(robot_pos, robot_direction,target)
             print(f"after robot pos {robot_pos} and direction {robot_direction} and target {target} and angle: {angle}")
-            if angle < -TOLERANCE or angle > TOLERANCE:
-                self._course_correction(angle, target)
+            if angle < -1 or angle > 1:
+                self._course_correction(angle, target,tol=1)
             self.client.send_command("move 7")
             self.client.send_command("move -7")
             self.client.send_command("stop_collect")

@@ -1,40 +1,42 @@
-import unittest
-from unittest.mock import patch, MagicMock
-import cv2
-import numpy as np
 
-import mainloop
+from client.field.coordinate_system import warp_perspective
+from client.pathfinding.CalculateCommandList import rotate_vector_to_point
+from client.search_targetpoint.obstacle_search import obstacle_Search
+from client.vision.filters import filter_image
+from client.vision.shape_detection import detect_balls, detect_obstacles, detect_robot
+from mainloop import MainLoop
 
-class TestRobotReactionToObstacle(unittest.TestCase):
-    def setUp(self):
-        self.main_loop = mainloop()
 
-    def load_image(self, filepath):
-        return cv2.imread(filepath)
+DST_SIZE = (1200, 1800)
+# make a test for collect ball in obstacle area : robot have to move to the targetpoint,
+# # have to turn in the right direction to the target point before executing commands
+def test_collect_ball_in_obstacle(ml):
+    ret, frame = ml.camera.read()
+    warped_img = warp_perspective(frame, ml.final_points, DST_SIZE)
+    print(f"testing colors {ml.direction_color}")
+    robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color)
+    while robot_pos is None or robot_direction is None:
+        robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color)
+    
+    ball = detect_balls(filter_image(warped_img, "filter_image_white"))
 
-    @patch('src.client.vision.camera.cv2.VideoCapture.read')
-    @patch('src.client.vision.shape_detection.detect_robot')
-    @patch('src.client.vision.filters.filter_image')
-    @patch('src.client.vision.shape_detection.detect_balls')
-    @patch('src.client.vision.shape_detection.detect_obstacles')
-    @patch('src.client.search_targetpoint.obstacle_search.obstacle_Search')
-    @patch('src.client.search_targetpoint.obstacle_search.is_ball_in_obstacle')
-    def test_robot_reacts_to_obstacle(self, mock_is_ball_in_obstacle, mock_obstacle_search, mock_detect_obstacles, mock_detect_balls, mock_filter_image, mock_detect_robot, mock_cv2_read):
-       
-        image = self.load_image('path_to_your_real_image.jpg')
+    midpoint = detect_obstacles(filter_image(warped_img, "filter_image_red"))
+    target_point, target = obstacle_Search(ball[0], 0, 1, midpoint)
+    path = [target_point]
+    ml._navigate_to_target(path)
+    
+    angle = rotate_vector_to_point(robot_pos, robot_direction,target)
+    print(f"after robot pos {robot_pos} and direction {robot_direction} and target {target} and angle: {angle}")
+    if angle < -1 or angle > 1:
+        ml._course_correction(angle, target,tol=1)
+    ml.client.send_command("move 7")
+    ml.client.send_command("move -7")
+    ml.client.send_command("stop_collect")
+    ml.client.send_command("stop")
 
-     
-        
-       
-        expected_calls = [
-            patch('self.main_loop.client.send_command').call("start_collect"),
-            patch('self.main_loop.client.send_command').call("move 7"),
-            patch('self.main_loop.client.send_command').call("move -7"),
-            patch('self.main_loop.client.send_command').call("stop_collect"),
-            patch('self.main_loop.client.send_command').call("stop")
-        ]
-        
-        self.main_loop.client.send_command.assert_has_calls(expected_calls, any_order=True)
 
-if __name__ == '__main__':
-    unittest.main()
+
+
+main_loop = MainLoop()
+main_loop.initialize_field()
+test_collect_ball_in_obstacle(main_loop)
