@@ -152,9 +152,9 @@ class MainLoop:
         #     self.client.send_command("stop_collect")
         #     self.client.send_command("stop")
            
-        #else:
-        path = find_path(warped_img, robot_pos, self.target_pos)
-        self._navigate_to_target(path)
+        else:
+            path = find_path(warped_img, robot_pos, self.target_pos)
+            self._navigate_to_target(path)
 
     def _deliver_balls(self):
         ret, frame = self.camera.read()
@@ -229,6 +229,12 @@ class MainLoop:
                         self.client.send_command("start_drive 10")
                     else:
                         self.client.send_command("start_drive 10")
+
+                    if are_points_close(robot_pos,self.target_pos,300):
+                         self.client.send_command("start_collect")
+                    else:
+                         self.client.send_command("stop_collect")
+
 
     def _course_correction(self, angle, target, tol=10): # TODO read final points only once at start?
         print(f"inside course correction. Angle: {angle}. Tolerance: {tol}")
