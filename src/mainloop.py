@@ -3,6 +3,7 @@ import time
 import cv2
 
 from src.client.pathfinding.FindPath import find_path
+from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh
 # from src.client.pathfinding.GenerateNavMesh import find_path
 from src.client.search_targetpoint.obstacle_search import is_ball_in_obstacle, obstacle_Search
 from src.client.field.collect_from_corner import is_ball_in_corner, check_corners, robot_movement_based_on_corners
@@ -37,7 +38,7 @@ class MainLoop:
         self.target_pos = None
         self.camera = cv2.VideoCapture(1, cv2.CAP_DSHOW)
         self.final_points = None
-        self.grid = None
+        self.navmesh = None
         self.robot_is_moving = False
         self.robot_is_turning = False
         self.target_found = False
@@ -76,6 +77,9 @@ class MainLoop:
 
         ret, frame = self.camera.read()
         self.final_points = find_corner_points_full(frame, self.red, doVerbose=True)
+        warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
+        red_hsv_values = read_hsv_values('hsv_presets_red.txt')
+        self.navmesh = GenerateNavMesh(warped_img, red_hsv_values)
 
     def _detect_obstacles(self):
         ret, frame = self.camera.read()
@@ -85,7 +89,7 @@ class MainLoop:
     def _detect_initial_balls(self):
         ret, frame = self.camera.read()
         warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
-        return detect_balls(warped_img)
+        self.balls = detect_balls(warped_img)
 
     def _collect_white_balls(self):
         while len(self.balls) > WHITE_BALL_COUNT - ROBOT_CAPACITY:
@@ -157,7 +161,7 @@ class MainLoop:
         #     self.client.send_command("stop")
            
         else:
-            path = find_path(warped_img, robot_pos, self.target_pos)
+            path = find_path(self.navmesh, warped_img, robot_pos, self.target_pos)
             self._navigate_to_target(path)
 
     def _collect_ball_in_corner(self, ball_pos, robot_pos, warped_img):

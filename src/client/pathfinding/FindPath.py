@@ -3,10 +3,8 @@ from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, coordinate_t
     cells_to_coordinates
 
 
-def find_path(warped_img, robot_pos, target_pos):
-    red_hsv_values = read_hsv_values('hsv_presets_red.txt')
-    navmesh = GenerateNavMesh(warped_img, red_hsv_values)
-    pretty_print_navmesh(navmesh, [])
+def find_path(navmesh, warped_img, robot_pos, target_pos):
+    # pretty_print_navmesh(navmesh, [])
     print("sdfdjsdjkjkdsfd")
     robotCell = coordinate_to_cell(robot_pos[0], robot_pos[1], 30)
 

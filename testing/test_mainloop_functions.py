@@ -132,7 +132,7 @@ def test_collect_ball_in_corner(ml):
 
 main_loop = MainLoop()
 main_loop.initialize_field()
-# main_loop._detect_initial_balls()
+main_loop._detect_initial_balls()
 # test_nav_to_target_hardcoded_path(main_loop)
 # test_nav_to_target_detected_path(main_loop)
 # test_collect_nearest_ball(main_loop)
