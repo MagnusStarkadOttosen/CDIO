@@ -1,4 +1,4 @@
-from client.vision.shape_detection import detect_obstacles
+# from client.vision.shape_detection import detect_obstacles
 
 def obstacle_Search(ball_dot, i, j, midpoint):
     target_point = [0, 0]

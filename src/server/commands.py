@@ -24,7 +24,7 @@ class Commands:
     def run_collector_counterclockwise(self):
         self.collector_motor.on(-55)
         time.sleep(20)
-        self.run_collector_clockwise()
+        self.collector_motor.off()
 
 
 
@@ -47,8 +47,8 @@ class Commands:
         self.tank_drive.on_for_degrees(SpeedPercent(-30), SpeedPercent(-30), degrees)
         print('Wheel motor turning this many degrees: ', degrees)  # Placeholder
 
-    def drive_inf(self):
-        self.tank_drive.on(SpeedPercent(10), SpeedPercent(10))
+    def drive_inf(self,speed):
+        self.tank_drive.on(SpeedPercent(speed), SpeedPercent(speed))
 
     def drive_back(self):
         self.tank_drive.on(SpeedPercent(-10), SpeedPercent(-10))

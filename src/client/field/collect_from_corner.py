@@ -14,7 +14,7 @@ CORNERS = {
     "bottom_right": (1800, 1200)
 }
 PIVOT_POINTS = [(300, 600), (1500, 600)]
-IMAGE_SIZE = [1200,1800]
+IMAGE_SIZE = [1200, 1800]
 
 
 def initialize():
