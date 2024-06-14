@@ -1,15 +1,13 @@
 import time
 
 import cv2
-import numpy as np
+
+from src.client.pathfinding.GenerateNavMesh import find_path
 from src.client.search_targetpoint.obstacle_search import is_ball_in_obstacle, obstacle_Search
 from src.client.field.collect_from_corner import is_ball_in_corner, check_corners, robot_movement_based_on_corners
 from src.client.field.coordinate_system import are_points_close, find_corner_points_full, warp_perspective
-# from src.client.field.field import Field
-from src.client.field.robot import calc_vector_direction, calc_degrees_to_rotate
 from src.client.pathfinding.CalculateCommandList import rotate_vector_to_point
 from src.client.pc_client import ClientPC
-from src.client.vision.camera import capture_image, initialize_camera
 from src.client.vision.filters import filter_image
 from src.client.vision.pathfinder import find_nearest_ball
 from src.client.vision.shape_detection import detect_balls, detect_obstacles, detect_robot
@@ -152,7 +150,7 @@ class MainLoop:
             self.client.send_command("stop")
            
         else:
-            path = find_path(self.grid, robot_pos, self.target_pos)
+            path = find_path(warped_img, robot_pos, self.target_pos)
             self._navigate_to_target(path)
 
     def _deliver_balls(self):

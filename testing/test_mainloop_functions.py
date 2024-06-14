@@ -85,7 +85,8 @@ def test_nav_to_target_with_find_path(ml):
         robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color)
 
     print(f"robot_pos: {robot_pos}, robot_direction: {robot_direction}")
-    path = find_path()
+    path = find_path(warped_img, robot_pos, (400, 600))
+    ml._navigate_to_target(path)
 
 
 def test_collect_nearest_ball(ml): # many white balls on field

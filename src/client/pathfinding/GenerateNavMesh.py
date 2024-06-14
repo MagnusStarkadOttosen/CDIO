@@ -3,14 +3,18 @@ import heapq
 import cv2
 import numpy as np
 
-def find_path(warped_img, robot_pos):
-  red_hsv_values = read_hsv_values('hsv_presets_red.txt')
+from src.client.hsvLoad import read_hsv_values
+from testing.test_mainloop_functions import pretty_print_navmesh
+
+
+def find_path(warped_img, robot_pos, target_pos):
+    red_hsv_values = read_hsv_values('hsv_presets_red.txt')
     navmesh = GenerateNavMesh(warped_img, red_hsv_values)
     pretty_print_navmesh(navmesh, [])
     print("sdfdjsdjkjkdsfd")
     robotCell = coordinate_to_cell(robot_pos[0], robot_pos[1], 30)
 
-    targetCell = coordinate_to_cell(400, 600, 30)
+    targetCell = coordinate_to_cell(target_pos[0], target_pos[1], 30)
     print(f"robotCell: {robotCell}, targetCell: {targetCell}")
     print(f"x: {robotCell[0]}, y: {robotCell[1]}")
     print(f"asdasdas {navmesh[robotCell[1], robotCell[0]]}")
@@ -32,7 +36,6 @@ def find_path(warped_img, robot_pos):
 
 
 def GenerateNavMesh(image, hsv_values):
-
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     height, width = gray.shape
 
