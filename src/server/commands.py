@@ -38,13 +38,13 @@ class Commands:
     def drive(self, distance_to_move):
         # revs = get_wheel_revolutions(distance_to_move)
         degrees = convert_distance_to_degrees(distance_to_move)
-        self.tank_drive.on_for_degrees(SpeedPercent(30), SpeedPercent(30), degrees)
+        self.tank_drive.on_for_degrees(SpeedPercent(10), SpeedPercent(10), degrees)
         print('Wheel motor turning this many degrees: ', degrees)  # Placeholder
 
     def drive_backwards(self, distance_to_move):
         # revs = get_wheel_revolutions(distance_to_move)
         degrees = convert_distance_to_degrees(distance_to_move)
-        self.tank_drive.on_for_degrees(SpeedPercent(-30), SpeedPercent(-30), degrees)
+        self.tank_drive.on_for_degrees(SpeedPercent(-10), SpeedPercent(-10), degrees)
         print('Wheel motor turning this many degrees: ', degrees)  # Placeholder
 
     def drive_inf(self,speed):
