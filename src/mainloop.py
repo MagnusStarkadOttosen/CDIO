@@ -126,17 +126,18 @@ class MainLoop:
             self.target_pos = find_nearest_ball(robot_pos, self.balls) # TODO handle target being null
             print(f"Nearest ball pos : {self.target_pos[0]},{self.target_pos[1]}")
 
-        # if is_ball_in_corner(self.balls):
-        #     corner_result = check_corners(self.balls, threshold=50)
-        #     pivot_points, corner_points = robot_movement_based_on_corners(corner_result)
-        #     # path = find_path(self.grid, robot_pos, pivot_points)
-        #     # self._navigate_to_target(path)
-        #     self.client.send_command("start_collect")
-        #     self._navigate_to_target(corner_points)
-        #     # self._navigate_to_target(path)
-        #     self.client.send_command("stop_collect")
-        #     self.client.send_command("stop")
-        # # elif is_ball_in_obstacle(self.balls, midpoint):
+        if is_ball_in_corner(self.balls):
+            print("ball is in corner.")
+            # corner_result = check_corners(self.balls, threshold=50)
+            # pivot_points, corner_points = robot_movement_based_on_corners(corner_result)
+            # # path = find_path(self.grid, robot_pos, pivot_points)
+            # # self._navigate_to_target(path)
+            # self.client.send_command("start_collect")
+            # self._navigate_to_target(corner_points)
+            # # self._navigate_to_target(path)
+            # self.client.send_command("stop_collect")
+            # self.client.send_command("stop")
+        # elif is_ball_in_obstacle(self.balls, midpoint):
         #     midpoint=self._detect_obstacles()
         #     target_point = obstacle_Search(self.balls, 0, 1, midpoint)
         #     target=  obstacle_Search(self.balls, 1, 0, midpoint)
