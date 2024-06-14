@@ -124,9 +124,9 @@ def test_collect_ball_in_corner(ml):
     robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color)
     while robot_pos is None or robot_direction is None:
         robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color)
-
+    ball_coord = (230, 230)
     ml.client.send_command("start_collect")
-    ml._collect_ball_in_corner(robot_pos, warped_img)
+    ml._collect_ball_in_corner(ball_coord, robot_pos, warped_img)
     ml.client.send_command("stop_collect")
 
 

@@ -126,9 +126,9 @@ class MainLoop:
             self.target_pos = find_nearest_ball(robot_pos, self.balls) # TODO handle target being null
             print(f"Nearest ball pos : {self.target_pos[0]},{self.target_pos[1]}")
 
-        if is_ball_in_corner(self.balls):
+        if is_ball_in_corner(self.target_pos):
             print("ball is in corner.")
-            # self._collect_ball_in_corner(robot_pos, warped_img)
+            self._collect_ball_in_corner(self.target_pos, robot_pos, warped_img)
             # corner_result = check_corners(self.balls, threshold=50)
             # pivot_points, corner_points = robot_movement_based_on_corners(corner_result)
             # # path = find_path(self.grid, robot_pos, pivot_points)
@@ -158,8 +158,8 @@ class MainLoop:
             path = find_path(warped_img, robot_pos, self.target_pos)
             self._navigate_to_target(path)
 
-    def _collect_ball_in_corner(self, robot_pos, warped_img):
-        corner_result = check_corners(self.balls, threshold=50)
+    def _collect_ball_in_corner(self, ball_pos, robot_pos, warped_img):
+        corner_result = check_corners(ball_pos, threshold=50)
         pivot_points, corner_points = robot_movement_based_on_corners(corner_result)
         path = find_path(warped_img, robot_pos, pivot_points)
         self._navigate_to_target(path)
