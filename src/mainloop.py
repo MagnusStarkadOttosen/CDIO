@@ -18,6 +18,7 @@ WHITE_BALL_COUNT = 10
 ROBOT_CAPACITY = 6
 TOLERANCE = 10
 TURN_SPEED = 3
+QUICK_TURN_SPEED= 9
 DST_SIZE = (1200, 1800)
 PIVOT_POINTS = [(300, 600), (1500, 600)]
 CORNERS = {
@@ -217,8 +218,14 @@ class MainLoop:
                 #     self.client.send_command("stop")
 
                 if not self.robot_is_moving and not self.robot_is_turning:
-                    self.client.send_command("start_drive")
+                    self.client.send_command("start_drive 10")
                     self.robot_is_moving = True
+
+                if self.robot_is_moving:
+                    if are_points_close(robot_pos,(x,y),100):
+                        self.client.send_command("start_drive 30")
+                    else:
+                        self.client.send_command("start_drive 10")
 
     def _course_correction(self, angle, target, tol=10): # TODO read final points only once at start?
         print(f"inside course correction. Angle: {angle}. Tolerance: {tol}")
@@ -236,14 +243,19 @@ class MainLoop:
                 continue
             angle = rotate_vector_to_point(robot_pos, robot_direction, target)
             print(f"angle: {angle}")
+            if angle> 50 or angle< -50:
+                 speed = QUICK_TURN_SPEED
+            else:
+                speed= TURN_SPEED
+
             if not self.robot_is_turning and angle < 0:
                 self.robot_is_turning = True
                 self.robot_is_moving = False
-                self.client.send_command(f"turn_left {-TURN_SPEED}")
+                self.client.send_command(f"turn_left {-speed}")
             elif not self.robot_is_turning and angle >= 0:
                 self.robot_is_turning = True
                 self.robot_is_moving = False
-                self.client.send_command(f"turn_left {TURN_SPEED}")
+                self.client.send_command(f"turn_left {speed}")
             else:
                 self.robot_is_turning = False
         self.robot_is_turning = False
