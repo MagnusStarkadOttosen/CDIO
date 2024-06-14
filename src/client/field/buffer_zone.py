@@ -1,5 +1,3 @@
-import numpy as np
-
 #buffer_points = [(100, 100), (1700, 100), (1700, 1100), (100, 1100)]
 buffer_points = [(200, 200), (1600, 200), (1600, 1000), (200, 1000)]
 buffer_distance = 300
@@ -9,33 +7,49 @@ green_zone_top_left = (min(point[0] for point in buffer_points), min(point[1] fo
 green_zone_bottom_right = (max(point[0] for point in buffer_points), max(point[1] for point in buffer_points))
 
 
-
 def is_within_buffer_zone(robot_position):
- print("is_within_buffer_zone in original method")
- print(f"Robot Position: {robot_position}")
- print(f"Green Zone Top Left: {green_zone_top_left}")
- print(f"Green Zone Bottom Right: {green_zone_bottom_right}")
+ print(f"Checking position: {robot_position}")
+ print(f"Top Left: {green_zone_top_left}, Bottom Right: {green_zone_bottom_right}")
 
- # Ensure robot_position is a tuple of two integers
  if not isinstance(robot_position, tuple) or len(robot_position) != 2:
   raise ValueError("robot_position must be a tuple of two integers")
- # Check if the robot position is outside the rectangular buffer zone (green zone)
-
- # for position_list in robot_position:
-  # Extract the tuple from each list
-  # robot_position = position_list[0]
 
  if (robot_position[0] < green_zone_top_left[0] or
          robot_position[0] > green_zone_bottom_right[0] or
          robot_position[1] < green_zone_top_left[1] or
          robot_position[1] > green_zone_bottom_right[1]):
-  print("Warning: Robot is inside the  zone!")
-  return True
+  print("Outside buffer zone")
+  return False
  else:
-  print("Robot is outside the buffer zone")
- return False
+  print("Inside buffer zone")
+  return True
 
-
+# def is_within_buffer_zone(robot_position):
+#  print("is_within_buffer_zone in original method")
+#  print(f"Robot Position: {robot_position}")
+#  print(f"Green Zone Top Left: {green_zone_top_left}")
+#  print(f"Green Zone Bottom Right: {green_zone_bottom_right}")
+#
+#  # Ensure robot_position is a tuple of two integers
+#  if not isinstance(robot_position, tuple) or len(robot_position) != 2:
+#   raise ValueError("robot_position must be a tuple of two integers")
+#  # Check if the robot position is outside the rectangular buffer zone (green zone)
+#
+#  # for position_list in robot_position:
+#   # Extract the tuple from each list
+#   # robot_position = position_list[0]
+#
+#  if (robot_position[0] < green_zone_top_left[0] or
+#          robot_position[0] > green_zone_bottom_right[0] or
+#          robot_position[1] < green_zone_top_left[1] or
+#          robot_position[1] > green_zone_bottom_right[1]):
+#   print("Warning: Robot is inside the  zone!")
+#   return True
+#  else:
+#   print("Robot is outside the buffer zone")
+#  return False
+#
+#
 
 #
 # # Define global variables for the points and drawing properties
