@@ -1,7 +1,8 @@
 from src.client.field.coordinate_system import warp_perspective
 from src.client.hsvLoad import read_hsv_values
+from src.client.pathfinding.FindPath import pretty_print_navmesh, find_path
 from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, astar, cells_to_coordinates, coordinate_to_cell, \
-    optimize_path, find_path
+    optimize_path
 from src.mainloop import MainLoop
 from src.client.vision.shape_detection import detect_robot
 
@@ -23,15 +24,6 @@ def test_nav_to_target_hardcoded_path(ml):
     path = [(300, 600), (1500, 600)]
     ml.target_pos = (100,600)
     ml._navigate_to_target(path)
-
-
-def pretty_print_navmesh(navmesh, path):
-    navmesh_copy = navmesh.copy()
-    for (x, y) in path:
-        navmesh_copy[y, x] = 2  # Mark the path with '2'
-
-    for row in navmesh_copy:
-        print(' '.join(str(cell) for cell in row))
 
 
 def test_nav_to_target_detected_path(ml):
