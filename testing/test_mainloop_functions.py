@@ -93,8 +93,6 @@ def test_collect_5_white_balls(ml): # many white balls on field
     ml.client.send_command("stop_collect")
 
 
-
-
 def test_collect_5_balls(ml):
     ml.client.send_command("start_collect")
     ml._collect_white_balls()
@@ -118,13 +116,14 @@ def test_start_main_loop(ml):
     ml.start_main_loop()
     ml.client.send_command("stop_collect")
 
+
 main_loop = MainLoop()
 main_loop.initialize_field()
 # main_loop._detect_initial_balls()
 # test_nav_to_target_hardcoded_path(main_loop)
-test_nav_to_target_detected_path(main_loop)
+# test_nav_to_target_detected_path(main_loop)
 # test_collect_nearest_ball(main_loop)
-# test_collect_5_balls(main_loop)
+test_collect_5_balls(main_loop)
 # test_collect_orange_ball(main_loop)
 # test_collect_remaining_balls(main_loop)
 # test_start_main_loop(main_loop)
