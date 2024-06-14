@@ -117,6 +117,19 @@ def test_start_main_loop(ml):
     ml.client.send_command("stop_collect")
 
 
+def test_collect_ball_in_corner(ml):
+    ret, frame = ml.camera.read()
+    warped_img = warp_perspective(frame, ml.final_points, DST_SIZE)
+    print(f"testing colors {ml.direction_color}")
+    robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color)
+    while robot_pos is None or robot_direction is None:
+        robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color)
+
+    ml.client.send_command("start_collect")
+    ml._collect_ball_in_corner(robot_pos, warped_img)
+    ml.client.send_command("stop_collect")
+
+
 main_loop = MainLoop()
 main_loop.initialize_field()
 # main_loop._detect_initial_balls()
