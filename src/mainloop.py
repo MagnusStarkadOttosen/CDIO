@@ -129,10 +129,8 @@ class MainLoop:
             pivot_points, corner_points = robot_movement_based_on_corners(corner_result)
             path = find_path(self.grid, robot_pos, pivot_points)
             self._navigate_to_target(path)
-            self.client.send_command("start_collect")
             self._navigate_to_target(corner_points)
             self._navigate_to_target(path)
-            self.client.send_command("stop_collect")
             self.client.send_command("stop")
         elif is_ball_in_obstacle(self.balls, midpoint):
             midpoint=self._detect_obstacles()
@@ -140,14 +138,12 @@ class MainLoop:
             target=  obstacle_Search(self.balls, 1, 0, midpoint)
             path= [target_point]
             self._navigate_to_target(path)
-            self.client.send_command("start_collect")
             angle = rotate_vector_to_point(robot_pos, robot_direction,target)
             print(f"after robot pos {robot_pos} and direction {robot_direction} and target {target} and angle: {angle}")
             if angle < -TOLERANCE or angle > TOLERANCE:
                 self._course_correction(angle, target)
             self.client.send_command("move 7")
             self.client.send_command("move -7")
-            self.client.send_command("stop_collect")
             self.client.send_command("stop")
            
         else:
@@ -205,6 +201,9 @@ class MainLoop:
                     self.at_target = True
                     break
 
+
+
+
                 angle = rotate_vector_to_point(robot_pos, robot_direction, (x, y))
 
                 # angle = calc_degrees_to_rotate(robot_direction, target_direction)
@@ -226,6 +225,12 @@ class MainLoop:
                         self.client.send_command("start_drive 30")
                     else:
                         self.client.send_command("start_drive 10")
+
+                    if are_points_close(robot_pos,self.target_pos,100):
+                         self.client.send_command("start_collect")
+                    else:
+                         self.client.send_command("stop_collect")
+
 
     def _course_correction(self, angle, target, tol=10): # TODO read final points only once at start?
         print(f"inside course correction. Angle: {angle}. Tolerance: {tol}")
