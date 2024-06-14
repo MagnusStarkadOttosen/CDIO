@@ -3,6 +3,10 @@ buffer_points = [(200, 200), (1600, 200), (1600, 1000), (200, 1000)]
 buffer_distance = 300
 
 # Determine the top-left and bottom-right points of the rectangle
+# green_zone_top_left = (min(point[0] for point in buffer_points), min(point[1] for point in buffer_points))
+# green_zone_bottom_right = (max(point[0] for point in buffer_points), max(point[1] for point in buffer_points))
+
+# Determine the top-left and bottom-right points of the rectangle
 green_zone_top_left = (min(point[0] for point in buffer_points), min(point[1] for point in buffer_points))
 green_zone_bottom_right = (max(point[0] for point in buffer_points), max(point[1] for point in buffer_points))
 
@@ -14,15 +18,35 @@ def is_within_buffer_zone(robot_position):
  if not isinstance(robot_position, tuple) or len(robot_position) != 2:
   raise ValueError("robot_position must be a tuple of two integers")
 
- if (robot_position[0] < green_zone_top_left[0] or
-         robot_position[0] > green_zone_bottom_right[0] or
-         robot_position[1] < green_zone_top_left[1] or
-         robot_position[1] > green_zone_bottom_right[1]):
-  print("Outside buffer zone")
+ x, y = robot_position
+ left, top = green_zone_top_left
+ right, bottom = green_zone_bottom_right
+
+ print(f"x: {x}, y: {y}, left: {left}, top: {top}, right: {right}, bottom: {bottom}")
+
+ if x < left or x > right or y < top or y > bottom:
+  print(f"Position {robot_position} is outside the buffer zone.")
   return False
  else:
-  print("Inside buffer zone")
+  print(f"Position {robot_position} is inside the buffer zone.")
   return True
+
+# def is_within_buffer_zone(robot_position):
+#  print(f"Checking position: {robot_position}")
+#  print(f"Top Left: {green_zone_top_left}, Bottom Right: {green_zone_bottom_right}")
+#
+#  if not isinstance(robot_position, tuple) or len(robot_position) != 2:
+#   raise ValueError("robot_position must be a tuple of two integers")
+#
+#  if (robot_position[0] < green_zone_top_left[0] or
+#          robot_position[0] > green_zone_bottom_right[0] or
+#          robot_position[1] < green_zone_top_left[1] or
+#          robot_position[1] > green_zone_bottom_right[1]):
+#   print("Outside buffer zone")
+#   return False
+#  else:
+#   print("Inside buffer zone")
+#   return True
 
 # def is_within_buffer_zone(robot_position):
 #  print("is_within_buffer_zone in original method")

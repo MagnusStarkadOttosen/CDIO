@@ -6,7 +6,8 @@ robot_position_2 = (900, 100)
 
 # Define a list of robot positions to test
 robot_positions = [
-    #(50, 50),  # Outside, top-left
+    (640, 420),  # Example inside position
+    (900, 100),  # Example inside position
     (1000, 1100),  # Outside
     (180, 180),  # Outside
     (1650, 50),  # Outside, top-right
@@ -22,11 +23,13 @@ main_loop.initialize_field()
 main_loop.client.send_command("start_drive")
 print("start_drive command sent")
 
+# Loop through each robot position and test it
 for idx, position in enumerate(robot_positions, start=1):
     print("Check a new point:")
     print(f"Testing robot_position_{idx}: {position}")
-    main_loop._navigate_to_target([position])
-    if is_within_buffer_zone(position):
+    main_loop._navigate_to_target([position])  # Assuming this method accepts a list of positions
+    is_within = is_within_buffer_zone(position)
+    if is_within:
         print(f"Robot position {position} is within buffer zone")
         main_loop.client.send_command("stop")
         main_loop.client.send_command("drive_back")
