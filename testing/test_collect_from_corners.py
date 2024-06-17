@@ -36,7 +36,7 @@ main_loop.client.send_command("start_drive 20")
 if is_ball_in_corner(ball_coords_2):
     print("Checking if the ball is in the corner.")
     print(f"There is a ball in {ball_coords_2} ")
-    corner_result_2 = check_corners(ball_coords_2, threshold=400)
+    corner_result_2 = check_corners(ball_coords_2, threshold=200)
     print("corner result 2", corner_result_2)
     pivot_points, corner_points = robot_movement_based_on_corners(corner_result_2)
     print(f"pivot: {pivot_points} corner: {corner_points}")
@@ -52,13 +52,14 @@ if is_ball_in_corner(ball_coords_2):
 
     angle = rotate_vector_to_point(robot_pos, robot_direction, ball_coords_2)
 
-    tolerance = 1
+    tolerance = 0.5
     if angle < -tolerance or angle > tolerance:
         print(f"The angle is: {angle}")
         main_loop._course_correction(angle, ball_coords_2, tol=tolerance)
 
     main_loop.client.send_command("start_collect")
     main_loop.client.send_command("move 50")
+    main_loop.client.send_command("stop_collect")
     main_loop.client.send_command("move -50")
     main_loop.client.send_command("stop")
 else:
