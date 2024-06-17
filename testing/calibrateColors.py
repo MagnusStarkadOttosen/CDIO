@@ -10,7 +10,7 @@ if project_root not in sys.path:
 
 from src.client.field.coordinate_system import calculate_slope, find_corner_points_full, find_intersection, is_near_90_degrees, warp_perspective
 
-warp = False
+warp = True
 edges = False
 
 cam_index = 1
@@ -320,14 +320,14 @@ while True:
     # Display circles
     if warp:
         if circles2 is not None and show_circles:
-            for (x, y, r) in circles2:
-                cv2.circle(gen_warped_frame, (x, y), r, (255, 255, 0), 4)
+            for (center, radius) in circles2:
+                cv2.circle(gen_warped_frame, center, radius, (255, 255, 0), 4)
         if circles3 is not None and show_circles:
-            for (x, y, r) in circles3:
-                cv2.circle(gen_warped_frame, (x, y), r, (255, 0, 0), 4)
+            for (center, radius) in circles3:
+                cv2.circle(gen_warped_frame, center, radius, (255, 0, 0), 4)
         if circles4 is not None and show_circles:
-            for (x, y, r) in circles4:
-                cv2.circle(gen_warped_frame, (x, y), r, (0, 0, 255), 4)
+            for (center, radius) in circles4:
+                cv2.circle(gen_warped_frame, center, radius, (0, 0, 255), 4)
     
     cv2.putText(res, f"Balls detected: {ball_count}", (10,30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     if warp:
