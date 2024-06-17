@@ -10,8 +10,10 @@ if project_root not in sys.path:
 
 from src.client.field.coordinate_system import calculate_slope, find_corner_points_full, find_intersection, is_near_90_degrees, warp_perspective
 
-warp = True
+warp = False
 edges = False
+
+cam_index = 1
 
 def read_hsv_values(filename):
     hsv_values = {}
@@ -152,7 +154,9 @@ def newfind_intersections(image, lines, min_angle=80, max_angle=100):
 #     return []
 
 def detect_balls(image, min_radius=15, max_radius=25):
-    cleaned_image = remove_noise(image)
+    mask_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    _, binary_mask = cv2.threshold(mask_gray, 127, 255, cv2.THRESH_BINARY)
+    cleaned_image = remove_noise(binary_mask)
     balls = detect_balls_with_contours(cleaned_image, min_radius, max_radius)
     return balls
 
@@ -162,7 +166,7 @@ def remove_noise(mask):
     mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
     return mask
 
-def detect_balls_with_contours(image, min_radius=15,max_radius=25):
+def detect_balls_with_contours(image, min_radius=15, max_radius=25):
     # Find contours in the binary image
     contours, _ = cv2.findContours(image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
@@ -174,12 +178,9 @@ def detect_balls_with_contours(image, min_radius=15,max_radius=25):
         if min_radius < radius < max_radius:
             center = (int(x), int(y))
             radius = int(radius)
-            # Draw the detected ball on the original image
-            cv2.circle(image, center, radius, (0, 255, 0), 2)
             balls.append((center, radius))
 
-    return image, balls
-
+    return balls
 
 
 def nothing(x):
@@ -210,7 +211,7 @@ def load_color_presets(color, base_filename="hsv_presets"):
         return None, None
 
 # Capture from camera
-cap = cv2.VideoCapture(1,cv2.CAP_DSHOW)
+cap = cv2.VideoCapture(cam_index,cv2.CAP_DSHOW)
 dst_size = (1200, 1800)
 ret, frame = cap.read()
 
@@ -314,8 +315,8 @@ while True:
     
     # Display circles
     if circles is not None and show_circles:
-        for (x, y, r) in circles:
-            cv2.circle(res, (x, y), r, (255, 255, 0), 4)
+        for (center, radius) in circles:
+            cv2.circle(res, center, radius, (255, 255, 0), 4)
     # Display circles
     if warp:
         if circles2 is not None and show_circles:
