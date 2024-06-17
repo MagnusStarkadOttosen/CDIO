@@ -64,14 +64,14 @@ if is_ball_in_corner(ball_coords_2):
 
     robot_pos, robot_direction = main_loop.temp()
 
-    angle = rotate_vector_to_point(robot_pos, robot_direction, (1700, 1200))
+    angle = rotate_vector_to_point(robot_pos, robot_direction, (1720, 1120))
 
     # angle = calc_degrees_to_rotate(robot_direction, target_direction)
     # print(f"after robot pos {robot_pos} and direction {robot_direction} and target {(x, y)} and angle: {angle}")
     tolerance = 1
     if angle < -tolerance or angle > tolerance:
         print(f"The angle is: {angle}")
-        main_loop._course_correction(angle, (1700, 1200), tol=tolerance)
+        main_loop._course_correction(angle, (1720, 1120), tol=tolerance)
 
     main_loop.client.send_command("start_collect")
     main_loop.client.send_command("move 50")
