@@ -120,14 +120,14 @@ class MainLoop:
         # if filter_image.equals(filter_image_orange):
         if self.collect_orange_ball:
             self.balls = safe_detect_balls(self.camera, self.final_points,
-                                           DST_SIZE, filter_image(warped_img, self.orange))
+                                           DST_SIZE, self.orange)
             if not self.balls:
                 self.collect_orange_ball = False
                 return
             self.target_pos = self.balls[0][:2]
         else:
             self.balls = safe_detect_balls(self.camera, self.final_points,
-                                           DST_SIZE, filter_image(warped_img, self.white))
+                                           DST_SIZE, self.white)
             if len(self.balls) == 0:
                 return
             print(self.balls)

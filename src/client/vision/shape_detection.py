@@ -49,6 +49,7 @@ def detect_egg(image, min_radius=45,max_radius=55):
 
 
 def safe_detect_balls(camera, final_points, dst_size, color):
+    print("Safe detecting balls")
     temp_len = 0
     circles = None
 

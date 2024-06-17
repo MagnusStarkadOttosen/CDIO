@@ -49,6 +49,7 @@ def coordinate_to_cell(x, y, grid_size):
 
 # Converts the list of cells from a star to a list of coordinates
 def cells_to_coordinates(cells, grid_size):
+    print("cells:", cells, "grid_size:", grid_size)
     coordinates = [(x*grid_size,y*grid_size) for x, y in cells]
     return coordinates
 
