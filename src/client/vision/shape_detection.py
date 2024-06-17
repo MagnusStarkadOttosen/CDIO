@@ -10,14 +10,14 @@ from src.client.field.coordinate_system import find_intersection
 
 def detect_robot(image, direction_color, pivot_color):
     direction_dot = detect_balls(filter_image(image, direction_color), min_radius=45, max_radius=50)
-    if len(direction_dot) == 0:  # TODO Proper error handling for green_dot
+    if direction_dot is None:  # TODO Proper error handling for green_dot
         print("No direction dot.")
         return None, None
     print(f"what direction detectfinds {direction_dot}")
     # print("green dot found ", len(green_dot))
 
     pivot_dot = detect_balls(filter_image(image, pivot_color), min_radius=60, max_radius=65)
-    if len(pivot_dot) == 0:  # TODO Proper error handling for red_dot
+    if pivot_dot is None:  # TODO Proper error handling for red_dot
         print("No pivot dot.")
         return None, None
     print(f"what pivot detectfinds {pivot_dot}")
@@ -65,7 +65,7 @@ def detect_balls(image, min_radius=15,max_radius=25):
         circles = np.round(circles[0, :]).astype("int")
         return circles
 
-    return []
+    return None
 
 def detect_obstacles(image):
     dst_size = (1200, 1800)  # width, height
