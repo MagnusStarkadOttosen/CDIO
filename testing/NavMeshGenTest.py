@@ -1,3 +1,4 @@
+from collections import deque
 import heapq
 import cv2
 import numpy as np
@@ -264,9 +265,42 @@ def smooth_path(navmesh, path):
 
     return smoothed_path
 
+def escape_dead_zone(navmesh, start):
+    height, width = navmesh.shape
+    visited = set()
+    queue = deque([start])
+    
+    while queue:
+        x, y = queue.popleft()
+        if (x, y) not in visited:
+            visited.add((x, y))
+            if 0 <= y < height and 0 <= x < width and navmesh[y, x] == 1:
+                return (x, y)
+            neighbors = [
+                (x + 1, y),
+                (x - 1, y),
+                (x, y + 1),
+                (x, y - 1),
+                (x + 1, y + 1),
+                (x - 1, y - 1),
+                (x + 1, y - 1),
+                (x - 1, y + 1)
+            ]
+            for neighbor in neighbors:
+                if neighbor not in visited:
+                    queue.append(neighbor)
+    
+    return None
 
-start = (10, 10)
-goal = (50, 20)
+
+start = (2, 10)
+goal = (59, 39)
+
+# Check if start and goal are walkable, if not, escape dead zone
+if navmesh[start[1], start[0]] == 0:
+    start = escape_dead_zone(navmesh, start)
+if navmesh[goal[1], goal[0]] == 0:
+    goal = escape_dead_zone(navmesh, goal)
 
 # Check if start and goal are walkable
 if navmesh[start[1], start[0]] == 0 or navmesh[goal[1], goal[0]] == 0:
