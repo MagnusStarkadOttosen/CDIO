@@ -2,6 +2,7 @@ import time
 
 import cv2
 
+from client.search_targetpoint.buffer_zone_search import buffer_zone_search, is_ball_in_buffer_zone
 from src.client.pathfinding.GenerateNavMesh import find_path
 from src.client.search_targetpoint.obstacle_search import is_ball_in_obstacle, obstacle_Search
 from src.client.field.collect_from_corner import is_ball_in_corner, check_corners, robot_movement_based_on_corners
@@ -149,7 +150,22 @@ class MainLoop:
             self.client.send_command("move -7")
             self.client.send_command("stop_collect")
             self.client.send_command("stop")
-           
+        elif is_ball_in_buffer_zone(self.balls):
+            ball_dot = self.balls[0]
+            target_point = buffer_zone_search(ball_dot, 0, 1)
+            path = [target_point]
+            self._navigate_to_target(path)
+            self.client.send_command("start_collect")
+            angle = rotate_vector_to_point(robot_pos, robot_direction,ball_dot)
+            print(f"after robot pos {robot_pos} and direction {robot_direction} and target {ball_dot} and angle: {angle}")
+            if angle < -1 or angle > 1:
+                self._course_correction(angle, ball_dot,tol=1)
+            self.client.send_command("start_collect")
+            self.client.send_command("move 5")
+            self.client.send_command("move -5")
+            self.client.send_command("stop_collect")
+            self.client.send_command("stop")
+              
         else:
             path = find_path(warped_img, robot_pos, self.target_pos)
             self._navigate_to_target(path)
