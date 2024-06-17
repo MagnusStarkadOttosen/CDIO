@@ -1,5 +1,10 @@
 import cv2
 import numpy as np
+import logging
+
+logging.basicConfig(filename='safe_detect_balls.log', filemode='w',
+                    format='%(asctime)s - %(message)s')
+
 
 from src.client.field.robot import calc_vector_direction
 from src.client.vision.filters import clean_the_image, convert_hsv, filter_for_yellow, filter_image, filter_image_green, filter_image_red, temp_filter_for_red_wall
@@ -57,7 +62,7 @@ def safe_detect_balls(camera, final_points, dst_size, color):
         ret, frame = camera.read()
         warped_img = warp_perspective(frame, final_points, dst_size)
         temp_circles = detect_balls(filter_image(warped_img, color))
-
+        logging.warning(len(temp_circles))
         if temp_circles is not None and len(temp_circles) > temp_len:
             temp_len = len(temp_circles)
             circles = temp_circles
