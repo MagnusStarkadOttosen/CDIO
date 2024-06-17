@@ -1,4 +1,5 @@
 
+from collections import deque
 import heapq
 import cv2
 import numpy as np
@@ -138,3 +139,31 @@ def optimize_path(navmesh, path):
         i += 1
 
     return optimized_path
+
+# This find the nearest walkable cell using breath first
+def escape_dead_zone(navmesh, start):
+    height, width = navmesh.shape
+    visited = set()
+    queue = deque([start])
+    
+    while queue:
+        x, y = queue.popleft()
+        if (x, y) not in visited:
+            visited.add((x, y))
+            if 0 <= y < height and 0 <= x < width and navmesh[y, x] == 1:
+                return (x, y)
+            neighbors = [
+                (x + 1, y),
+                (x - 1, y),
+                (x, y + 1),
+                (x, y - 1),
+                (x + 1, y + 1),
+                (x - 1, y - 1),
+                (x + 1, y - 1),
+                (x - 1, y + 1)
+            ]
+            for neighbor in neighbors:
+                if neighbor not in visited:
+                    queue.append(neighbor)
+    
+    return None
