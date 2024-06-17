@@ -17,7 +17,6 @@ def find_path(navmesh, warped_img, robot_pos, target_pos):
     if navmesh[targetCell[1], targetCell[0]] == 0:
         targetCell = escape_dead_zone(navmesh, targetCell)
     path = astar(navmesh, robotCell, targetCell)
-    path = astar(navmesh, robotCell, targetCell)
     # while path is None:
     #     print("try again")
     #     path = astar(navmesh, robotCell, targetCell)
