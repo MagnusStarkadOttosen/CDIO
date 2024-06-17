@@ -1,6 +1,6 @@
 from src.client.hsvLoad import read_hsv_values
 from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, coordinate_to_cell, astar, optimize_path, \
-    cells_to_coordinates
+    cells_to_coordinates, escape_dead_zone
 
 
 def find_path(navmesh, warped_img, robot_pos, target_pos):
