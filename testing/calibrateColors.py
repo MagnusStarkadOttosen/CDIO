@@ -158,7 +158,7 @@ def detect_balls(image, min_radius=15, max_radius=25):
     _, binary_mask = cv2.threshold(mask_gray, 127, 255, cv2.THRESH_BINARY)
     cleaned_image = remove_noise(binary_mask)
     balls = detect_balls_with_contours(cleaned_image, min_radius, max_radius)
-    return balls
+    return balls, cleaned_image
 
 def remove_noise(mask):
     kernel = np.ones((5, 5), np.uint8)
@@ -232,9 +232,11 @@ if warp:
 cv2.namedWindow('Lower Bounds')
 cv2.namedWindow('Upper Bounds')
 cv2.namedWindow('Result')
+cv2.namedWindow('Cleaned Image')
 if warp:
     cv2.namedWindow('warped')
     cv2.resizeWindow('warped', 1200, 1800)
+    cv2.namedWindow('Cleaned Image2')
 if edges:
     cv2.namedWindow('edges para')
     cv2.namedWindow('edges')
@@ -302,12 +304,12 @@ while True:
     # newfind_intersections(res, linestest)
     
     # Detect and count balls
-    circles = detect_balls(res)
+    circles, cleaned_image = detect_balls(res)
     ball_count = len(circles)
     if warp:
         circles2 = detect_balls(gen_warped_frame,min_radius=60, max_radius=65)
         ball_count2 = len(circles2)
-        circles3 = detect_balls(gen_warped_frame)
+        circles3, cleaned_image2 = detect_balls(gen_warped_frame)
         ball_count3 = len(circles3)
         circles4 = detect_balls(gen_warped_frame, min_radius=45, max_radius=50)
         ball_count4 = len(circles2)
@@ -333,8 +335,10 @@ while True:
     if warp:
         cv2.putText(gen_warped_frame, f"Balls detected: {ball_count2}", (10,30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     cv2.imshow('Result', res)
+    cv2.imshow('Cleaned Image', cleaned_image)
     if warp:
         cv2.imshow('warped', gen_warped_frame)
+        cv2.imshow('Cleaned Image2', cleaned_image2)
     
 
     key = cv2.waitKey(1) & 0xFF
