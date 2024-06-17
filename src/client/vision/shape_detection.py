@@ -46,6 +46,25 @@ def detect_egg(image, min_radius=45,max_radius=55):
         print("No balls detected.")
 
     return circles
+
+
+def safe_detect_balls(camera, final_points, dst_size, color):
+    temp_len = 0
+    circles = None
+
+    for _ in range(10):
+        ret, frame = camera.read()
+        warped_img = warp_perspective(frame, final_points, dst_size)
+        temp_circles = detect_balls(filter_image(warped_img, color))
+
+        if temp_circles is not None and len(temp_circles) > temp_len:
+            temp_len = len(temp_circles)
+            circles = temp_circles
+
+    if circles is not None:
+        return circles
+    return None
+
 def detect_balls(image, min_radius=15,max_radius=25):
     # Convert to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)

@@ -12,7 +12,7 @@ from src.client.pathfinding.CalculateCommandList import rotate_vector_to_point
 from src.client.pc_client import ClientPC
 from src.client.vision.filters import filter_image
 from src.client.vision.pathfinder import find_nearest_ball
-from src.client.vision.shape_detection import detect_balls, detect_obstacles, detect_robot
+from src.client.vision.shape_detection import detect_balls, detect_obstacles, detect_robot, safe_detect_balls
 from src.client.hsvLoad import read_hsv_values
 
 
@@ -119,13 +119,15 @@ class MainLoop:
 
         # if filter_image.equals(filter_image_orange):
         if self.collect_orange_ball:
-            self.balls = detect_balls(filter_image(warped_img, self.orange))
+            self.balls = safe_detect_balls(self.camera, self.final_points,
+                                           DST_SIZE, filter_image(warped_img, self.orange))
             if not self.balls:
                 self.collect_orange_ball = False
                 return
             self.target_pos = self.balls[0][:2]
         else:
-            self.balls = detect_balls(filter_image(warped_img, self.white))
+            self.balls = safe_detect_balls(self.camera, self.final_points,
+                                           DST_SIZE, filter_image(warped_img, self.white))
             if len(self.balls) == 0:
                 return
             print(self.balls)
