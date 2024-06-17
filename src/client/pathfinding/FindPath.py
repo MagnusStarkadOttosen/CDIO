@@ -1,6 +1,6 @@
 from src.client.hsvLoad import read_hsv_values
 from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, coordinate_to_cell, astar, optimize_path, \
-    cells_to_coordinates
+    cells_to_coordinates, escape_dead_zone
 
 
 def find_path(navmesh, warped_img, robot_pos, target_pos):
@@ -12,8 +12,10 @@ def find_path(navmesh, warped_img, robot_pos, target_pos):
     print(f"robotCell: {robotCell}, targetCell: {targetCell}")
     print(f"x: {robotCell[0]}, y: {robotCell[1]}")
     print(f"asdasdas {navmesh[robotCell[1], robotCell[0]]}")
-    print(f"targetCell: {navmesh[targetCell[1], targetCell[0]]}")
-
+    if navmesh[robotCell[1], robotCell[0]] == 0:
+        robotCell = escape_dead_zone(navmesh, robotCell)
+    if navmesh[targetCell[1], targetCell[0]] == 0:
+        targetCell = escape_dead_zone(navmesh, targetCell)
     path = astar(navmesh, robotCell, targetCell)
     # while path is None:
     #     print("try again")
