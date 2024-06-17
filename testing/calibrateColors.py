@@ -129,27 +129,58 @@ def newfind_intersections(image, lines, min_angle=80, max_angle=100):
     return image, intersection_points
 
 
-def detect_balls(image, min_radius=15,max_radius=25):
-    #normalized = cv2.normalize(frame, None, 0, 255, cv2.NORM_MINMAX)
-    # Convert to grayscale
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+# def detect_balls(image, min_radius=15,max_radius=25):
+#     #normalized = cv2.normalize(frame, None, 0, 255, cv2.NORM_MINMAX)
+#     # Convert to grayscale
+#     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-    # Apply blur
-    blur = cv2.GaussianBlur(gray, (9, 9), 2)
+#     # Apply blur
+#     blur = cv2.GaussianBlur(gray, (9, 9), 2)
 
-    # Apply edge detection
-    edges = cv2.Canny(blur, 50, 150)
+#     # Apply edge detection
+#     edges = cv2.Canny(blur, 50, 150)
 
-    # Detect circles
-    circles = cv2.HoughCircles(edges, cv2.HOUGH_GRADIENT,
-                               dp=1.75, minDist=9,
-                               param1=30, param2=35,
-                               minRadius=min_radius, maxRadius=max_radius)
-    if circles is not None:
-        circles = np.round(circles[0, :]).astype("int")
-        return circles
+#     # Detect circles
+#     circles = cv2.HoughCircles(edges, cv2.HOUGH_GRADIENT,
+#                                dp=1.75, minDist=9,
+#                                param1=30, param2=35,
+#                                minRadius=min_radius, maxRadius=max_radius)
+#     if circles is not None:
+#         circles = np.round(circles[0, :]).astype("int")
+#         return circles
 
-    return []
+#     return []
+
+def detect_balls(image, min_radius=15, max_radius=25):
+    cleaned_image = remove_noise(image)
+    balls = detect_balls_with_contours(cleaned_image, min_radius, max_radius)
+    return balls
+
+def remove_noise(mask):
+    kernel = np.ones((5, 5), np.uint8)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
+    return mask
+
+def detect_balls_with_contours(image, min_radius=15,max_radius=25):
+    # Find contours in the binary image
+    contours, _ = cv2.findContours(image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Filter contours by radius to detect balls
+    balls = []
+
+    for contour in contours:
+        ((x, y), radius) = cv2.minEnclosingCircle(contour)
+        if min_radius < radius < max_radius:
+            center = (int(x), int(y))
+            radius = int(radius)
+            # Draw the detected ball on the original image
+            cv2.circle(image, center, radius, (0, 255, 0), 2)
+            balls.append((center, radius))
+
+    return image, balls
+
+
 
 def nothing(x):
     pass
