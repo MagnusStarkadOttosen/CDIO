@@ -15,12 +15,11 @@ from src.client.vision.pathfinder import find_nearest_ball
 from src.client.vision.shape_detection import detect_balls, detect_obstacles, detect_robot, safe_detect_balls
 from src.client.hsvLoad import read_hsv_values
 
-
 WHITE_BALL_COUNT = 10
 ROBOT_CAPACITY = 6
 TOLERANCE = 10
 TURN_SPEED = 3
-QUICK_TURN_SPEED= 9
+QUICK_TURN_SPEED = 9
 DST_SIZE = (1200, 1800)
 PIVOT_POINTS = [(300, 600), (1500, 600)]
 CORNERS = {
@@ -29,6 +28,7 @@ CORNERS = {
     "top_right": (1800, 0),
     "bottom_right": (1800, 1200)
 }
+
 
 class MainLoop:
     def __init__(self):
@@ -131,7 +131,7 @@ class MainLoop:
             if len(self.balls) == 0:
                 return
             print(self.balls)
-            self.target_pos = find_nearest_ball(robot_pos, self.balls) # TODO handle target being null
+            self.target_pos = find_nearest_ball(robot_pos, self.balls)  # TODO handle target being null
             print(f"Nearest ball pos : {self.target_pos[0]},{self.target_pos[1]}")
 
         if is_ball_in_corner(self.target_pos):
@@ -161,7 +161,7 @@ class MainLoop:
         #     self.client.send_command("move -7")
         #     self.client.send_command("stop_collect")
         #     self.client.send_command("stop")
-           
+
         else:
             path = find_path(self.navmesh, warped_img, robot_pos, self.target_pos)
             self._navigate_to_target(path)
@@ -187,11 +187,8 @@ class MainLoop:
         while robot_pos is None or robot_direction is None:
             robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color)
 
-
-        path_to_goal_A= []
-        goal_A_pivot_point= (150,600)
-
-
+        path_to_goal_A = []
+        goal_A_pivot_point = (150, 600)
 
         path_to_goal_A.append(goal_A_pivot_point)
         # path_to_goal_A.append(goal_A_point)
@@ -200,7 +197,8 @@ class MainLoop:
         angle = rotate_vector_to_point(robot_pos, robot_direction, (-100, 600))
 
         # angle = calc_degrees_to_rotate(robot_direction, target_direction)
-        print(f"after robot pos {robot_pos} and direction {robot_direction} and target {(-100, 600)} and angle: {angle}")
+        print(
+            f"after robot pos {robot_pos} and direction {robot_direction} and target {(-100, 600)} and angle: {angle}")
         if angle < -1 or angle > 1:
             print(f"asdsdkjfsdkjfsdkj {angle}")
             self._course_correction(angle, (-100, 600), 1)
@@ -211,7 +209,7 @@ class MainLoop:
         for (x, y) in path:
             while True:
                 ret, frame = self.camera.read()
-                #final_points = find_corner_points_full(frame, doVerbose=False)
+                # final_points = find_corner_points_full(frame, doVerbose=False)
                 warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
                 print(f"orange hsv values: {self.pivot_color}")
 
@@ -221,7 +219,7 @@ class MainLoop:
 
                 if robot_pos is None or robot_direction is None:
                     continue
-                if are_points_close(robot_pos, (x,y), tolerance=40):
+                if are_points_close(robot_pos, (x, y), tolerance=40):
                     print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
                     self.client.send_command("stop")
                     self.robot_is_moving = False
@@ -231,11 +229,12 @@ class MainLoop:
                 angle = rotate_vector_to_point(robot_pos, robot_direction, (x, y))
 
                 # angle = calc_degrees_to_rotate(robot_direction, target_direction)
-                print(f"after robot pos {robot_pos} and direction {robot_direction} and target {(x, y)} and angle: {angle}")
+                print(
+                    f"after robot pos {robot_pos} and direction {robot_direction} and target {(x, y)} and angle: {angle}")
                 tolerance = 10
                 if angle < -tolerance or angle > tolerance:
                     print(f"asdsdkjfsdkjfsdkj {angle}")
-                    self._course_correction(angle, (x,y), tol=tolerance)
+                    self._course_correction(angle, (x, y), tol=tolerance)
 
                 # if self.robot_is_turning:
                 #     self.robot_is_turning = False
@@ -246,18 +245,17 @@ class MainLoop:
                     self.robot_is_moving = True
 
                 if self.robot_is_moving:
-                    if are_points_close(robot_pos,(x,y),300):
+                    if are_points_close(robot_pos, (x, y), 300):
                         self.client.send_command("start_drive 10")
                     else:
                         self.client.send_command("start_drive 10")
 
-                    if are_points_close(robot_pos,self.target_pos,300):
-                         self.client.send_command("start_collect")
+                    if are_points_close(robot_pos, self.target_pos, 300):
+                        self.client.send_command("start_collect")
                     else:
-                         self.client.send_command("stop_collect")
+                        self.client.send_command("stop_collect")
 
-
-    def _course_correction(self, angle, target, tol=10): # TODO read final points only once at start?
+    def _course_correction(self, angle, target, tol=10):
         print(f"inside course correction. Angle: {angle}. Tolerance: {tol}")
         while angle < -tol or angle > tol:
             ret, frame = self.camera.read()
@@ -268,15 +266,16 @@ class MainLoop:
             while robot_pos is None or robot_direction is None:
                 robot_pos, robot_direction = detect_robot(gen_warped_image, self.direction_color, self.pivot_color)
 
-            print(f"in correction robot pos {robot_pos} and direction {robot_direction} and target {target} and angle: {angle}")
+            print(
+                f"in correction robot pos {robot_pos} and direction {robot_direction} and target {target} and angle: {angle}")
             if robot_pos is None or robot_direction is None:
                 continue
             angle = rotate_vector_to_point(robot_pos, robot_direction, target)
             print(f"angle: {angle}")
-            if angle> 50 or angle< -50:
-                 speed = QUICK_TURN_SPEED
+            if angle > 50 or angle < -50:
+                speed = QUICK_TURN_SPEED
             else:
-                speed= TURN_SPEED
+                speed = TURN_SPEED
 
             if not self.robot_is_turning and angle < 0:
                 self.robot_is_turning = True
@@ -290,10 +289,9 @@ class MainLoop:
                 self.robot_is_turning = False
         self.robot_is_turning = False
         self.client.send_command("stop")
-    
+
     def temp(self):
         ret, frame = self.camera.read()
         warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
         robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color)
         return robot_pos, robot_direction
-
