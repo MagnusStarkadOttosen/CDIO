@@ -1,6 +1,11 @@
 import time
 
 import cv2
+import logging
+
+logging.basicConfig(filename='safe_detect_balls.log', filemode='w',
+                    format='%(asctime)s - %(message)s')
+
 
 from src.client.pathfinding.FindPath import find_path
 from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh
@@ -132,6 +137,7 @@ class MainLoop:
                 return
             print(self.balls)
             self.target_pos = find_nearest_ball(robot_pos, self.balls)  # TODO handle target being null
+            logging.warning(self.target_pos)
             print(f"Nearest ball pos : {self.target_pos[0]},{self.target_pos[1]}")
 
         if is_ball_in_corner(self.target_pos):
@@ -200,7 +206,7 @@ class MainLoop:
         print(
             f"after robot pos {robot_pos} and direction {robot_direction} and target {(-100, 600)} and angle: {angle}")
         if angle < -1 or angle > 1:
-            print(f"asdsdkjfsdkjfsdkj {angle}")
+            #print(f"asdsdkjfsdkjfsdkj {angle}")
             self._course_correction(angle, (-100, 600), 1)
 
         self.client.send_command("deliver")
@@ -220,7 +226,6 @@ class MainLoop:
                 if robot_pos is None or robot_direction is None:
                     continue
                 if are_points_close(robot_pos, (x, y), tolerance=40):
-                    print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
                     self.client.send_command("stop")
                     self.robot_is_moving = False
                     self.at_target = True
