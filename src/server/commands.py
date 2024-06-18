@@ -23,8 +23,7 @@ class Commands:
 
     def run_collector_counterclockwise(self):
         self.collector_motor.on(-55)
-        time.sleep(40)
-        self.collector_motor.off()
+        
 
 
 

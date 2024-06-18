@@ -40,7 +40,7 @@ def find_path(navmesh, warped_img, robot_pos, target_pos):
 
 def cell_is_in_dead_zone(pos, navmesh):
     target_cell = coordinate_to_cell(pos[0], pos[1], 30)
-    return navmesh[target_cell[0], target_cell[1]] == 0
+    return navmesh[target_cell[1], target_cell[0]] == 0
 
 
 def pretty_print_navmesh(navmesh, path):

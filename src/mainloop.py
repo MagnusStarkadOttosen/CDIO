@@ -1,3 +1,4 @@
+import math
 import time
 
 import cv2
@@ -175,6 +176,25 @@ class MainLoop:
             log_path("Is in deadzone")
             self.client.send_command("move -5")
             return
+        
+        # Calculate the magnitude of the direction vector
+        magnitude = math.sqrt(robot_direction[0]**2 + robot_direction[1]**2)
+    
+        if magnitude == 0:
+            raise ValueError("Direction vector magnitude is zero, cannot move")
+        
+        # Calculate the unit direction vector components
+        unit_a = robot_direction[0] / magnitude
+        unit_b = robot_direction[1] / magnitude
+        
+        distance = 5
+        # Calculate the new point
+        new_x = robot_pos[0] + distance * unit_a
+        new_y = robot_pos[1] + distance * unit_b
+        if cell_is_in_dead_zone((int(new_x),int(new_y)), self.navmesh):
+            log_path("front Is in deadzone")
+            self.client.send_command("move -5")
+            return
         path = find_path(self.navmesh, warped_img, robot_pos, self.target_pos)
         self._navigate_to_target(path)
 
@@ -219,6 +239,8 @@ class MainLoop:
             self._course_correction(angle, (-100, 600), 1)
 
         self.client.send_command("deliver")
+        time.sleep(5)
+        self.client.send_command("stop_collect")
 
     def _navigate_to_target(self, path):
         for (x, y) in path:
