@@ -242,10 +242,9 @@ class MainLoop:
 
                 if self.robot_is_moving:
                     distance = distance_left(robot_pos,(x,y),300)
-
-                    pace = np.round(distance/800)*MAXSPEED
-
-
+                    pace = np.round(distance/1800)*(MAXSPEED*1.2)
+                    if pace>MAXSPEED:
+                        pace=MAXSPEED
                     self.client.send_command("start_drive "+pace)
 
 
