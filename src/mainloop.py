@@ -1,6 +1,7 @@
 import time
 
 import cv2
+import numpy as np
 
 from src.client.pathfinding.FindPath import find_path
 # from src.client.pathfinding.GenerateNavMesh import find_path
@@ -241,7 +242,8 @@ class MainLoop:
 
                 if self.robot_is_moving:
                     distance = distance_left(robot_pos,(x,y),300)
-                    pace= distance/1200*MAXSPEED
+
+                    pace = np.round(distance/1200)*MAXSPEED
 
 
                     self.client.send_command("start_drive "+pace)
@@ -270,9 +272,9 @@ class MainLoop:
             angle = rotate_vector_to_point(robot_pos, robot_direction, target)
             print(f"angle: {angle}")
             if angle>=0:
-                 speed = angle/180*MAXROTATION
+                 speed = np.round(angle/180)*MAXROTATION
             else:
-                 speed = angle/-180*MAXROTATION
+                 speed = np.round(angle/-180)*MAXROTATION
 
             if not self.robot_is_turning and angle < 0:
                 self.robot_is_turning = True
