@@ -280,3 +280,6 @@ def cluster_lines(image, lines):
 def are_points_close(point1, point2, tolerance = 5):
     distance = math.sqrt((point2[0] - point1[0]) ** 2 + (point2[1] - point1[1]) ** 2)
     return distance <= tolerance
+def distance_left(point1, point2, tolerance = 5):
+    distance = math.sqrt((point2[0] - point1[0]) ** 2 + (point2[1] - point1[1]) ** 2)
+    return distance
