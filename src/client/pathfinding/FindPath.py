@@ -1,7 +1,12 @@
 from src.client.hsvLoad import read_hsv_values
 from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, coordinate_to_cell, astar, optimize_path, \
     cells_to_coordinates, escape_dead_zone
+import logging
 
+from src.client.utilities import log_path
+
+logging.basicConfig(filename='buffered_path.log', filemode='w',
+                    format='%(asctime)s - %(message)s')
 
 def find_path(navmesh, warped_img, robot_pos, target_pos):
     # pretty_print_navmesh(navmesh, [])
@@ -27,7 +32,8 @@ def find_path(navmesh, warped_img, robot_pos, target_pos):
 
     coord_path = cells_to_coordinates(optimized_path, 30)
 
-    print(f"coord_path: {coord_path}")
+    #print(f"coord_path: {coord_path}")
+    log_path(coord_path)
 
     return coord_path
 
