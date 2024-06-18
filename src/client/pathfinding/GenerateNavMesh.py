@@ -20,6 +20,12 @@ def GenerateNavMesh(image, hsv_values):
     mask = cv2.inRange(hsv, lower_bound, upper_bound)
     inverted_mask = cv2.bitwise_not(mask)
 
+    # Set the edge pixels to white
+    edge_size = 20
+    inverted_mask[:edge_size, :] = 255
+    inverted_mask[-edge_size:, :] = 255
+    inverted_mask[:, :edge_size] = 255
+    inverted_mask[:, -edge_size:] = 255
 
     # Create an empty navmesh grid
     navmesh = np.zeros((height // grid_size, width // grid_size), dtype=np.uint8)
