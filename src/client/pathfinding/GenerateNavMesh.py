@@ -11,6 +11,7 @@ def GenerateNavMesh(image, hsv_values):
     # Define the grid size for the navmesh
     grid_size = 30
     buffer_size = 150
+    buffer_edge = 150
 
     # Find 
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
@@ -31,7 +32,7 @@ def GenerateNavMesh(image, hsv_values):
     for y in range(0, height, grid_size):
         for x in range(0, width, grid_size):
             # Skip cells near the edges of the image to create a buffer
-            if y < buffer_size or y + grid_size > height - buffer_size or x < buffer_size or x + grid_size > width - buffer_size:
+            if y < buffer_edge or y + grid_size > height - buffer_edge or x < buffer_edge or x + grid_size > width - buffer_edge:
                 continue
             cell = buffered_mask[y:y + grid_size, x:x + grid_size]
             # Calculate the percentage of the cell that is white

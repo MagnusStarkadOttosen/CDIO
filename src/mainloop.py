@@ -43,7 +43,7 @@ class MainLoop:
         self.balls = None
         self.collect_orange_ball = False
         self.target_pos = None
-        self.camera = cv2.VideoCapture(1, cv2.CAP_DSHOW)
+        self.camera = cv2.VideoCapture(2, cv2.CAP_DSHOW)
         self.final_points = None
         self.navmesh = None
         self.robot_is_moving = False
@@ -173,7 +173,7 @@ class MainLoop:
         # else:
         if cell_is_in_dead_zone(robot_pos, self.navmesh):
             log_path("Is in deadzone")
-            self.client.send_command("drive_backwards 5")
+            self.client.send_command("move -5")
             return
         path = find_path(self.navmesh, warped_img, robot_pos, self.target_pos)
         self._navigate_to_target(path)
@@ -199,12 +199,15 @@ class MainLoop:
         while robot_pos is None or robot_direction is None:
             robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color)
 
-        path_to_goal_A = []
+        # path_to_goal_A = []
         goal_A_pivot_point = (150, 600)
 
-        path_to_goal_A.append(goal_A_pivot_point)
+        # path_to_goal_A.append(goal_A_pivot_point)
+
+        path = find_path(self.navmesh, warped_img, robot_pos, goal_A_pivot_point)
+
         # path_to_goal_A.append(goal_A_point)
-        self._navigate_to_target(path_to_goal_A)
+        self._navigate_to_target(path)
 
         angle = rotate_vector_to_point(robot_pos, robot_direction, (-100, 600))
 
