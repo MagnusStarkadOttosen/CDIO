@@ -10,13 +10,15 @@ if project_root not in sys.path:
 
 from src.client.field.coordinate_system import calculate_slope, find_corner_points_full, find_intersection, is_near_90_degrees, warp_perspective
 
-warp = True
+warp = False
 edges = False
+
+cam_index = 2
 
 def read_hsv_values(filename):
     hsv_values = {}
-    temp = "C:/Users/bayou/PycharmProjects/CDIO/hsv_presets_red.txt"
-    with open(temp, 'r') as file:
+    # temp = "C:/Users/bayou/PycharmProjects/CDIO/hsv_presets_red.txt"
+    with open(filename, 'r') as file:
         for line in file:
             key, value = line.strip().split()
             hsv_values[key] = int(value)
@@ -128,11 +130,26 @@ def newfind_intersections(image, lines, min_angle=80, max_angle=100):
 
     return image, intersection_points
 
+def normalize_image(image):
+    # Convert image to grayscale
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # Normalize the grayscale image
+    norm_image = cv2.normalize(gray, None, 0, 255, cv2.NORM_MINMAX)
+
+    # Convert back to BGR for further processing
+    normalized_image = cv2.cvtColor(norm_image, cv2.COLOR_GRAY2BGR)
+    
+    return normalized_image
 
 def detect_balls(image, min_radius=15,max_radius=25):
     #normalized = cv2.normalize(frame, None, 0, 255, cv2.NORM_MINMAX)
+
+    # Normalize the image
+    normalized_image = normalize_image(image)
+
     # Convert to grayscale
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(normalized_image, cv2.COLOR_BGR2GRAY)
 
     # Apply blur
     blur = cv2.GaussianBlur(gray, (9, 9), 2)
@@ -179,7 +196,7 @@ def load_color_presets(color, base_filename="hsv_presets"):
         return None, None
 
 # Capture from camera
-cap = cv2.VideoCapture(1,cv2.CAP_DSHOW)
+cap = cv2.VideoCapture(cam_index,cv2.CAP_DSHOW)
 dst_size = (1200, 1800)
 ret, frame = cap.read()
 
@@ -200,6 +217,7 @@ if warp:
 cv2.namedWindow('Lower Bounds')
 cv2.namedWindow('Upper Bounds')
 cv2.namedWindow('Result')
+cv2.namedWindow('Normalized Image')
 if warp:
     cv2.namedWindow('warped')
     cv2.resizeWindow('warped', 1200, 1800)
@@ -303,6 +321,10 @@ while True:
     cv2.imshow('Result', res)
     if warp:
         cv2.imshow('warped', gen_warped_frame)
+
+    # Display the normalized image
+    normalized_image = normalize_image(res)
+    cv2.imshow('Normalized Image', normalized_image)
     
 
     key = cv2.waitKey(1) & 0xFF
