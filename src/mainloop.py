@@ -17,7 +17,8 @@ from src.client.pathfinding.CalculateCommandList import rotate_vector_to_point
 from src.client.pc_client import ClientPC
 from src.client.vision.filters import filter_image
 from src.client.vision.pathfinder import find_nearest_ball
-from src.client.vision.shape_detection import detect_balls, detect_obstacles, detect_robot, safe_detect_balls
+from src.client.vision.shape_detection import detect_balls, detect_obstacles, detect_robot, safe_detect_balls, \
+    safe_detect_robot
 from src.client.hsvLoad import read_hsv_values
 
 WHITE_BALL_COUNT = 10
@@ -219,9 +220,10 @@ class MainLoop:
                 warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
                 print(f"orange hsv values: {self.pivot_color}")
 
-                robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color)
-                while robot_pos is None or robot_direction is None:
-                    robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color)
+                robot_pos, robot_direction = safe_detect_robot(self.camera, self.final_points, DST_SIZE,
+                                                               self.direction_color, self.pivot_color)
+                # while robot_pos is None or robot_direction is None:
+                #     robot_pos, robot_direction = safe_detect_robot(warped_img, self.direction_color, self.pivot_color)
 
                 if robot_pos is None or robot_direction is None:
                     continue
@@ -267,11 +269,14 @@ class MainLoop:
             gen_warped_image = warp_perspective(frame, self.final_points, DST_SIZE)
             print(f"pivot_color hsv values: {self.pivot_color}")
 
-            robot_pos, robot_direction = detect_robot(gen_warped_image, self.direction_color, self.pivot_color)
-            while robot_pos is None or robot_direction is None:
-                ret, frame = self.camera.read()
-                gen_warped_image = warp_perspective(frame, self.final_points, DST_SIZE)
-                robot_pos, robot_direction = detect_robot(gen_warped_image, self.direction_color, self.pivot_color)
+            robot_pos, robot_direction = safe_detect_robot(self.camera, self.final_points, DST_SIZE,
+                                                           self.direction_color, self.pivot_color)
+
+            # robot_pos, robot_direction = detect_robot(gen_warped_image, self.direction_color, self.pivot_color)
+            # while robot_pos is None or robot_direction is None:
+            #     ret, frame = self.camera.read()
+            #     gen_warped_image = warp_perspective(frame, self.final_points, DST_SIZE)
+            #     robot_pos, robot_direction = safe_detect_robot(gen_warped_image, self.direction_color, self.pivot_color)
 
             print(
                 f"in correction robot pos {robot_pos} and direction {robot_direction} and target {target} and angle: {angle}")
