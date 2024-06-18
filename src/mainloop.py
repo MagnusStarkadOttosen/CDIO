@@ -7,8 +7,8 @@ logging.basicConfig(filename='safe_detect_balls.log', filemode='w',
                     format='%(asctime)s - %(message)s')
 
 
-from src.client.pathfinding.FindPath import find_path
-from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh
+from src.client.pathfinding.FindPath import find_path, cell_is_in_dead_zone
+from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, escape_dead_zone
 # from src.client.pathfinding.GenerateNavMesh import find_path
 from src.client.search_targetpoint.obstacle_search import is_ball_in_obstacle, obstacle_Search
 from src.client.field.collect_from_corner import is_ball_in_corner, check_corners, robot_movement_based_on_corners
@@ -139,7 +139,6 @@ class MainLoop:
             print(self.balls)
             self.target_pos = find_nearest_ball(robot_pos, self.balls)  # TODO handle target being null
             logging.warning(self.target_pos)
-            print(f"Nearest ball pos : {self.target_pos[0]},{self.target_pos[1]}")
 
         if is_ball_in_corner(self.target_pos):
             print("ball is in corner.")
@@ -170,6 +169,9 @@ class MainLoop:
         #     self.client.send_command("stop")
 
         else:
+            if cell_is_in_dead_zone(robot_pos, self.navmesh):
+                self.client.send_command("drive_backwards 5")
+            robot_pos, robot_direction = detect_robot()
             path = find_path(self.navmesh, warped_img, robot_pos, self.target_pos)
             self._navigate_to_target(path)
 

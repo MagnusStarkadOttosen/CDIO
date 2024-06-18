@@ -12,8 +12,8 @@ def find_path(navmesh, warped_img, robot_pos, target_pos):
     print(f"robotCell: {robotCell}, targetCell: {targetCell}")
     print(f"x: {robotCell[0]}, y: {robotCell[1]}")
     print(f"asdasdas {navmesh[robotCell[1], robotCell[0]]}")
-    if navmesh[robotCell[1], robotCell[0]] == 0:
-        robotCell = escape_dead_zone(navmesh, robotCell)
+    # if navmesh[robotCell[1], robotCell[0]] == 0:
+    #     robotCell = escape_dead_zone(navmesh, robotCell)
     if navmesh[targetCell[1], targetCell[0]] == 0:
         targetCell = escape_dead_zone(navmesh, targetCell)
     path = astar(navmesh, robotCell, targetCell)
@@ -30,6 +30,11 @@ def find_path(navmesh, warped_img, robot_pos, target_pos):
     print(f"coord_path: {coord_path}")
 
     return coord_path
+
+
+def cell_is_in_dead_zone(pos, navmesh):
+    target_cell = coordinate_to_cell(pos[0], pos[1], 30)
+    return navmesh[target_cell[0], target_cell[1]] == 0
 
 
 def pretty_print_navmesh(navmesh, path):
