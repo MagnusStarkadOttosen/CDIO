@@ -130,17 +130,7 @@ def find_corner_points_full(image, hsv_values, doVerbose=False):
     # lines = np.array(lines)
     # lines = lines.reshape(-1, 4)
     
-    intersection_points = []
-    for i in range(len(lines)):
-        for j in range(i+1, len(lines)):
-            slope1 = calculate_slope(lines[i][0])
-            slope2 = calculate_slope(lines[j][0])
-            if is_near_90_degrees(slope1, slope2):
-                intersection = find_intersection(lines[i][0], lines[j][0])
-                if intersection:
-                    intersection_points.append(intersection)
-                    # print(f"Intersection point: {intersection}") 
-                    cv2.circle(edge_image, intersection, radius=5, color=(255, 0, 0), thickness=-1) 
+    intersection_points = find_all_intersections(edge_image, lines)
     
     height, width, _ = image.shape
     center_x, center_y = width // 2, height // 2
@@ -176,6 +166,23 @@ def find_corner_points_full(image, hsv_values, doVerbose=False):
         printImagesFromWarping(images, final_points)
     
     return final_points
+
+def find_all_intersections(image, lines):
+    if lines is None:
+        return []
+
+    intersection_points = []
+    for i in range(len(lines)):
+        for j in range(i+1, len(lines)):
+            slope1 = calculate_slope(lines[i][0])
+            slope2 = calculate_slope(lines[j][0])
+            if is_near_90_degrees(slope1, slope2):
+                intersection = find_intersection(lines[i][0], lines[j][0])
+                if intersection:
+                    intersection_points.append(intersection)
+                    # print(f"Intersection point: {intersection}") 
+                    # cv2.circle(image, intersection, radius=5, color=(255, 0, 0), thickness=-1) 
+    return intersection_points
 
 #This prints the images for visual inspection
 def printImagesFromWarping(images, final_points):
