@@ -15,7 +15,8 @@ actions_functions = {
     "turn_left": commands.turn_left,
     "drive_back": commands.drive_back,
     "drive_back_save": commands.drive_back_save,
-    "drive_backward": commands.drive_backwards
+    "drive_backward": commands.drive_backwards,
+    "max_speed:": commands.max_speed
 }
 
 

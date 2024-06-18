@@ -14,6 +14,8 @@ from src.client.vision.pathfinder import find_nearest_ball
 from src.client.vision.shape_detection import detect_balls, detect_obstacles, detect_robot
 from src.client.hsvLoad import read_hsv_values
 
+MaxSpeed=0
+maxRotation=0
 
 WHITE_BALL_COUNT = 10
 ROBOT_CAPACITY = 6

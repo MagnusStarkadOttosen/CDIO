@@ -29,6 +29,14 @@ class Commands:
 
 
     # Function to turn the robot by x degrees
+    def max_speed(self):
+        motor1 = MediumMotor(OUTPUT_A)
+        max_speed = motor1.max_speed
+        print(f"Maximum speed of the motor: {max_speed} MOTOR A")
+        motor2 = MediumMotor(OUTPUT_D)
+        max_speed2 = motor2.max_speed
+        print(f"Maximum speed of the motor: {max_speed2} MOTOR D")
+
     def turn_by_x_degrees(self, degrees):
         self.tank_drive.off()
         motor_revolutions = (degrees * DIST_BETWEEN_WHEELS) / WHEEL_DIMENSION
