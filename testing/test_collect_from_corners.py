@@ -14,7 +14,7 @@ print("Test collecting from corners.")
 IMAGE_SIZE = [1200, 1800]
 ball_coords_1 = (1690, 574)
 ball_coords_2 = (1720, 1120)
-ball_coords_3 = (1600, 1000)
+ball_coords_3 = (0, 0)
 
 WHITE_BALL_COUNT = 10
 ROBOT_CAPACITY = 6
@@ -36,7 +36,7 @@ main_loop.client.send_command("start_drive 20")
 if is_ball_in_corner(ball_coords_2):
     print("Checking if the ball is in the corner.")
     print(f"There is a ball in {ball_coords_2} ")
-    corner_result_2 = check_corners(ball_coords_2, threshold=400)
+    corner_result_2 = check_corners(ball_coords_2, threshold=100)
     print("corner result 2", corner_result_2)
     pivot_points, corner_points = robot_movement_based_on_corners(corner_result_2)
     print(f"pivot: {pivot_points} corner: {corner_points}")
