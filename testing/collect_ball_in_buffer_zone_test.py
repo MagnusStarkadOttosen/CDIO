@@ -1,18 +1,16 @@
 import time
 
-from client.search_targetpoint.buffer_zone_search import buffer_zone_search
+from src.client.search_targetpoint.buffer_zone_search import buffer_zone_search
 from src.client.field.coordinate_system import warp_perspective
 from src.client.hsvLoad import read_hsv_values
 from src.client.pathfinding.CalculateCommandList import rotate_vector_to_point
-from src.client.search_targetpoint.obstacle_search import obstacle_Search
 from src.client.vision.filters import filter_image
-from src.client.vision.shape_detection import detect_balls, detect_obstacles, detect_robot
+from src.client.vision.shape_detection import detect_balls, detect_robot
 from src.mainloop import MainLoop
 
 
 DST_SIZE = (1200, 1800)
-# make a test for collect ball in obstacle area : robot have to move to the targetpoint,
-# # have to turn in the right direction to the target point before executing commands
+
 def test_collect_ball_in_buffer_zone(ml):
     ret, frame = ml.camera.read()
     warped_img = warp_perspective(frame, ml.final_points, DST_SIZE)

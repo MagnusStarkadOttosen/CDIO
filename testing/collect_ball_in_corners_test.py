@@ -34,14 +34,14 @@ def test_collect_ball_in_corners(ml):
     print(f"after robot pos {robot_pos} and direction {robot_direction} and target {ball} and angle: {angle}")
     if angle < -0.5 or angle > 0.5:
         ml._course_correction(angle, ball,tol=0.5)
-    ml.client.send_command("start_collect")
-    ml.client.send_command("move 5")
-    time.sleep(0.5)
-    ml.client.send_command("move 1")
-    time.sleep(0.5)
-    ml.client.send_command("move -6")
-    ml.client.send_command("stop_collect")
-    ml.client.send_command("stop")
+    # ml.client.send_command("start_collect")
+    # ml.client.send_command("move 5")
+    # time.sleep(0.5)
+    # ml.client.send_command("move 1")
+    # time.sleep(0.5)
+    # ml.client.send_command("move -6")
+    # ml.client.send_command("stop_collect")
+    # ml.client.send_command("stop")
 
 
 
