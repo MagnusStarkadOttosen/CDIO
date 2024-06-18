@@ -2,6 +2,8 @@ import cv2
 import numpy as np
 import logging
 
+from src.client.utilities import log_balls
+
 logging.basicConfig(filename='safe_detect_balls.log', filemode='w',
                     format='%(asctime)s - %(message)s')
 
@@ -76,7 +78,7 @@ def safe_detect_balls(camera, final_points, dst_size, color):
         ret, frame = camera.read()
         warped_img = warp_perspective(frame, final_points, dst_size)
         temp_circles = detect_balls(filter_image(warped_img, color))
-        logging.warning(f"{i}: {len(temp_circles)}")
+        log_balls(f"{i}: {len(temp_circles)}")
         if temp_circles is not None and len(temp_circles) > temp_len:
             temp_len = len(temp_circles)
             circles = temp_circles
