@@ -21,7 +21,7 @@ WHITE_BALL_COUNT = 10
 ROBOT_CAPACITY = 6
 TOLERANCE = 10
 TURN_SPEED = 3
-QUICK_TURN_SPEED= 9
+QUICK_TURN_SPEED= 10
 DST_SIZE = (1200, 1800)
 PIVOT_POINTS = [(300, 600), (1500, 600)]
 CORNERS = {
@@ -240,11 +240,11 @@ class MainLoop:
                     self.robot_is_moving = True
 
                 if self.robot_is_moving:
-                    pace = distance_left(robot_pos,(x,y),300)
-                    pace= 10/900*MAXSPEED
+                    distance = distance_left(robot_pos,(x,y),300)
+                    pace= distance/1200*MAXSPEED
 
 
-                    self.client.send_command("start_drive 10")
+                    self.client.send_command("start_drive "+pace)
 
 
                     # if are_points_close(robot_pos,self.target_pos,300):
@@ -269,10 +269,10 @@ class MainLoop:
                 continue
             angle = rotate_vector_to_point(robot_pos, robot_direction, target)
             print(f"angle: {angle}")
-            if angle> 50 or angle< -50:
-                 speed = QUICK_TURN_SPEED
+            if angle>=0:
+                 speed = angle/180*MAXROTATION
             else:
-                speed= TURN_SPEED
+                 speed = angle/-180*MAXROTATION
 
             if not self.robot_is_turning and angle < 0:
                 self.robot_is_turning = True
