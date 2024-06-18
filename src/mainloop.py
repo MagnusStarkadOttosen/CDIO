@@ -136,7 +136,7 @@ class MainLoop:
         else:
             self.balls = safe_detect_balls(self.camera, self.final_points,
                                            DST_SIZE, self.white)
-            if len(self.balls) == 0:
+            if self.balls is None:
                 return
             print(self.balls)
             self.target_pos = find_nearest_ball(robot_pos, self.balls)  # TODO handle target being null
