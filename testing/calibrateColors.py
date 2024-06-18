@@ -299,7 +299,7 @@ while True:
     
     cv2.putText(res, f"Balls detected: {ball_count}", (10,30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     if warp:
-        cv2.putText(gen_warped_frame, f"Balls detected: {ball_count2}", (10,30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        cv2.putText(gen_warped_frame, f"Balls detected: {ball_count3}", (10,30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     cv2.imshow('Result', res)
     if warp:
         cv2.imshow('warped', gen_warped_frame)

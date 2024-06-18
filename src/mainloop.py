@@ -268,7 +268,7 @@ class MainLoop:
             if angle> 50 or angle< -50:
                  speed = QUICK_TURN_SPEED
             else:
-                speed= TURN_SPEED
+                speed= 1
 
             if not self.robot_is_turning and angle < 0:
                 self.robot_is_turning = True

@@ -36,7 +36,7 @@ main_loop.client.send_command("start_drive 20")
 if is_ball_in_corner(ball_coords_2):
     print("Checking if the ball is in the corner.")
     print(f"There is a ball in {ball_coords_2} ")
-    corner_result_2 = check_corners(ball_coords_2, threshold=100)
+    corner_result_2 = check_corners(ball_coords_2, threshold=400)
     print("corner result 2", corner_result_2)
     pivot_points, corner_points = robot_movement_based_on_corners(corner_result_2)
     print(f"pivot: {pivot_points} corner: {corner_points}")
