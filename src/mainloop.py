@@ -242,10 +242,16 @@ class MainLoop:
 
                 if self.robot_is_moving:
                     distance = distance_left(robot_pos,(x,y),300)
-                    pace = np.round(distance/1800)*(MAXSPEED*1.2)
+                    print(distance)
+                    fraction=np.round(distance/1800)
+                    print(fraction)
+
+                    pace = fraction*(MAXSPEED*1.2)
                     if pace>MAXSPEED:
                         pace=MAXSPEED
-                    self.client.send_command("start_drive "+pace)
+                    print(fraction)
+
+                self.client.send_command(f"start_drive {pace}")
 
 
                     # if are_points_close(robot_pos,self.target_pos,300):
@@ -270,10 +276,13 @@ class MainLoop:
                 continue
             angle = rotate_vector_to_point(robot_pos, robot_direction, target)
             print(f"angle: {angle}")
-            if angle>=0:
-                 speed = np.round(angle/180)*MAXROTATION
-            else:
-                 speed = np.round(angle/-180)*MAXROTATION
+
+            #if angle>=0:
+                 #speed = np.round(angle/180)*MAXROTATION
+            #else:
+                 #speed = np.round(angle/-180)*MAXROTATION
+
+            speed = TURN_SPEED
 
             if not self.robot_is_turning and angle < 0:
                 self.robot_is_turning = True
