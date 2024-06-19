@@ -22,8 +22,8 @@ def initialize():
     client_pc = ClientPC()
     camera = initialize_camera(index=2)
 
-# def calculate_distance(corner_point, target_point):
-#     return math.sqrt((target_point[0] - corner_point[0]) ** 2 + (target_point[1] - corner_point[1]) ** 2)
+def calculate_distance(corner_point, target_point):
+    return math.sqrt((target_point[0] - corner_point[0]) ** 2 + (target_point[1] - corner_point[1]) ** 2)
 
 
 def is_ball_in_corner(ball_coords):
