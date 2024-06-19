@@ -2,6 +2,8 @@ import math
 import time
 
 import cv2
+import numpy as np
+
 #import logging
 #
 # logging.basicConfig(filename='safe_detect_balls.log', filemode='w',
@@ -13,7 +15,7 @@ from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, escape_dead_
 # from src.client.pathfinding.GenerateNavMesh import find_path
 from src.client.search_targetpoint.obstacle_search import is_ball_in_obstacle, obstacle_Search
 from src.client.field.collect_from_corner import is_ball_in_corner, check_corners, robot_movement_based_on_corners
-from src.client.field.coordinate_system import are_points_close, find_corner_points_full, warp_perspective
+from src.client.field.coordinate_system import are_points_close,distance_left, find_corner_points_full, warp_perspective
 from src.client.pathfinding.CalculateCommandList import rotate_vector_to_point
 from src.client.pc_client import ClientPC
 from src.client.utilities import log_balls, log_path
@@ -23,11 +25,13 @@ from src.client.vision.shape_detection import detect_balls, detect_obstacles, de
     safe_detect_robot
 from src.client.hsvLoad import read_hsv_values
 
+MAXSPEED = 100
+MAXROTATION = 30
 WHITE_BALL_COUNT = 10
 ROBOT_CAPACITY = 6
-TOLERANCE = 10
+TOLERANCE = 50
 TURN_SPEED = 3
-QUICK_TURN_SPEED = 9
+QUICK_TURN_SPEED= 10
 DST_SIZE = (1200, 1800)
 PIVOT_POINTS = [(300, 600), (1500, 600)]
 CORNERS = {
@@ -198,6 +202,37 @@ class MainLoop:
             return
         path = find_path(self.navmesh, warped_img, robot_pos, self.target_pos)
         self._navigate_to_target(path)
+        if is_ball_in_corner(self.target_pos):
+            print("ball is in corner.")
+            self._collect_ball_in_corner(self.target_pos, robot_pos, warped_img)
+            # corner_result = check_corners(self.balls, threshold=50)
+            # pivot_points, corner_points = robot_movement_based_on_corners(corner_result)
+            # # path = find_path(self.grid, robot_pos, pivot_points)
+            # # self._navigate_to_target(path)
+            # self.client.send_command("start_collect")
+            # self._navigate_to_target(corner_points)
+            # # self._navigate_to_target(path)
+            # self.client.send_command("stop_collect")
+            # self.client.send_command("stop")
+        # elif is_ball_in_obstacle(self.balls, midpoint):
+        #     midpoint=self._detect_obstacles()
+        #     target_point = obstacle_Search(self.balls, 0, 1, midpoint)
+        #     target=  obstacle_Search(self.balls, 1, 0, midpoint)
+        #     path= [target_point]
+        #     self._navigate_to_target(path)
+        #     self.client.send_command("start_collect")
+        #     angle = rotate_vector_to_point(robot_pos, robot_direction,target)
+        #     print(f"after robot pos {robot_pos} and direction {robot_direction} and target {target} and angle: {angle}")
+        #     if angle < -TOLERANCE or angle > TOLERANCE:
+        #         self._course_correction(angle, target)
+        #     self.client.send_command("move 7")
+        #     self.client.send_command("move -7")
+        #     self.client.send_command("stop_collect")
+        #     self.client.send_command("stop")
+
+        # else:
+        path = find_path(warped_img, robot_pos, self.target_pos)
+        self._navigate_to_target(path)
 
     def _collect_ball_in_corner(self, ball_pos, robot_pos, warped_img):
         corner_result = check_corners(ball_pos, threshold=50)
@@ -290,15 +325,32 @@ class MainLoop:
                     self.robot_is_moving = True
 
                 if self.robot_is_moving:
-                    if are_points_close(robot_pos, (x, y), 300):
-                        self.client.send_command("start_drive 10")
-                    else:
-                        self.client.send_command("start_drive 10")
+                    distance = distance_left(robot_pos,self.target_pos)
+                    print(distance)
+                    fraction=distance/1800
+                    print(fraction)
+
+                    pace = np.round(fraction*(MAXSPEED*1.2))
+
+                    if pace>MAXSPEED:
+                        pace=MAXSPEED
+
+                    if pace<10:
+                        pace=10
+                    print(fraction)
+
 
                     if are_points_close(robot_pos, self.target_pos, 300):
                         self.client.send_command("start_collect")
                     else:
                         self.client.send_command("stop_collect")
+                self.client.send_command(f"start_drive {pace}")
+
+
+                    # if are_points_close(robot_pos,self.target_pos,300):
+                    #      self.client.send_command("start_collect")
+                    # else:
+                    #      self.client.send_command("stop_collect")
 
     def _course_correction(self, angle, target, tol=10):
         print(f"inside course correction. Angle: {angle}. Tolerance: {tol}")
@@ -326,8 +378,19 @@ class MainLoop:
             print(f"angle: {angle}")
             if angle > 50 or angle < -50:
                 speed = QUICK_TURN_SPEED
+
+            if angle>=0:
+                 speed = np.round((angle/180)*MAXROTATION*1.2)
+
             else:
-                speed = TURN_SPEED
+                 speed = np.round((angle/-180)*MAXROTATION *1.2)
+
+            if speed< TURN_SPEED:
+                speed=TURN_SPEED
+            if speed> MAXSPEED:
+                speed=MAXSPEED
+
+
 
             if not self.robot_is_turning and angle < 0:
                 self.robot_is_turning = True

@@ -2,18 +2,19 @@
 
 def obstacle_Search(ball_dot, i, j, midpoint):
     target_point = [0, 0]
+    print(f"ball_dot: {ball_dot[i]} midpoint: {midpoint[i]}")
     if ball_dot[i] < midpoint[i] and ball_dot[j] < midpoint[j]:
-        target_point = [midpoint[0] - 95, midpoint[1] - 320]  
-        target=   [midpoint[0] - 95, midpoint[1] + 320]  
+        target_point = [midpoint[0] - 80, midpoint[1] - 320]
+        target=   [midpoint[0] - 95, midpoint[1] + 320]
     elif ball_dot[i] < midpoint[i] and ball_dot[j] > midpoint[j]:
-        target_point = [midpoint[0] - 95, midpoint[1] + 320]  
-        target=   [midpoint[0] - 95, midpoint[1] - 320]     
+        target_point = [midpoint[0] - 80, midpoint[1] + 320]
+        target=   [midpoint[0] - 95, midpoint[1] - 320]
     elif ball_dot[i] > midpoint[i] and ball_dot[j] > midpoint[j]:
-        target_point = [midpoint[0] + 95, midpoint[1] - 320] 
-        target=   [midpoint[0] + 95, midpoint[1] + 320]       
+        target_point = [midpoint[0] + 80, midpoint[1] - 320]
+        target=   [midpoint[0] + 95, midpoint[1] + 320]
     elif ball_dot[i] > midpoint[i] and ball_dot[j] < midpoint[j]:
-        target_point = [midpoint[0] + 95, midpoint[1] + 320]   
-        target=   [midpoint[0] + 95, midpoint[1] - 320]   
+        target_point = [midpoint[0] + 80, midpoint[1] + 320]
+        target=   [midpoint[0] +95, midpoint[1] - 320]
     return target_point, target
 
 def is_ball_in_obstacle(ball_coords, midpoint):
