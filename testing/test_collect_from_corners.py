@@ -33,7 +33,7 @@ CORNERS = {
 
 main_loop = MainLoop()
 main_loop.initialize_field()
-main_loop.client.send_command("start_drive 20")
+main_loop.client.send_command("start_drive 30")
 
 if is_ball_in_corner(ball_coords_2):
     print("Checking if the ball is in the corner.")
