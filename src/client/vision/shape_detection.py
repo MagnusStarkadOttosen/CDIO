@@ -13,7 +13,7 @@ def detect_robot(image, direction_color, pivot_color):
     if len(direction_dot) == 0:  # TODO Proper error handling for green_dot
         print("No direction dot.")
         return None, None
-    print(f"what direction detectfinds {direction_dot}")
+    print(f"what direction detect finds {direction_dot}")
     # print("green dot found ", len(green_dot))
 
     pivot_dot = detect_balls(filter_image(image, pivot_color), min_radius=60, max_radius=65)
