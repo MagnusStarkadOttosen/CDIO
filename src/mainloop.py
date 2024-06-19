@@ -124,9 +124,9 @@ class MainLoop:
         # final_points = find_corner_points_full(frame, doVerbose=False)
         warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
 
-        robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color)
-        while robot_pos is None or robot_direction is None:
-            robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color)
+        robot_pos, robot_direction = safe_detect_robot(self.camera, self.final_points, DST_SIZE, self.white, self.white)
+        # while robot_pos is None or robot_direction is None:
+        #     robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color)
 
         # if filter_image.equals(filter_image_orange):
         if self.collect_orange_ball:
@@ -159,8 +159,19 @@ class MainLoop:
             log_balls(f"front pos: {front_x}, {front_y}")
             print("front is in deadzone")
             log_path("front Is in deadzone")
-            new_x, new_y = escape_dead_zone(self.navmesh, (front_x, front_y))
-            self.target_pos = (new_x, new_y)
+            new_x, new_y = escape_dead_zone(self.navmesh, (int(front_x), int(front_y)))
+
+            angle = rotate_vector_to_point(robot_pos, robot_direction, (900, 600))
+            tolerance = 20
+            if angle < -tolerance or angle > tolerance:
+                self._course_correction(angle, (900, 600), tol=tolerance)
+
+            self.client.send_command("move 10")
+
+            # if new_x and new_y is not None:
+            #     self.target_pos = (new_x, new_y)
+            # else:
+            #     print("New target none")
             # self.client.send_command("move -5")
             #return
 
@@ -255,6 +266,7 @@ class MainLoop:
                     continue
                 if are_points_close(robot_pos, (x, y), tolerance=40):
                     self.client.send_command("stop")
+                    # print(f"{robot_pos}aaa{(x,y)}aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
                     self.robot_is_moving = False
                     self.at_target = True
                     break
@@ -329,6 +341,7 @@ class MainLoop:
                 self.robot_is_turning = False
         self.robot_is_turning = False
         self.client.send_command("stop")
+        print("stop from course correction")
 
     def temp(self):
         ret, frame = self.camera.read()
