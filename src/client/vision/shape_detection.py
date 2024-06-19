@@ -78,7 +78,8 @@ def safe_detect_balls(camera, final_points, dst_size, color):
         ret, frame = camera.read()
         warped_img = warp_perspective(frame, final_points, dst_size)
         temp_circles = detect_balls(filter_image(warped_img, color))
-        log_balls(f"{i}: {len(temp_circles)}")
+        if temp_circles is not None:
+            log_balls(f"{i}: {len(temp_circles)}")
         if temp_circles is not None and len(temp_circles) > temp_len:
             temp_len = len(temp_circles)
             circles = temp_circles

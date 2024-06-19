@@ -1,3 +1,4 @@
+import math
 import time
 
 import cv2
@@ -135,7 +136,7 @@ class MainLoop:
         else:
             self.balls = safe_detect_balls(self.camera, self.final_points,
                                            DST_SIZE, self.white)
-            if len(self.balls) == 0:
+            if self.balls is None:
                 return
             print(self.balls)
             self.target_pos = find_nearest_ball(robot_pos, self.balls)  # TODO handle target being null
@@ -173,7 +174,26 @@ class MainLoop:
         # else:
         if cell_is_in_dead_zone(robot_pos, self.navmesh):
             log_path("Is in deadzone")
-            self.client.send_command(" 5")
+            self.client.send_command("move -5")
+            return
+
+        # Calculate the magnitude of the direction vector
+        magnitude = math.sqrt(robot_direction[0]**2 + robot_direction[1]**2)
+
+        if magnitude == 0:
+            raise ValueError("Direction vector magnitude is zero, cannot move")
+
+        # Calculate the unit direction vector components
+        unit_a = robot_direction[0] / magnitude
+        unit_b = robot_direction[1] / magnitude
+
+        distance = 5
+        # Calculate the new point
+        new_x = robot_pos[0] + distance * unit_a
+        new_y = robot_pos[1] + distance * unit_b
+        if cell_is_in_dead_zone((int(new_x),int(new_y)), self.navmesh):
+            log_path("front Is in deadzone")
+            self.client.send_command("move -5")
             return
         path = find_path(self.navmesh, warped_img, robot_pos, self.target_pos)
         self._navigate_to_target(path)
@@ -199,12 +219,15 @@ class MainLoop:
         while robot_pos is None or robot_direction is None:
             robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color)
 
-        path_to_goal_A = []
+        # path_to_goal_A = []
         goal_A_pivot_point = (150, 600)
 
-        path_to_goal_A.append(goal_A_pivot_point)
+        # path_to_goal_A.append(goal_A_pivot_point)
+
+        path = find_path(self.navmesh, warped_img, robot_pos, goal_A_pivot_point)
+
         # path_to_goal_A.append(goal_A_point)
-        self._navigate_to_target(path_to_goal_A)
+        self._navigate_to_target(path)
 
         angle = rotate_vector_to_point(robot_pos, robot_direction, (-100, 600))
 
@@ -216,6 +239,8 @@ class MainLoop:
             self._course_correction(angle, (-100, 600), 1)
 
         self.client.send_command("deliver")
+        time.sleep(5)
+        self.client.send_command("stop_collect")
 
     def _navigate_to_target(self, path):
         for (x, y) in path:
