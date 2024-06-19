@@ -15,10 +15,9 @@ def test_collect_ball_in_buffer_zone(ml):
     ret, frame = ml.camera.read()
     warped_img = warp_perspective(frame, ml.final_points, DST_SIZE)
     print(f"testing colors {ml.direction_color}")
-    robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color)
-    while robot_pos is None or robot_direction is None:
-        robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color)
 
+    robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color)
+    
     white_hsv_values = read_hsv_values('hsv_presets_white.txt')
     red_hsv_values = read_hsv_values('hsv_presets_red.txt')
 
@@ -40,8 +39,6 @@ def test_collect_ball_in_buffer_zone(ml):
     ml.client.send_command("move -6")
     ml.client.send_command("stop_collect")
     ml.client.send_command("stop")
-
-
 
 
 main_loop = MainLoop()
