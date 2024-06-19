@@ -8,7 +8,8 @@ import cv2
 #                     format='%(asctime)s - %(message)s')
 
 
-from src.client.pathfinding.FindPath import find_path, cell_is_in_dead_zone
+from src.client.pathfinding.FindPath import find_path, cell_is_in_dead_zone, cell_is_in_border_zone, \
+    cell_is_in_cross_zone
 from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, escape_dead_zone
 # from src.client.pathfinding.GenerateNavMesh import find_path
 from src.client.search_targetpoint.obstacle_search import is_ball_in_obstacle, obstacle_Search
@@ -155,11 +156,17 @@ class MainLoop:
         #     return
 
         front_x, front_y = self._calc_robot_front(robot_direction, robot_pos)
-        if cell_is_in_dead_zone((int(front_x),int(front_y)), self.navmesh):
-            log_balls(f"front pos: {front_x}, {front_y}")
-            print("front is in deadzone")
-            log_path("front Is in deadzone")
-            new_x, new_y = escape_dead_zone(self.navmesh, (int(front_x), int(front_y)))
+        if cell_is_in_border_zone((front_x, front_y), self.navmesh):
+            self._escape_border(robot_pos, robot_direction)
+            return
+        elif cell_is_in_cross_zone((front_x, front_y), self.navmesh):
+            self._escape_cross(front_x, front_y)
+
+        # if cell_is_in_dead_zone((int(front_x),int(front_y)), self.navmesh):
+        #     log_balls(f"front pos: {front_x}, {front_y}")
+        #     print("front is in deadzone")
+        #     log_path("front Is in deadzone")
+        #     new_x, new_y = escape_dead_zone(self.navmesh, (int(front_x), int(front_y)))
 
             # if new_x and new_y is not None:
             #     self.target_pos = (new_x, new_y)
@@ -196,9 +203,10 @@ class MainLoop:
             self._course_correction(angle, (900, 600), tol=tolerance)
         self.client.send_command("move 10")
 
-
-    def _escape_cross(self):
-        return None
+    def _escape_cross(self, front_x, front_y):
+        log_path("front Is in deadzone")
+        new_x, new_y = escape_dead_zone(self.navmesh, (front_x, front_y))
+        self.target_pos = (new_x, new_y)
 
     def _collect_ball_in_corner(self, ball_pos, robot_pos, warped_img):
         corner_result = check_corners(ball_pos, threshold=50)

@@ -37,11 +37,20 @@ def find_path(navmesh, warped_img, robot_pos, target_pos):
 
     return coord_path
 
+#
+# def cell_is_in_dead_zone(pos, navmesh):
+#     target_cell = coordinate_to_cell(pos[0], pos[1], 30)
+#     return navmesh[target_cell[1], target_cell[0]] == 0
 
-def cell_is_in_dead_zone(pos, navmesh):
+
+def cell_is_in_border_zone(pos, navmesh):
     target_cell = coordinate_to_cell(pos[0], pos[1], 30)
     return navmesh[target_cell[1], target_cell[0]] == 0
 
+
+def cell_is_in_cross_zone(pos, navmesh):
+    target_cell = coordinate_to_cell(pos[0], pos[1], 30)
+    return navmesh[target_cell[1], target_cell[0]] == 1
 
 def pretty_print_navmesh(navmesh, path):
     navmesh_copy = navmesh.copy()
