@@ -161,13 +161,6 @@ class MainLoop:
             log_path("front Is in deadzone")
             new_x, new_y = escape_dead_zone(self.navmesh, (int(front_x), int(front_y)))
 
-            angle = rotate_vector_to_point(robot_pos, robot_direction, (900, 600))
-            tolerance = 20
-            if angle < -tolerance or angle > tolerance:
-                self._course_correction(angle, (900, 600), tol=tolerance)
-
-            self.client.send_command("move 10")
-
             # if new_x and new_y is not None:
             #     self.target_pos = (new_x, new_y)
             # else:
@@ -196,6 +189,16 @@ class MainLoop:
         new_y = robot_pos[1] + distance * unit_b
         return new_x, new_y
 
+    def _escape_border(self, robot_pos, robot_direction):
+        angle = rotate_vector_to_point(robot_pos, robot_direction, (900, 600))
+        tolerance = 20
+        if angle < -tolerance or angle > tolerance:
+            self._course_correction(angle, (900, 600), tol=tolerance)
+        self.client.send_command("move 10")
+
+
+    def _escape_cross(self):
+        return None
 
     def _collect_ball_in_corner(self, ball_pos, robot_pos, warped_img):
         corner_result = check_corners(ball_pos, threshold=50)
