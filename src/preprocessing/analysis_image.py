@@ -64,7 +64,7 @@ test_dataset = create_dataset('dataset_resized/test', batch_size=32, shuffle=Fal
 
 # Example to visualize a batch of images
 def visualize_dataset(dataset, class_names, batch_size=32):
-    plt.figure(figsize=(10, 10))
+    plt.figure(figsize=(15, 15))
     for images, labels in dataset.take(1):
         for i in range(batch_size):
             ax = plt.subplot(4, 8, i + 1)
