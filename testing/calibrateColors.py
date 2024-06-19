@@ -12,6 +12,7 @@ from src.client.field.coordinate_system import calculate_slope, find_corner_poin
 
 warp = True
 edges = False
+CAM_INDEX = 1
 
 def read_hsv_values(filename):
     hsv_values = {}
@@ -179,7 +180,7 @@ def load_color_presets(color, base_filename="hsv_presets"):
         return None, None
 
 # Capture from camera
-cap = cv2.VideoCapture(1,cv2.CAP_DSHOW)
+cap = cv2.VideoCapture(CAM_INDEX,cv2.CAP_DSHOW)
 dst_size = (1200, 1800)
 ret, frame = cap.read()
 
@@ -299,7 +300,7 @@ while True:
     
     cv2.putText(res, f"Balls detected: {ball_count}", (10,30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     if warp:
-        cv2.putText(gen_warped_frame, f"Balls detected: {ball_count3}", (10,30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        cv2.putText(gen_warped_frame, f"Balls detected: {ball_count2}", (10,30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     cv2.imshow('Result', res)
     if warp:
         cv2.imshow('warped', gen_warped_frame)

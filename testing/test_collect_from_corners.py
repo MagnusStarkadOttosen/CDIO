@@ -49,7 +49,7 @@ if is_ball_in_corner(ball_coords_2):
     print("after navigate to pivot points")
 
     distance_to_move = calculate_distance(pivot_points, corner_points)
-    print(f"distance to move: {distance_to_move}")
+    print(f"distance to move: {distance_to_move}" )
     main_loop.client.send_command("stop")
 
     robot_pos, robot_direction = main_loop.temp()
@@ -64,7 +64,7 @@ if is_ball_in_corner(ball_coords_2):
 
 
     main_loop.client.send_command("start_collect")
-    main_loop.client.send_command("move " + distance_to_move * 0.88 )
+    main_loop.client.send_command("move " + distance_to_move*0.88 )
     main_loop.client.send_command("move -50")
     main_loop.client.send_command("stop")
     main_loop.client.send_command("stop_collect")
