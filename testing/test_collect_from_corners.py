@@ -14,9 +14,9 @@ print("Test collecting from corners.")
 
 IMAGE_SIZE = [1200, 1800]
 ball_coords_1 = (1690, 574)
-# ball_coords_2 = (1800, 1200) # bottom_right
+ball_coords_2 = (1800, 1200) # bottom_right
 #ball_coords_2 = (0, 0) # top_left
-ball_coords_2 = (1800, 0) # top_right
+# ball_coords_2 = (1800, 0) # top_right
 #ball_coords_2 = (0, 1200) # bottom_right
 
 WHITE_BALL_COUNT = 10
@@ -48,8 +48,8 @@ if is_ball_in_corner(ball_coords_2):
     main_loop._navigate_to_target([pivot_points])
     print("after navigate to pivot points")
 
-    distance = calculate_distance(pivot_points, corner_points)
-    distance_to_move = distance * 0.88
+    distance = calculate_distance(corner_points, pivot_points)
+    distance_to_move = (distance * 0.88) - 180
     print(f"distance to move: {distance}")
     main_loop.client.send_command("stop")
 
