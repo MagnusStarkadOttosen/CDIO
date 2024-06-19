@@ -17,10 +17,10 @@ from src.client.hsvLoad import read_hsv_values
 
 
 MAXSPEED = 100
-MAXROTATION = 10
+MAXROTATION = 20
 WHITE_BALL_COUNT = 10
 ROBOT_CAPACITY = 6
-TOLERANCE = 100
+TOLERANCE = 50
 TURN_SPEED = 3
 QUICK_TURN_SPEED= 10
 DST_SIZE = (1200, 1800)
@@ -241,7 +241,7 @@ class MainLoop:
                     self.robot_is_moving = True
 
                 if self.robot_is_moving:
-                    distance = distance_left(robot_pos,(x,y))
+                    distance = distance_left(robot_pos,self.target_pos)
                     print(distance)
                     fraction=distance/1800
                     print(fraction)
