@@ -5,11 +5,15 @@ import numpy as np
 from src.client.vision.filters import *
 from sklearn.cluster import KMeans
 
-def find_corners(masked_image):
-    corners = cv2.goodFeaturesToTrack(cv2.cvtColor(masked_image, cv2.COLOR_BGR2GRAY), 4, 0.01, 10)
-    corners = np.int0(corners)
-    return corners
 
+def find_corners(image, max_corners, quality_level, min_distance):
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    mean_intensity = np.mean(gray)
+    adapted_quality_level = quality_level * (mean_intensity / 128)  # Adjust based on average brightness
+
+    corners = cv2.goodFeaturesToTrack(gray, max_corners, adapted_quality_level, min_distance)
+    corners = np.int0(corners)if corners is not None else []
+    return corners
 
 def map_to_coordinate_system(image, point, origin, scale):
     # Convert a point from image coordinates to your defined coordinate system
@@ -19,18 +23,23 @@ def map_to_coordinate_system(image, point, origin, scale):
     mapped_y = (y - origin_y) * scale
     return mapped_x, mapped_y
 
-
 def warp_perspective(image, src_points, dst_size):
-    height, width = dst_size
-    
-    pts_dst = np.array([[0, 0], [width, 0], [width, height], [0, height]], dtype="float32")
-    #print(f"src_points: {src_points} pts_dst: {pts_dst} ")
-    
+    """ Applies a perspective transformation to the image. """
+    pts_dst = np.array([[0, 0], [dst_size[0], 0], [dst_size[0], dst_size[1]], [0, dst_size[1]]], dtype="float32")
     M = cv2.getPerspectiveTransform(src_points, pts_dst)
-    
-    warped_image = cv2.warpPerspective(image, M, (width, height))
-    
+    warped_image = cv2.warpPerspective(image, M, (dst_size[0], dst_size[1]))
     return warped_image
+# def warp_perspective(image, src_points, dst_size):
+#     height, width = dst_size
+#
+#     pts_dst = np.array([[0, 0], [width, 0], [width, height], [0, height]], dtype="float32")
+#     #print(f"src_points: {src_points} pts_dst: {pts_dst} ")
+#
+#     M = cv2.getPerspectiveTransform(src_points, pts_dst)
+#
+#     warped_image = cv2.warpPerspective(image, M, (width, height))
+#
+#     return warped_image
 
 
 def draw_grid(image, real_world_size, grid_spacing_cm):
