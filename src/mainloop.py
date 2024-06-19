@@ -146,14 +146,25 @@ class MainLoop:
             #logging.warning(self.target_pos)
             log_balls(self.target_pos)
 
-        # old
+        # old find_corners code
         if cell_is_in_dead_zone(robot_pos, self.navmesh):
             log_path("Is in deadzone")
             self.client.send_command("move -5")
             return
 
+        front_x, front_y = self._calc_robot_front(robot_direction, robot_pos)
+        if cell_is_in_dead_zone((int(front_x),int(front_y)), self.navmesh):
+            log_path("front Is in deadzone")
+            log_balls(f"front pos: {front_x}, {front_y}")
+            self.client.send_command("move -5")
+            return
+        path = find_path(self.navmesh, warped_img, robot_pos, self.target_pos)
+        self._navigate_to_target(path)
+
+
+    def _calc_robot_front(self, robot_direction, robot_pos):
         # Calculate the magnitude of the direction vector
-        magnitude = math.sqrt(robot_direction[0]**2 + robot_direction[1]**2)
+        magnitude = math.sqrt(robot_direction[0] ** 2 + robot_direction[1] ** 2)
 
         if magnitude == 0:
             raise ValueError("Direction vector magnitude is zero, cannot move")
@@ -166,12 +177,8 @@ class MainLoop:
         # Calculate the new point
         new_x = robot_pos[0] + distance * unit_a
         new_y = robot_pos[1] + distance * unit_b
-        if cell_is_in_dead_zone((int(new_x),int(new_y)), self.navmesh):
-            log_path("front Is in deadzone")
-            self.client.send_command("move -5")
-            return
-        path = find_path(self.navmesh, warped_img, robot_pos, self.target_pos)
-        self._navigate_to_target(path)
+        return new_x, new_y
+
 
     def _collect_ball_in_corner(self, ball_pos, robot_pos, warped_img):
         corner_result = check_corners(ball_pos, threshold=50)
