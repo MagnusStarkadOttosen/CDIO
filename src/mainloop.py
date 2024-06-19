@@ -224,7 +224,7 @@ class MainLoop:
 
                 # angle = calc_degrees_to_rotate(robot_direction, target_direction)
                 print(f"after robot pos {robot_pos} and direction {robot_direction} and target {(x, y)} and angle: {angle}")
-                tolerance = 1
+                tolerance = 10
                 if angle < -tolerance or angle > tolerance:
                     print(f"asdsdkjfsdkjfsdkj {angle}")
                     self._course_correction(angle, (x,y), tol=tolerance)
@@ -249,7 +249,7 @@ class MainLoop:
                     #      self.client.send_command("stop_collect")
 
 
-    def _course_correction(self, angle, target, tol=1): # TODO read final points only once at start?
+    def _course_correction(self, angle, target, tol=10): # TODO read final points only once at start?
         print(f"inside course correction. Angle: {angle}. Tolerance: {tol}")
         while angle < -tol or angle > tol:
             ret, frame = self.camera.read()
@@ -268,7 +268,7 @@ class MainLoop:
             if angle> 50 or angle< -50:
                  speed = QUICK_TURN_SPEED
             else:
-                speed= 2
+                speed= 1
 
             if not self.robot_is_turning and angle < 0:
                 self.robot_is_turning = True
