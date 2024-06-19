@@ -21,6 +21,13 @@ def GenerateNavMesh(image, hsv_values):
     mask = cv2.inRange(hsv, lower_bound, upper_bound)
     inverted_mask = cv2.bitwise_not(mask)
 
+    # Set the edge pixels to white
+    edge_size = 20
+    inverted_mask[:edge_size, :] = 255
+    inverted_mask[-edge_size:, :] = 255
+    inverted_mask[:, :edge_size] = 255
+    inverted_mask[:, -edge_size:] = 255
+    
     # Remove rogue pixels
     num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(inverted_mask, connectivity=8)
     for i in range(1, num_labels):

@@ -44,7 +44,7 @@ class MainLoop:
         self.balls = None
         self.collect_orange_ball = False
         self.target_pos = None
-        self.camera = cv2.VideoCapture(2, cv2.CAP_DSHOW)
+        self.camera = cv2.VideoCapture(1, cv2.CAP_DSHOW)
         self.final_points = None
         self.navmesh = None
         self.robot_is_moving = False
@@ -100,9 +100,10 @@ class MainLoop:
         self.balls = detect_balls(warped_img)
 
     def _collect_white_balls(self):
-        while len(self.balls) > WHITE_BALL_COUNT - ROBOT_CAPACITY:
-            self._collect_ball()
-        self._deliver_balls()
+        while len(self.balls) > ROBOT_CAPACITY:
+            while len(self.balls) > WHITE_BALL_COUNT - ROBOT_CAPACITY:
+                self._collect_ball()
+            self._deliver_balls()
         self._collect_remaining_balls()
 
     def _collect_and_deliver_orange_ball(self):
@@ -176,17 +177,17 @@ class MainLoop:
             log_path("Is in deadzone")
             self.client.send_command("move -5")
             return
-        
+
         # Calculate the magnitude of the direction vector
         magnitude = math.sqrt(robot_direction[0]**2 + robot_direction[1]**2)
-    
+
         if magnitude == 0:
             raise ValueError("Direction vector magnitude is zero, cannot move")
-        
+
         # Calculate the unit direction vector components
         unit_a = robot_direction[0] / magnitude
         unit_b = robot_direction[1] / magnitude
-        
+
         distance = 5
         # Calculate the new point
         new_x = robot_pos[0] + distance * unit_a
