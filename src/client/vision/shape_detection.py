@@ -80,9 +80,10 @@ def safe_detect_balls(camera, final_points, dst_size, color):
         temp_circles = detect_balls(filter_image(warped_img, color))
         if temp_circles is not None:
             log_balls(f"{i}: {len(temp_circles)}")
-        if temp_circles is not None and len(temp_circles) > temp_len:
-            temp_len = len(temp_circles)
-            circles = temp_circles
+        if temp_circles is not None:
+            if len(temp_circles) > temp_len:
+                temp_len = len(temp_circles)
+                circles = temp_circles
 
     if circles is not None:
         return circles
