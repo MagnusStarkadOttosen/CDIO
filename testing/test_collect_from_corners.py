@@ -13,9 +13,9 @@ print("Test collecting from corners.")
 
 IMAGE_SIZE = [1200, 1800]
 ball_coords_1 = (1690, 574)
-ball_coords_2 = (1800, 1200) # bottom_right
+# ball_coords_2 = (1800, 1200) # bottom_right
 #ball_coords_2 = (0, 0) # top_left
-#ball_coords_2 = (1800, 0) # top_right
+ball_coords_2 = (1800, 0) # top_right
 #ball_coords_2 = (0, 1200) # bottom_right
 
 WHITE_BALL_COUNT = 10
@@ -33,12 +33,12 @@ CORNERS = {
 
 main_loop = MainLoop()
 main_loop.initialize_field()
-main_loop.client.send_command("start_drive 20")
+main_loop.client.send_command("start_drive 30")
 
 if is_ball_in_corner(ball_coords_2):
     print("Checking if the ball is in the corner.")
     print(f"There is a ball in {ball_coords_2} ")
-    corner_result_2 = check_corners(ball_coords_2, threshold=100)
+    corner_result_2 = check_corners(ball_coords_2, threshold=50)
     print("corner result 2", corner_result_2)
     pivot_points, corner_points = robot_movement_based_on_corners(corner_result_2)
     print(f"pivot: {pivot_points} corner: {corner_points}")
@@ -60,7 +60,7 @@ if is_ball_in_corner(ball_coords_2):
         main_loop._course_correction(angle, ball_coords_2, tol=tolerance)
 
     main_loop.client.send_command("start_collect")
-    main_loop.client.send_command("move 50")
+    main_loop.client.send_command("move 49")
     main_loop.client.send_command("move -50")
     main_loop.client.send_command("stop")
     main_loop.client.send_command("stop_collect")
