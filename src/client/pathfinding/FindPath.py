@@ -55,7 +55,7 @@ def cell_is_in_cross_zone(pos, navmesh):
 def pretty_print_navmesh(navmesh, path):
     navmesh_copy = navmesh.copy()
     for (x, y) in path:
-        navmesh_copy[y, x] = 2  # Mark the path with '2'
+        navmesh_copy[y, x] = 3  # Mark the path with '3'
 
     for row in navmesh_copy:
         print(' '.join(str(cell) for cell in row))
