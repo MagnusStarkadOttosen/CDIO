@@ -237,6 +237,7 @@ class MainLoop:
                 #     self.client.send_command("stop")
 
                 if not self.robot_is_moving and not self.robot_is_turning:
+                    self.client.send_command("start_drive 10")
                     self.robot_is_moving = True
 
                 if self.robot_is_moving:
@@ -253,9 +254,7 @@ class MainLoop:
                     if pace<10:
                         pace=10
                     print(fraction)
-
-
-                self.client.send_command(f"start_drive {pace}")
+                    self.client.send_command(f"start_drive {pace}")
 
 
                     # if are_points_close(robot_pos,self.target_pos,300):
