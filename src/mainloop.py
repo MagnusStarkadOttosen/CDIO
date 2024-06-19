@@ -147,15 +147,15 @@ class MainLoop:
             log_balls(self.target_pos)
 
         # old find_corners code
-        if cell_is_in_dead_zone(robot_pos, self.navmesh):
-            print("front is in deadzone")
-            log_path("Is in deadzone")
-            self.client.send_command("move -5")
-            return
+        # if cell_is_in_dead_zone(robot_pos, self.navmesh):
+        #     print("front is in deadzone")
+        #     log_path("Is in deadzone")
+        #     self.client.send_command("move -5")
+        #     return
 
         front_x, front_y = self._calc_robot_front(robot_direction, robot_pos)
-        log_balls(f"front pos: {front_x}, {front_y}")
         if cell_is_in_dead_zone((int(front_x),int(front_y)), self.navmesh):
+            log_balls(f"front pos: {front_x}, {front_y}")
             print("front is in deadzone")
             log_path("front Is in deadzone")
             self.client.send_command("move -5")
