@@ -4,6 +4,9 @@ import heapq
 import cv2
 import numpy as np
 
+WALKABLE_INDEX = 2
+OBSTACLE_INDEX = 1
+
 def GenerateNavMesh(image, hsv_values):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     height, width = gray.shape
@@ -51,13 +54,10 @@ def GenerateNavMesh(image, hsv_values):
             # Calculate the percentage of the cell that is white
             white_pixels = np.sum(cell == 255)
             total_pixels = cell.size
-            print("after total pixels")
             if white_pixels / total_pixels >= 0.75:
-                print("walkable")
-                navmesh[y // grid_size, x // grid_size] = 2
+                navmesh[y // grid_size, x // grid_size] = WALKABLE_INDEX
             else:
-                print("Cross")
-                navmesh[y // grid_size, x // grid_size] = 1
+                navmesh[y // grid_size, x // grid_size] = OBSTACLE_INDEX
 
 
     return navmesh
@@ -112,7 +112,7 @@ def astar(navmesh, start, goal):
         
         for neighbor in neighbors:
             if 0 <= neighbor[1] < navmesh.shape[0] and 0 <= neighbor[0] < navmesh.shape[1]:
-                if navmesh[neighbor[1], neighbor[0]] == 1:  # Check if neighbor is walkable
+                if navmesh[neighbor[1], neighbor[0]] == WALKABLE_INDEX:  # Check if neighbor is walkable
                     tentative_g_cost = g_costs[current] + 1
                     if neighbor not in g_costs or tentative_g_cost < g_costs[neighbor]:
                         g_costs[neighbor] = tentative_g_cost
@@ -131,7 +131,7 @@ def is_walkable(navmesh, start, end):
     sy = 1 if y0 < y1 else -1
     err = dx - dy
     while True:
-        if navmesh[y0, x0] == 0:
+        if navmesh[y0, x0] == 0 or navmesh[y0, x0] == 1:
             return False
         if (x0, y0) == (x1, y1):
             break
@@ -145,7 +145,7 @@ def is_walkable(navmesh, start, end):
     return True
 
 def optimize_path(navmesh, path):
-    if not path:
+    if path is None:
         return path
 
     optimized_path = [path[0]]

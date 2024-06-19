@@ -82,6 +82,8 @@ for y in range(0, height, grid_size):
         white_pixels = np.sum(cell == 255)
         total_pixels = cell.size
         if white_pixels / total_pixels >= 0.75:
+            navmesh[y // grid_size, x // grid_size] = 2
+        else:
             navmesh[y // grid_size, x // grid_size] = 1
 print("Filled the navmesh grid based on the buffered_mask")
 # Create an image to visualize the navmesh
@@ -148,7 +150,7 @@ def astar(navmesh, start, goal):
         ]
         for neighbor in neighbors:
             if 0 <= neighbor[1] < navmesh.shape[0] and 0 <= neighbor[0] < navmesh.shape[1]:
-                if navmesh[neighbor[1], neighbor[0]] == 1:  # Check if neighbor is walkable
+                if navmesh[neighbor[1], neighbor[0]] == 2:  # Check if neighbor is walkable
                     tentative_g_cost = g_costs[current] + 1
                     if neighbor not in g_costs or tentative_g_cost < g_costs[neighbor]:
                         g_costs[neighbor] = tentative_g_cost
@@ -162,7 +164,7 @@ def astar(navmesh, start, goal):
 def pretty_print_navmesh(navmesh, path):
     navmesh_copy = navmesh.copy()
     for (x, y) in path:
-        navmesh_copy[y, x] = 2  # Mark the path with '2'
+        navmesh_copy[y, x] = 3  # Mark the path with '3'
 
     for row in navmesh_copy:
         print(' '.join(str(cell) for cell in row))
@@ -241,7 +243,7 @@ def is_walkable(navmesh, start, end):
     sy = 1 if y0 < y1 else -1
     err = dx - dy
     while True:
-        if navmesh[y0, x0] == 0:
+        if navmesh[y0, x0] == 0 or navmesh[y0, x0] == 1:
             return False
         if (x0, y0) == (x1, y1):
             break
