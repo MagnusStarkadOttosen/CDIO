@@ -40,37 +40,34 @@ def inverted_filter_mask(image, hsv_values):
 # # def generate_navmesh(image):
 
 red_hsv_values = read_hsv_values('hsv_presets_red.txt')
-print("read hsv valuees")
 mask, inverted_red_mask = inverted_filter_mask(image, red_hsv_values)
-print("created mask")
+
 # Set the edge pixels to white
 edge_size = 20
 inverted_red_mask[:edge_size, :] = 255
 inverted_red_mask[-edge_size:, :] = 255
 inverted_red_mask[:, :edge_size] = 255
 inverted_red_mask[:, -edge_size:] = 255
-print(" Set the edge pixels to white")
+
 # Convert image to grayscale
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 height, width = gray.shape
-print("converted to gray")
+
 # Define the grid size for the navmesh
 grid_size = 30
 buffer_size = 100
 
 # Create an empty navmesh grid
 navmesh = np.zeros((height // grid_size, width // grid_size), dtype=np.uint8)
-print("Create an empty navmesh grid")
+
 # Create a buffer around the black areas
 # kernel = np.ones((buffer_size, buffer_size), np.uint8)
 kernel = np.ones((buffer_size, buffer_size), np.uint8)
 buffered_mask = cv2.erode(inverted_red_mask, kernel, iterations=2)
-print("buffered mask")
-cv2.imwrite('Mask.jpg', inverted_red_mask)
-cv2.imwrite('BMask.jpg', buffered_mask)
-# cv2.imshow('Mask', inverted_red_mask)
-# cv2.imshow('BMask', buffered_mask)
-print("imshow")
+
+cv2.imshow('Mask', inverted_red_mask)
+cv2.imshow('BMask', buffered_mask)
+
 # Fill the navmesh grid based on the buffered_mask
 for y in range(0, height, grid_size):
     for x in range(0, width, grid_size):
@@ -82,23 +79,21 @@ for y in range(0, height, grid_size):
         white_pixels = np.sum(cell == 255)
         total_pixels = cell.size
         if white_pixels / total_pixels >= 0.75:
-            navmesh[y // grid_size, x // grid_size] = 2
-        else:
             navmesh[y // grid_size, x // grid_size] = 1
-print("Filled the navmesh grid based on the buffered_mask")
+
 # Create an image to visualize the navmesh
 navmesh_img = np.zeros_like(image)
-print("Created an image to visualize the navmesh")
+
 # Draw rectangles on the navmesh image
 for y in range(navmesh.shape[0]):
     for x in range(navmesh.shape[1]):
         if navmesh[y, x] == 1:
             cv2.rectangle(navmesh_img, (x * grid_size, y * grid_size), 
                           ((x + 1) * grid_size, (y + 1) * grid_size), (0, 255, 0), -1)
-print(" Drew rectangles on the navmesh image")
+
 # Overlay the navmesh on the original image
 overlay = cv2.addWeighted(image, 0.5, navmesh_img, 0.5, 0)
-print(" Overlayed the navmesh on the original image")
+
 # Display the images
 # cv2.imshow('Original Image', image)
 # cv2.imshow('Navmesh', overlay)
@@ -107,7 +102,7 @@ print(" Overlayed the navmesh on the original image")
 np.set_printoptions(threshold=np.inf)
 inverted_navmesh = np.logical_not(navmesh).astype(np.uint8)
 # print(inverted_navmesh)
-print("")
+
 
 
 def heuristic(a, b):
@@ -150,7 +145,7 @@ def astar(navmesh, start, goal):
         ]
         for neighbor in neighbors:
             if 0 <= neighbor[1] < navmesh.shape[0] and 0 <= neighbor[0] < navmesh.shape[1]:
-                if navmesh[neighbor[1], neighbor[0]] == 2:  # Check if neighbor is walkable
+                if navmesh[neighbor[1], neighbor[0]] == 1:  # Check if neighbor is walkable
                     tentative_g_cost = g_costs[current] + 1
                     if neighbor not in g_costs or tentative_g_cost < g_costs[neighbor]:
                         g_costs[neighbor] = tentative_g_cost
@@ -164,7 +159,7 @@ def astar(navmesh, start, goal):
 def pretty_print_navmesh(navmesh, path):
     navmesh_copy = navmesh.copy()
     for (x, y) in path:
-        navmesh_copy[y, x] = 3  # Mark the path with '3'
+        navmesh_copy[y, x] = 2  # Mark the path with '2'
 
     for row in navmesh_copy:
         print(' '.join(str(cell) for cell in row))
@@ -243,7 +238,7 @@ def is_walkable(navmesh, start, end):
     sy = 1 if y0 < y1 else -1
     err = dx - dy
     while True:
-        if navmesh[y0, x0] == 0 or navmesh[y0, x0] == 1:
+        if navmesh[y0, x0] == 0:
             return False
         if (x0, y0) == (x1, y1):
             break
@@ -301,17 +296,15 @@ else:
         combined_image = overlay_path_on_image(image, optimized_path, grid_size)
         combined_image = draw_start_goal_on_image(combined_image, start, goal, grid_size)
         combined_image = overlay_tried_cells_on_image(combined_image, tried_cells, grid_size)
-        cv2.imwrite('Navmesh with Optimized Path.jpg', combined_image)
-        # cv2.imshow('Navmesh with Optimized Path', combined_image)
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
+        cv2.imshow('Navmesh with Optimized Path', combined_image)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
     else:
         print("No path found.")
         pretty_print_navmesh(navmesh, [])
         combined_image = draw_start_goal_on_image(image, start, goal, grid_size)
         combined_image = overlay_tried_cells_on_image(combined_image, tried_cells, grid_size)
-        cv2.imwrite('Navmesh with Path.jpg', combined_image)
-        # cv2.imshow('Navmesh with Path', combined_image)
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
+        cv2.imshow('Navmesh with Path', combined_image)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
         
