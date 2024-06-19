@@ -14,6 +14,7 @@ actions_functions = {
     "start_drive": commands.drive_inf,
     "turn_left": commands.turn_left,
     "drive_back": commands.drive_back,
+    "drive_back_save": commands.drive_back_save,
     "drive_backward": commands.drive_backwards
 }
 
@@ -25,7 +26,11 @@ def process_command(command):
         if action in actions_functions:
             if len(command_parsed) > 1:
                 value = float(command_parsed[1])
-                actions_functions[action](value)
+                if len(command_parsed) > 2:
+                    value1 = float(command_parsed[2])
+                    actions_functions[action](value, value1)
+                else:
+                    actions_functions[action](value)
             else:
                 actions_functions[action]()
         else:
