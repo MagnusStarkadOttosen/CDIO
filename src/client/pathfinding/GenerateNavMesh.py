@@ -158,7 +158,6 @@ def optimize_path(navmesh, path):
                 i = j
                 break
         i += 1
-
     return optimized_path
 
 # This find the nearest walkable cell using breath first
