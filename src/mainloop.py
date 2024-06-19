@@ -146,35 +146,7 @@ class MainLoop:
             #logging.warning(self.target_pos)
             log_balls(self.target_pos)
 
-        # if is_ball_in_corner(self.target_pos):
-        #     print("ball is in corner.")
-        #     self._collect_ball_in_corner(self.target_pos, robot_pos, warped_img)
-        #     # corner_result = check_corners(self.balls, threshold=50)
-        #     # pivot_points, corner_points = robot_movement_based_on_corners(corner_result)
-        #     # # path = find_path(self.grid, robot_pos, pivot_points)
-        #     # # self._navigate_to_target(path)
-        #     # self.client.send_command("start_collect")
-        #     # self._navigate_to_target(corner_points)
-        #     # # self._navigate_to_target(path)
-        #     # self.client.send_command("stop_collect")
-        #     # self.client.send_command("stop")
-        # # elif is_ball_in_obstacle(self.balls, midpoint):
-        # #     midpoint=self._detect_obstacles()
-        # #     target_point = obstacle_Search(self.balls, 0, 1, midpoint)
-        # #     target=  obstacle_Search(self.balls, 1, 0, midpoint)
-        # #     path= [target_point]
-        # #     self._navigate_to_target(path)
-        # #     self.client.send_command("start_collect")
-        # #     angle = rotate_vector_to_point(robot_pos, robot_direction,target)
-        # #     print(f"after robot pos {robot_pos} and direction {robot_direction} and target {target} and angle: {angle}")
-        # #     if angle < -TOLERANCE or angle > TOLERANCE:
-        # #         self._course_correction(angle, target)
-        # #     self.client.send_command("move 7")
-        # #     self.client.send_command("move -7")
-        # #     self.client.send_command("stop_collect")
-        # #     self.client.send_command("stop")
-        #
-        # else:
+        # old
         if cell_is_in_dead_zone(robot_pos, self.navmesh):
             log_path("Is in deadzone")
             self.client.send_command("move -5")
