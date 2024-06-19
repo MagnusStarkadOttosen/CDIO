@@ -213,6 +213,7 @@ class MainLoop:
         path = find_path(self.navmesh, warped_img, robot_pos, goal_A_pivot_point)
 
         # path_to_goal_A.append(goal_A_point)
+        self.client.send_command("stop_collect")
         self._navigate_to_target(path)
 
         angle = rotate_vector_to_point(robot_pos, robot_direction, (-100, 600))
