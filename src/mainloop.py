@@ -282,16 +282,21 @@ class MainLoop:
             angle = rotate_vector_to_point(robot_pos, robot_direction, target)
             print(f"angle: {angle}")
 
-            if angle>=0:
-                 speed = np.round((angle/180)*MAXROTATION*1.2)
-
+            if angle> 50 or angle< -50:
+                speed = QUICK_TURN_SPEED
             else:
-                 speed = np.round((angle/-180)*MAXROTATION *1.2)
+                speed = TURN_SPEED
 
-            if speed< TURN_SPEED:
-                speed=TURN_SPEED
-            if speed> MAXSPEED:
-                speed=MAXSPEED
+           # if angle>=0:
+            #     speed = np.round((angle/180)*MAXROTATION*1.2)
+
+#            else:
+ #                speed = np.round((angle/-180)*MAXROTATION *1.2)
+
+  #          if speed< TURN_SPEED:
+   #             speed=TURN_SPEED
+    #        if speed> MAXSPEED:
+     #           speed=MAXSPEED
 
 
 
