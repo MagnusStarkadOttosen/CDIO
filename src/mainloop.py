@@ -62,7 +62,7 @@ class MainLoop:
         self.initialize_field()
         self.balls = self._detect_initial_balls()
 
-        self._collect_and_deliver_orange_ball()
+        #self._collect_and_deliver_orange_ball()
         self._collect_white_balls()
 
         self.client.send_command("stop_collect")

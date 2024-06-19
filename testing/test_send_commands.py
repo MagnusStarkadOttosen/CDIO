@@ -48,7 +48,9 @@ def move(self):
 
 client_pc = ClientPC()
 client_pc.send_command("start_collect")
-
+client_pc.send_command("move 50")
+client_pc.send_command("deliver")
+client_pc.send_command("stop_collect")
 
 
 
