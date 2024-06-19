@@ -29,8 +29,13 @@ def warp_perspective(image, src_points, dst_size):
     M = cv2.getPerspectiveTransform(src_points, pts_dst)
     
     warped_image = cv2.warpPerspective(image, M, (width, height))
+
+    original_center = np.array([[image.shape[1] / 2, image.shape[0] / 2]], dtype="float32")
+    original_center = np.array([original_center])
+    transformed_center = cv2.perspectiveTransform(original_center, M)
+    transformed_center = transformed_center.reshape((2,))
     
-    return warped_image
+    return warped_image, transformed_center
 
 
 def draw_grid(image, real_world_size, grid_spacing_cm):
