@@ -14,9 +14,9 @@ print("Test collecting from corners.")
 IMAGE_SIZE = [1200, 1800]
 ball_coords_1 = (1690, 574)
 ball_coords_2 = (1800, 1200) # bottom_right
-#ball_coords_3 = (0, 0) # top_left
-#ball_coords_3 = (1800, 0) # top_right
-#ball_coords_3 = (0, 1200) # bottom_right
+#ball_coords_2 = (0, 0) # top_left
+#ball_coords_2 = (1800, 0) # top_right
+#ball_coords_2 = (0, 1200) # bottom_right
 
 WHITE_BALL_COUNT = 10
 ROBOT_CAPACITY = 6
