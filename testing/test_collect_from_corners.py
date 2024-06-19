@@ -64,7 +64,7 @@ if is_ball_in_corner(ball_coords_2):
 
 
     main_loop.client.send_command("start_collect")
-    main_loop.client.send_command("move 53" )
+    main_loop.client.send_command("move " + distance_to_move * 0.88 )
     main_loop.client.send_command("move -50")
     main_loop.client.send_command("stop")
     main_loop.client.send_command("stop_collect")

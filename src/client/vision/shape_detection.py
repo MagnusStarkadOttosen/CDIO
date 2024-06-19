@@ -68,10 +68,10 @@ def detect_balls(image, min_radius=15,max_radius=25):
     return []
 
 def detect_obstacles(image):
-    # dst_size = (1200, 1800)  # width, height
-    # corners = find_corner_points_full(image, doVerbose=True)
-    # gen_warped_image = warp_perspective(image, corners, dst_size)
-    red_image = temp_filter_for_red_wall(image)
+    dst_size = (1200, 1800)  # width, height
+    corners = find_corner_points_full(image, doVerbose=True)
+    gen_warped_image = warp_perspective(image, corners, dst_size)
+    red_image = temp_filter_for_red_wall(gen_warped_image)
     clean_image = clean_the_image(red_image)
     edge_image, lines = find_lines(clean_image, resolution=5, doVerbose=True)
     intersections=[]
@@ -79,15 +79,15 @@ def detect_obstacles(image):
        for i in range(len(lines)):
            for j in range(i + 1, len(lines)):
                l1 = lines[i][0]
-               l2 = lines[j][0]  
+               l2 = lines[j][0]
                slope1 = calculate_slope(l1)
                slope2 = calculate_slope(l2)
                if is_near_90_degrees(slope1, slope2, tolerance=5,zero_tolerance=0.1):
                 inter = find_intersection(l1, l2)
                 if inter is not None and inter not in intersections:
                    intersections.append(inter)
-                   print(f"Intersection found: {inter}") 
-                   cv2.circle(clean_image, inter, radius=5, color=(255, 0, 0), thickness=-1) 
+                   print(f"Intersection found: {inter}")
+                   cv2.circle(clean_image, inter, radius=5, color=(255, 0, 0), thickness=-1)
     grouped_points = group_close_points(intersections)
     midpoint = calculate_midpoints(grouped_points)
 
@@ -96,7 +96,7 @@ def detect_obstacles(image):
     cv2.imwrite(re_image_path, clean_image)
     # print(f"Total intersections found: {len(intersections)}")
     # print(f"midpoint: {midpoint}")
-    return  midpoint
+    return  intersections, midpoint
 
 def group_close_points(points, distance_threshold=10):
     groups = []
@@ -214,7 +214,7 @@ class Shapes:  # TODO opløs Shapes klasse
 
         self.image = cv2.bitwise_and(self.original_image, self.original_image, mask=mask)
 
-    
+
     def draw_coordinate_system(image):
         corners = find_corners(image)  # Assuming this returns the corners as (x, y) tuples
         if corners is not None and len(corners) >= 4:
