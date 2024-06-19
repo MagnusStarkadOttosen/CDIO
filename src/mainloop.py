@@ -159,8 +159,10 @@ class MainLoop:
             log_balls(f"front pos: {front_x}, {front_y}")
             print("front is in deadzone")
             log_path("front Is in deadzone")
-            self.client.send_command("move -5")
-            return
+            new_x, new_y = escape_dead_zone(self.navmesh, (front_x, front_y))
+            self.target_pos = (new_x, new_y)
+            # self.client.send_command("move -5")
+            #return
 
         path = find_path(self.navmesh, warped_img, robot_pos, self.target_pos)
         self._navigate_to_target(path)
