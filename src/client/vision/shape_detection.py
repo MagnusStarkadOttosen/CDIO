@@ -86,7 +86,7 @@ def safe_detect_balls(camera, final_points, dst_size, color):
 
     if circles is not None:
         return circles
-    return None
+    return []
 
 
 def detect_balls(image, min_radius=15, max_radius=25):
@@ -108,7 +108,7 @@ def detect_balls(image, min_radius=15, max_radius=25):
         circles = np.round(circles[0, :]).astype("int")
         return circles
 
-    return None
+    return []
 
 
 def detect_obstacles(image):
