@@ -7,7 +7,7 @@ import numpy as np
 # Paths
 input_folder_path = 'originalImages/'
 output_folder_path = 'NavMeshImage/'
-image_name = 'PreWarpedCourse.jpg'
+image_name = 'frame_warp.jpg'
 input_image_path = input_folder_path + image_name
 output_image_path = output_folder_path + 'NavMesh_' + image_name
 
@@ -49,6 +49,12 @@ inverted_red_mask[-edge_size:, :] = 255
 inverted_red_mask[:, :edge_size] = 255
 inverted_red_mask[:, -edge_size:] = 255
 
+
+# Use morphological closing to close large holes in the mask
+kernel_size = 5
+kernel = np.ones((kernel_size, kernel_size), np.uint8)
+closed_mask = cv2.morphologyEx(inverted_red_mask, cv2.MORPH_CLOSE, kernel)
+
 # Convert image to grayscale
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 height, width = gray.shape
@@ -63,7 +69,7 @@ navmesh = np.zeros((height // grid_size, width // grid_size), dtype=np.uint8)
 # Create a buffer around the black areas
 # kernel = np.ones((buffer_size, buffer_size), np.uint8)
 kernel = np.ones((buffer_size, buffer_size), np.uint8)
-buffered_mask = cv2.erode(inverted_red_mask, kernel, iterations=2)
+buffered_mask = cv2.erode(closed_mask, kernel, iterations=2)
 
 cv2.imshow('Mask', inverted_red_mask)
 cv2.imshow('BMask', buffered_mask)
@@ -95,10 +101,10 @@ for y in range(navmesh.shape[0]):
 overlay = cv2.addWeighted(image, 0.5, navmesh_img, 0.5, 0)
 
 # Display the images
-# cv2.imshow('Original Image', image)
-# cv2.imshow('Navmesh', overlay)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
+cv2.imshow('Original Image', image)
+cv2.imshow('Navmesh', overlay)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
 np.set_printoptions(threshold=np.inf)
 inverted_navmesh = np.logical_not(navmesh).astype(np.uint8)
 # print(inverted_navmesh)
