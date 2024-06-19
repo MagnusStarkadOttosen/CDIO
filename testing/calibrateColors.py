@@ -10,14 +10,14 @@ if project_root not in sys.path:
 
 from src.client.field.coordinate_system import calculate_slope, find_corner_points_full, find_intersection, is_near_90_degrees, warp_perspective
 
-warp = False
+warp = True
 edges = False
-CAM_INDEX = 2
+CAM_INDEX = 1
 
 def read_hsv_values(filename):
     hsv_values = {}
-    # temp = "C:/Users/bayou/PycharmProjects/CDIO/hsv_presets_red.txt"
-    with open(filename, 'r') as file:
+    temp = "C:/Users/bayou/PycharmProjects/CDIO/hsv_presets_red.txt"
+    with open(temp, 'r') as file:
         for line in file:
             key, value = line.strip().split()
             hsv_values[key] = int(value)
