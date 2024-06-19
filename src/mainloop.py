@@ -16,8 +16,8 @@ from src.client.vision.shape_detection import detect_balls, detect_obstacles, de
 from src.client.hsvLoad import read_hsv_values
 
 
-MAXSPEED = 100
-MAXROTATION = 20
+MAXSPEED = 12
+MAXROTATION = 40
 WHITE_BALL_COUNT = 10
 ROBOT_CAPACITY = 6
 TOLERANCE = 50
@@ -241,7 +241,7 @@ class MainLoop:
                     self.robot_is_moving = True
 
                 if self.robot_is_moving:
-                    distance = distance_left(robot_pos,self.target_pos)
+                    distance = distance_left(robot_pos,path[len(path)-1])
                     print(distance)
                     fraction=distance/1800
                     print(fraction)
@@ -280,21 +280,21 @@ class MainLoop:
             angle = rotate_vector_to_point(robot_pos, robot_direction, target)
             print(f"angle: {angle}")
 
-            if angle> 50 or angle< -50:
-                speed = QUICK_TURN_SPEED
+           # if angle> 50 or angle< -50:
+            #    speed = QUICK_TURN_SPEED
+            #else:
+               # speed = TURN_SPEED
+
+            if angle>=0:
+                 speed = np.round((angle/180)*MAXROTATION*1.2)
+
             else:
-                speed = TURN_SPEED
+                 speed = np.round((angle/-180)*MAXROTATION *1.2)
 
-           # if angle>=0:
-            #     speed = np.round((angle/180)*MAXROTATION*1.2)
-
-#            else:
- #                speed = np.round((angle/-180)*MAXROTATION *1.2)
-
-  #          if speed< TURN_SPEED:
-   #             speed=TURN_SPEED
-    #        if speed> MAXSPEED:
-     #           speed=MAXSPEED
+            if speed< TURN_SPEED:
+                speed=TURN_SPEED
+            if speed> MAXSPEED:
+                speed=MAXSPEED
 
 
 
