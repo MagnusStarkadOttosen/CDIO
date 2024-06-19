@@ -173,7 +173,7 @@ class MainLoop:
         # else:
         if cell_is_in_dead_zone(robot_pos, self.navmesh):
             log_path("Is in deadzone")
-            self.client.send_command("drive_backwards 5")
+            self.client.send_command(" 5")
             return
         path = find_path(self.navmesh, warped_img, robot_pos, self.target_pos)
         self._navigate_to_target(path)
