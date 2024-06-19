@@ -51,8 +51,14 @@ def GenerateNavMesh(image, hsv_values):
             # Calculate the percentage of the cell that is white
             white_pixels = np.sum(cell == 255)
             total_pixels = cell.size
+            print("after total pixels")
             if white_pixels / total_pixels >= 0.75:
+                print("walkable")
+                navmesh[y // grid_size, x // grid_size] = 2
+            else:
+                print("Cross")
                 navmesh[y // grid_size, x // grid_size] = 1
+
 
     return navmesh
 
