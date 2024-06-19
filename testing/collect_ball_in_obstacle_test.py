@@ -14,7 +14,7 @@ from src.mainloop import MainLoop
 
 DST_SIZE = (1200, 1800)
 
-def test_collect_ball_in_obstacle(ml):
+def test_collect_ball_in_obstacle(ml, camera, final_points, direction_color, pivot_color, client):
     ret, frame = ml.camera.read()
     if not ret or frame is None or frame.size == 0:
         print("Failed to read from camera or empty frame captured.")
@@ -53,7 +53,7 @@ def test_collect_ball_in_obstacle(ml):
 
     if is_ball_in_obstacle(ball[0], midpoint):
         target_point, target = obstacle_Search(ball[0], 0, 1, midpoint)
-        path = astar(navmesh, robot_pos, target_point)
+        path = astar(navmesh, robot_pos, target)
         ml._navigate_to_target(path)
         path = [target]
         ml._navigate_to_target(path)
