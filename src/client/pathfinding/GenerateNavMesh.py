@@ -12,6 +12,7 @@ def GenerateNavMesh(image, hsv_values):
     grid_size = 30
     buffer_size = 150
     buffer_edge = 150
+    rogue_pixel_threshold = 500
 
     # Find 
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
@@ -20,6 +21,11 @@ def GenerateNavMesh(image, hsv_values):
     mask = cv2.inRange(hsv, lower_bound, upper_bound)
     inverted_mask = cv2.bitwise_not(mask)
 
+    # Remove rogue pixels
+    num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(inverted_mask, connectivity=8)
+    for i in range(1, num_labels):
+        if stats[i, cv2.CC_STAT_AREA] < rogue_pixel_threshold:
+            inverted_mask[labels == i] = 255
 
     # Create an empty navmesh grid
     navmesh = np.zeros((height // grid_size, width // grid_size), dtype=np.uint8)
