@@ -101,5 +101,5 @@ def test_collect_ball_in_obstacle(ml, camera, final_points, direction_color, piv
         ml.client.send_command("stop")
 
 main_loop = MainLoop()
-main_loop.initialize_field()
+#main_loop.initialize_field()
 test_collect_ball_in_obstacle(main_loop)
