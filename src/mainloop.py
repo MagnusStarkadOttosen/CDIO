@@ -60,7 +60,7 @@ class MainLoop:
 
     def start_main_loop(self):
         self.initialize_field()
-        self.balls = self._detect_initial_balls()
+        self._detect_initial_balls()
         # log_balls("Starting collect orange ball")
         # self._collect_and_deliver_orange_ball()
         log_balls("Starting collect white balls")
@@ -97,8 +97,8 @@ class MainLoop:
 
     def _detect_initial_balls(self):
         ret, frame = self.camera.read()
-        warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
-        self.balls = detect_balls(warped_img)
+        # warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
+        self.balls = safe_detect_balls(self.camera, self.final_points, DST_SIZE, self.white)
 
     def _collect_white_balls(self):
         while len(self.balls) > ROBOT_CAPACITY:
@@ -114,9 +114,10 @@ class MainLoop:
         self._deliver_balls()
 
     def _collect_remaining_balls(self):
-        while len(self.balls) > 0:
-            self._collect_ball()
-        self._deliver_balls()
+        if self.balls is not None:
+            while len(self.balls) > 0:
+                self._collect_ball()
+            self._deliver_balls()
 
     def _collect_ball(self):
         ret, frame = self.camera.read()
