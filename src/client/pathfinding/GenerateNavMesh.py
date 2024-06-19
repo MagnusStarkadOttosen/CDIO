@@ -14,7 +14,7 @@ def GenerateNavMesh(image, hsv_values):
     buffer_edge = 150
     rogue_pixel_threshold = 500
 
-    # Find 
+    # Find
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     lower_bound = np.array([hsv_values['LowerH'], hsv_values['LowerS'], hsv_values['LowerV']])
     upper_bound = np.array([hsv_values['UpperH'], hsv_values['UpperS'], hsv_values['UpperV']])
@@ -23,11 +23,11 @@ def GenerateNavMesh(image, hsv_values):
 
     # Set the edge pixels to white
     edge_size = 20
-    inverted_mask[:edge_size, :] = 255
-    inverted_mask[-edge_size:, :] = 255
-    inverted_mask[:, :edge_size] = 255
-    inverted_mask[:, -edge_size:] = 255
-    
+    inverted_mask[:edge_size, :] = 255 # top wall
+    inverted_mask[-edge_size:, :] = 255 # bottom wall
+    inverted_mask[:, :edge_size] = 255 # left wall
+    inverted_mask[:, -edge_size:] = 255 # right wall
+
     # Remove rogue pixels
     num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(inverted_mask, connectivity=8)
     for i in range(1, num_labels):
@@ -75,14 +75,14 @@ def astar(navmesh, start, goal):
     # Priority queue to store (cost, current_node)
     open_set = []
     heapq.heappush(open_set, (0, start))
-    
+
     # Dictionaries to store the cost from start to each node and the path
     g_costs = {start: 0}
     came_from = {start: None}
-    
+
     while open_set:
         _, current = heapq.heappop(open_set)
-        
+
         if current == goal:
             # Reconstruct the path
             path = []
