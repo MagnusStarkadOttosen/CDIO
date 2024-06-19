@@ -100,9 +100,10 @@ class MainLoop:
         self.balls = detect_balls(warped_img)
 
     def _collect_white_balls(self):
-        while len(self.balls) > WHITE_BALL_COUNT - ROBOT_CAPACITY:
-            self._collect_ball()
-        self._deliver_balls()
+        while len(self.balls) > ROBOT_CAPACITY:
+            while len(self.balls) > WHITE_BALL_COUNT - ROBOT_CAPACITY:
+                self._collect_ball()
+            self._deliver_balls()
         self._collect_remaining_balls()
 
     def _collect_and_deliver_orange_ball(self):
