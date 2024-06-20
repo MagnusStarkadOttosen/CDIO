@@ -48,7 +48,7 @@ class Commands:
         print('Wheel motor turning this many degrees: ', degrees)  # Placeholder
 
     def drive_inf(self,speed):
-        speed2=speed-5
+        speed2=speed-1
         self.tank_drive.on(SpeedPercent(speed), SpeedPercent(speed2))
 
     def drive_back_save(self,speed1,speed2):
@@ -63,7 +63,6 @@ class Commands:
 
     def stop(self):
         self.tank_drive.off()
-
     def turn_left(self, speed):
         self.tank_drive.on(speed, -speed)
 
