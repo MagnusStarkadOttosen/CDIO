@@ -43,6 +43,7 @@ def get_transformed_center(image, src_points, dst_size):
     original_center = np.array([[[image.shape[1] / 2, image.shape[0] / 2]]], dtype="float32")
     transformed_center = cv2.perspectiveTransform(original_center, M)
     transformed_center = transformed_center.reshape((2,))
+    print(f"transformed_center = {transformed_center}")
 
     return transformed_center
 

@@ -52,7 +52,8 @@ targets = [
 main_loop = MainLoop()
 main_loop.initialize_field()
 main_loop.client.send_command("start_drive 30")
-
+main_loop._navigate_to_target([(0,0)])
+main_loop.client.send_command("stop")
 # Test one corner at the time
 if is_ball_in_corner(ball_coords_2):
     print("Checking if the ball is in the corner.")

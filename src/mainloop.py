@@ -211,6 +211,7 @@ class MainLoop:
                 print(f"orange hsv values: {self.pivot_color}")
 
                 robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color,self.transformed_center )
+                print(f"robot pos {robot_pos} and direction {robot_direction} and transformed center {self.transformed_center}")
                 while robot_pos is None or robot_direction is None:
                     robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color,self.transformed_center )
 
@@ -237,10 +238,12 @@ class MainLoop:
                 #     self.client.send_command("stop")
 
                 if not self.robot_is_moving and not self.robot_is_turning:
+                    print("If robot is not moving")
                     self.client.send_command("start_drive 10")
                     self.robot_is_moving = True
 
                 if self.robot_is_moving:
+                    print("If robot is moving")
                     if are_points_close(robot_pos,(x,y),300):
                         self.client.send_command("start_drive 10")
                     else:
@@ -259,9 +262,9 @@ class MainLoop:
             gen_warped_image = warp_perspective(frame, self.final_points, DST_SIZE)
             print(f"pivot_color hsv values: {self.pivot_color}")
 
-            robot_pos, robot_direction = detect_robot(gen_warped_image, self.direction_color, self.pivot_color,self.transformed_center )
+            robot_pos, robot_direction = detect_robot(gen_warped_image, self.direction_color, self.pivot_color, self.transformed_center )
             while robot_pos is None or robot_direction is None:
-                robot_pos, robot_direction = detect_robot(gen_warped_image, self.direction_color, self.pivot_color,self.transformed_center )
+                robot_pos, robot_direction = detect_robot(gen_warped_image, self.direction_color, self.pivot_color, self.transformed_center )
 
             print(f"in correction robot pos {robot_pos} and direction {robot_direction} and target {target} and angle: {angle}")
             if robot_pos is None or robot_direction is None:
