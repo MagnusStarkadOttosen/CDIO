@@ -12,9 +12,9 @@ from src.client.vision.shape_detection import detect_balls, detect_robot
 
 print("Test collecting from corners.")
 
-CAMERA_HIGHT = 182
-ROBOT_HIGHT = 23
-scale_factor = (CAMERA_HIGHT - ROBOT_HIGHT) / CAMERA_HIGHT
+CAMERA_HEIGHT = 182
+ROBOT_HEIGHT = 23
+scale_factor = (CAMERA_HEIGHT - ROBOT_HEIGHT) / CAMERA_HEIGHT
 
 IMAGE_SIZE = [1200, 1800]
 ball_coords_1 = (1690, 574)
