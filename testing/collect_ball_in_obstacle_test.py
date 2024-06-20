@@ -39,21 +39,29 @@ def test_collect_ball_in_obstacle(ml,camera, final_point, direction_color, pivot
     navmesh = GenerateNavMesh(warped_img, red_hsv_values)
 
     try:
-        filtered_img = filter_image(warped_img, hsv_values=white_hsv_values)
-        if filtered_img is None or filtered_img.size == 0:
+        filtered_1img = filter_image(warped_img, hsv_values=white_hsv_values)
+        if filtered_1img is None or filtered_1img.size == 0:
              print("Filtered image is empty.")
              return
     except Exception as e:
          print(f"Error in filtering image: {e}")
          return
 
-    balls = detect_balls(filtered_img)
+    balls = detect_balls(filtered_1img)
     print(f"balls {balls}")
     if len(balls)<1:
         print("No balls detected.")
         return
-
-    midpoint = detect_obstacles(filtered_img)
+    try:
+        filtered_2img = filter_image(warped_img, hsv_values=white_hsv_values)
+        if filtered_2img is None or filtered_2img.size == 0:
+             print("Filtered image is empty.")
+             return
+    except Exception as e:
+         print(f"Error in filtering image: {e}")
+         return
+    
+    midpoint = detect_obstacles(filtered_2img)
     print(f"midpoint {midpoint}")
 # check if ball in balls is in obstacle
     for ball in balls:
