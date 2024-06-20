@@ -248,7 +248,7 @@ class MainLoop:
                     fraction=distance/1800
                     print(fraction)
 
-                    pace = np.round(fraction*(MAXSPEED*3.5))
+                    pace = np.round(fraction*(MAXSPEED*4))
 
                     if pace>MAXSPEED:
                         pace=MAXSPEED
