@@ -10,7 +10,7 @@ from src.client.field.coordinate_system import find_intersection
 
 CAMERA_HEIGHT = 202
 ROBOT_HEIGHT = 23
-scale_factor = (CAMERA_HEIGHT - ROBOT_HEIGHT) / CAMERA_HEIGHT
+scale_factor = ROBOT_HEIGHT/CAMERA_HEIGHT
 def detect_robot(image, direction_color, pivot_color, center_point):
     direction_dot = detect_balls(filter_image(image, direction_color), min_radius=45, max_radius=50)
     if len(direction_dot) == 0:  # TODO Proper error handling for green_dot
@@ -25,22 +25,16 @@ def detect_robot(image, direction_color, pivot_color, center_point):
         return None, None
     print(f"what pivot detect finds {pivot_dot}")
     # print("yellow dot found ", len(pivot_dot))
-    x, y = center_point
-    relative_pos_x = pivot_dot[0][0]* scale_factor
-    relative_pos_y = pivot_dot[0][1] * scale_factor
+    cam_x, cam_y = center_point
 
+    real_pos_x = cam_x + (pivot_dot[0][0]-cam_x) * scale_factor
+    real_pos_y = cam_y + (pivot_dot[0][1]-cam_y) * scale_factor
 
-    # x, y = center_point
-    # relative_pos_x = x + (( x - pivot_dot[0][0]) * scale_factor )
-    # relative_pos_y = y + (( y - pivot_dot[0][1]) * scale_factor)
+    real_dir_x = cam_x + (direction_dot[0][0]-cam_x) * scale_factor
+    real_dir_y = cam_y + (direction_dot[0][1]-cam_y) * scale_factor
 
-    # relative_dir_x = x + ((x - direction_dot[0][0]) * scale_factor)
-    # relative_dir_y = y + ((y - direction_dot[0][1]) * scale_factor)
-    relative_dir_x = direction_dot[0][0] * scale_factor
-    relative_dir_y = direction_dot[0][1]* scale_factor
-
-    robot_pos = (relative_pos_x, relative_pos_y)
-    robot_direction = calc_vector_direction((relative_dir_x, relative_dir_y), robot_pos)
+    robot_pos = (real_pos_x, real_pos_y)
+    robot_direction = calc_vector_direction((real_dir_x, real_dir_y), robot_pos)
 
     return robot_pos, robot_direction
 
