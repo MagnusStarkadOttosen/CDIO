@@ -149,13 +149,7 @@ class MainLoop:
 
         # if filter_image.equals(filter_image_orange):
         if self.collect_orange_ball:
-            self.balls = safe_detect_balls(self.camera, self.final_points,
-                                           DST_SIZE, self.orange)
-            if self.balls is None:
-                log_balls("No orange ball")
-                self.collect_orange_ball = False
-                return
-            self.target_pos = self.balls[0][:2]
+            self._collect_orange_ball(frame, robot_pos, robot_direction)
         else:
             self.balls = safe_detect_balls(self.camera, self.final_points,
                                            DST_SIZE, self.white)
@@ -169,6 +163,17 @@ class MainLoop:
         path = find_path(self.navmesh, warped_img, robot_pos, self.target_pos)
         self._navigate_to_target(path)
 
+    def _collect_orange_ball(self, frame, robot_pos, robot_direction):
+        self.balls = safe_detect_balls(self.camera, self.final_points,
+                                       DST_SIZE, self.orange)
+        if self.balls is None:
+            log_balls("No orange ball")
+            self.collect_orange_ball = False
+            return
+        self.target_pos = self.balls[0][:2]
+        path = find_path(self.navmesh, frame, robot_pos, robot_direction)
+        self._navigate_to_target(path)
+
     def _collect_ball_in_corner(self, ball_pos, robot_pos, warped_img):
         corner_result = check_corners(ball_pos, threshold=50)
         pivot_points, corner_points = robot_movement_based_on_corners(corner_result)
@@ -179,6 +184,8 @@ class MainLoop:
         self._navigate_to_target(path)
         self.client.send_command("stop_collect")
         self.client.send_command("stop")
+
+
 
     def _deliver_balls(self):
         ret, frame = self.camera.read()
