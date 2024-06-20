@@ -1,4 +1,5 @@
 import math
+import logging
 
 DPI = 96  # RESOLUTION
 
@@ -23,3 +24,30 @@ def get_distance(current_pos, target_pos):
     dist_vector = current_pos - target_pos
     distance = round(math.sqrt(dist_vector[0] ** 2 + dist_vector[1] ** 2), 1)
     return distance
+
+
+# Configure the first logger
+logger1 = logging.getLogger('safe_detect_balls')
+logger1.setLevel(logging.DEBUG)
+file_handler1 = logging.FileHandler('safe_detect_balls.log')
+file_handler1.setLevel(logging.DEBUG)
+formatter1 = logging.Formatter('%(asctime)s - %(message)s')
+file_handler1.setFormatter(formatter1)
+logger1.addHandler(file_handler1)
+
+# Configure the second logger
+logger2 = logging.getLogger('buffered_path')
+logger2.setLevel(logging.DEBUG)
+file_handler2 = logging.FileHandler('buffered_path.log')
+file_handler2.setLevel(logging.DEBUG)
+formatter2 = logging.Formatter('%(asctime)s - %(message)s')
+file_handler2.setFormatter(formatter2)
+logger2.addHandler(file_handler2)
+
+
+def log_balls(message):
+    logger1.debug(message)
+
+
+def log_path(message):
+    logger2.info(message)

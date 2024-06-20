@@ -1,23 +1,41 @@
 import cv2
 import numpy as np
+import logging
+
+from src.client.utilities import log_balls
+
+logging.basicConfig(filename='safe_detect_balls.log', filemode='w',
+                    format='%(asctime)s - %(message)s')
 
 from src.client.field.robot import calc_vector_direction
-from src.client.vision.filters import clean_the_image, convert_hsv, filter_for_yellow, filter_image, filter_image_green, filter_image_red, temp_filter_for_red_wall
-from src.client.field.coordinate_system import calculate_slope, find_corner_points_full, find_corners, find_lines, is_near_90_degrees, warp_perspective
+from src.client.vision.filters import clean_the_image, convert_hsv, filter_for_yellow, filter_image, filter_image_green, \
+    filter_image_red, temp_filter_for_red_wall
+from src.client.field.coordinate_system import calculate_slope, find_corner_points_full, find_corners, find_lines, \
+    is_near_90_degrees, warp_perspective
 from src.client.vision.filters import apply_gray, apply_canny
 from src.client.field.coordinate_system import find_intersection
 
 
+def safe_detect_robot(camera, final_points, dst_size, direction_col, pivot_col):
+    while True:
+        ret, frame = camera.read()
+        warped_img = warp_perspective(frame, final_points, dst_size)
+        robot_pos, robot_direction = detect_robot(warped_img, direction_col,
+                                                  pivot_col)
+        if robot_pos and robot_direction is not None:
+            return robot_pos, robot_direction
+
+
 def detect_robot(image, direction_color, pivot_color):
     direction_dot = detect_balls(filter_image(image, direction_color), min_radius=45, max_radius=50)
-    if len(direction_dot) == 0:  # TODO Proper error handling for green_dot
+    if len(direction_dot) < 1:  # TODO Proper error handling for green_dot
         print("No direction dot.")
         return None, None
     print(f"what direction detectfinds {direction_dot}")
     # print("green dot found ", len(green_dot))
 
     pivot_dot = detect_balls(filter_image(image, pivot_color), min_radius=60, max_radius=65)
-    if len(pivot_dot) == 0:  # TODO Proper error handling for red_dot
+    if len(pivot_dot) < 1:  # TODO Proper error handling for red_dot
         print("No pivot dot.")
         return None, None
     print(f"what pivot detectfinds {pivot_dot}")
@@ -27,7 +45,8 @@ def detect_robot(image, direction_color, pivot_color):
 
     return robot_pos, robot_direction
 
-def detect_egg(image, min_radius=45,max_radius=55):
+
+def detect_egg(image, min_radius=45, max_radius=55):
     # Convert to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
@@ -46,7 +65,29 @@ def detect_egg(image, min_radius=45,max_radius=55):
         print("No balls detected.")
 
     return circles
-def detect_balls(image, min_radius=15,max_radius=25):
+
+
+def safe_detect_balls(camera, final_points, dst_size, color):
+    print("Safe detecting balls")
+    temp_len = 0
+    circles = None
+
+    for i in range(10):
+        ret, frame = camera.read()
+        warped_img = warp_perspective(frame, final_points, dst_size)
+        temp_circles = detect_balls(filter_image(warped_img, color))
+        if temp_circles is not None:
+            log_balls(f"{i}: {len(temp_circles)}")
+        if temp_circles is not None and len(temp_circles) > temp_len:
+            temp_len = len(temp_circles)
+            circles = temp_circles
+
+    if circles is not None:
+        return circles
+    return []
+
+
+def detect_balls(image, min_radius=15, max_radius=25):
     # Convert to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
@@ -67,6 +108,7 @@ def detect_balls(image, min_radius=15,max_radius=25):
 
     return []
 
+
 def detect_obstacles(image):
     # dst_size = (1200, 1800)  # width, height
     # corners = find_corner_points_full(image, hsv_values, doVerbose=True)
@@ -74,20 +116,20 @@ def detect_obstacles(image):
     red_image = temp_filter_for_red_wall(image)
     clean_image = clean_the_image(red_image)
     edge_image, lines = find_lines(clean_image, resolution=5, doVerbose=True)
-    intersections=[]
+    intersections = []
     if lines is not None:
-       for i in range(len(lines)):
-           for j in range(i + 1, len(lines)):
-               l1 = lines[i][0]
-               l2 = lines[j][0]  
-               slope1 = calculate_slope(l1)
-               slope2 = calculate_slope(l2)
-               if is_near_90_degrees(slope1, slope2, tolerance=5,zero_tolerance=0.1):
-                inter = find_intersection(l1, l2)
-                if inter is not None and inter not in intersections:
-                   intersections.append(inter)
-                   print(f"Intersection found: {inter}") 
-                   cv2.circle(clean_image, inter, radius=5, color=(255, 0, 0), thickness=-1) 
+        for i in range(len(lines)):
+            for j in range(i + 1, len(lines)):
+                l1 = lines[i][0]
+                l2 = lines[j][0]
+                slope1 = calculate_slope(l1)
+                slope2 = calculate_slope(l2)
+                if is_near_90_degrees(slope1, slope2, tolerance=5, zero_tolerance=0.1):
+                    inter = find_intersection(l1, l2)
+                    if inter is not None and inter not in intersections:
+                        intersections.append(inter)
+                        print(f"Intersection found: {inter}")
+                        cv2.circle(clean_image, inter, radius=5, color=(255, 0, 0), thickness=-1)
     grouped_points = group_close_points(intersections)
     midpoint = calculate_midpoints(grouped_points)
 
@@ -110,6 +152,7 @@ def group_close_points(points, distance_threshold=10):
         if not added:
             groups.append([point])
     return groups
+
 
 # fine the midpoint of the groups
 def calculate_midpoints(groups):
@@ -136,7 +179,6 @@ def calculate_midpoints(groups):
         circles = np.array([])
 
     return circles
-
 
 
 class Shapes:  # TODO opløs Shapes klasse
@@ -214,7 +256,6 @@ class Shapes:  # TODO opløs Shapes klasse
 
         self.image = cv2.bitwise_and(self.original_image, self.original_image, mask=mask)
 
-    
     def draw_coordinate_system(image):
         corners = find_corners(image)  # Assuming this returns the corners as (x, y) tuples
         if corners is not None and len(corners) >= 4:

@@ -1,10 +1,8 @@
 import heapq
 import cv2
 import numpy as np
-from scipy.spatial import Delaunay
-from shapely.geometry import Polygon, Point
-from shapely.ops import unary_union
-import matplotlib.pyplot as plt
+
+
 
 # Paths
 input_folder_path = 'originalImages/'
@@ -44,6 +42,12 @@ def inverted_filter_mask(image, hsv_values):
 red_hsv_values = read_hsv_values('hsv_presets_red.txt')
 mask, inverted_red_mask = inverted_filter_mask(image, red_hsv_values)
 
+# Set the edge pixels to white
+edge_size = 20
+inverted_red_mask[:edge_size, :] = 255
+inverted_red_mask[-edge_size:, :] = 255
+inverted_red_mask[:, :edge_size] = 255
+inverted_red_mask[:, -edge_size:] = 255
 
 # Convert image to grayscale
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)

@@ -1,9 +1,11 @@
 
+from collections import deque
 import heapq
 import cv2
 import numpy as np
 
-from src.client.hsvLoad import read_hsv_values
+WALKABLE_INDEX = 2
+OBSTACLE_INDEX = 1
 
 def GenerateNavMesh(image, hsv_values):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -12,14 +14,28 @@ def GenerateNavMesh(image, hsv_values):
     # Define the grid size for the navmesh
     grid_size = 30
     buffer_size = 150
+    buffer_edge = 150
+    rogue_pixel_threshold = 500
 
-    # Find 
+    # Find
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     lower_bound = np.array([hsv_values['LowerH'], hsv_values['LowerS'], hsv_values['LowerV']])
     upper_bound = np.array([hsv_values['UpperH'], hsv_values['UpperS'], hsv_values['UpperV']])
     mask = cv2.inRange(hsv, lower_bound, upper_bound)
     inverted_mask = cv2.bitwise_not(mask)
 
+    # Set the edge pixels to white
+    edge_size = 20
+    inverted_mask[:edge_size, :] = 255 # top wall
+    inverted_mask[-edge_size:, :] = 255 # bottom wall
+    inverted_mask[:, :edge_size] = 255 # left wall
+    inverted_mask[:, -edge_size:] = 255 # right wall
+
+    # Remove rogue pixels
+    num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(inverted_mask, connectivity=8)
+    for i in range(1, num_labels):
+        if stats[i, cv2.CC_STAT_AREA] < rogue_pixel_threshold:
+            inverted_mask[labels == i] = 255
 
     # Create an empty navmesh grid
     navmesh = np.zeros((height // grid_size, width // grid_size), dtype=np.uint8)
@@ -32,14 +48,17 @@ def GenerateNavMesh(image, hsv_values):
     for y in range(0, height, grid_size):
         for x in range(0, width, grid_size):
             # Skip cells near the edges of the image to create a buffer
-            if y < buffer_size or y + grid_size > height - buffer_size or x < buffer_size or x + grid_size > width - buffer_size:
+            if y < buffer_edge or y + grid_size > height - buffer_edge or x < buffer_edge or x + grid_size > width - buffer_edge:
                 continue
             cell = buffered_mask[y:y + grid_size, x:x + grid_size]
             # Calculate the percentage of the cell that is white
             white_pixels = np.sum(cell == 255)
             total_pixels = cell.size
             if white_pixels / total_pixels >= 0.75:
-                navmesh[y // grid_size, x // grid_size] = 1
+                navmesh[y // grid_size, x // grid_size] = WALKABLE_INDEX
+            else:
+                navmesh[y // grid_size, x // grid_size] = OBSTACLE_INDEX
+
 
     return navmesh
 
@@ -51,6 +70,7 @@ def coordinate_to_cell(x, y, grid_size):
 
 # Converts the list of cells from a star to a list of coordinates
 def cells_to_coordinates(cells, grid_size):
+    print("cells:", cells, "grid_size:", grid_size)
     coordinates = [(x*grid_size,y*grid_size) for x, y in cells]
     return coordinates
 
@@ -61,14 +81,14 @@ def astar(navmesh, start, goal):
     # Priority queue to store (cost, current_node)
     open_set = []
     heapq.heappush(open_set, (0, start))
-    
+
     # Dictionaries to store the cost from start to each node and the path
     g_costs = {start: 0}
     came_from = {start: None}
-    
+
     while open_set:
         _, current = heapq.heappop(open_set)
-        
+
         if current == goal:
             # Reconstruct the path
             path = []
@@ -92,7 +112,7 @@ def astar(navmesh, start, goal):
         
         for neighbor in neighbors:
             if 0 <= neighbor[1] < navmesh.shape[0] and 0 <= neighbor[0] < navmesh.shape[1]:
-                if navmesh[neighbor[1], neighbor[0]] == 1:  # Check if neighbor is walkable
+                if navmesh[neighbor[1], neighbor[0]] == WALKABLE_INDEX:  # Check if neighbor is walkable
                     tentative_g_cost = g_costs[current] + 1
                     if neighbor not in g_costs or tentative_g_cost < g_costs[neighbor]:
                         g_costs[neighbor] = tentative_g_cost
@@ -111,7 +131,7 @@ def is_walkable(navmesh, start, end):
     sy = 1 if y0 < y1 else -1
     err = dx - dy
     while True:
-        if navmesh[y0, x0] == 0:
+        if navmesh[y0, x0] == 0 or navmesh[y0, x0] == 1:
             return False
         if (x0, y0) == (x1, y1):
             break
@@ -125,7 +145,7 @@ def is_walkable(navmesh, start, end):
     return True
 
 def optimize_path(navmesh, path):
-    if not path:
+    if path is None:
         return path
 
     optimized_path = [path[0]]
@@ -138,5 +158,32 @@ def optimize_path(navmesh, path):
                 i = j
                 break
         i += 1
-
     return optimized_path
+
+# This find the nearest walkable cell using breath first
+def escape_dead_zone(navmesh, start):
+    height, width = navmesh.shape
+    visited = set()
+    queue = deque([start])
+    
+    while queue:
+        x, y = queue.popleft()
+        if (x, y) not in visited:
+            visited.add((x, y))
+            if 0 <= y < height and 0 <= x < width and navmesh[y, x] == 1:
+                return (x, y)
+            neighbors = [
+                (x + 1, y),
+                (x - 1, y),
+                (x, y + 1),
+                (x, y - 1),
+                (x + 1, y + 1),
+                (x - 1, y - 1),
+                (x + 1, y - 1),
+                (x - 1, y + 1)
+            ]
+            for neighbor in neighbors:
+                if neighbor not in visited:
+                    queue.append(neighbor)
+    
+    return None

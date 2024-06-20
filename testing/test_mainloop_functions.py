@@ -77,18 +77,67 @@ def test_nav_to_target_with_find_path(ml):
         robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color)
 
     print(f"robot_pos: {robot_pos}, robot_direction: {robot_direction}")
-    path = find_path(warped_img, robot_pos, (400, 600))
+    path = find_path(warped_img, robot_pos, (1400, 600))
     ml._navigate_to_target(path)
 
 
 def test_collect_nearest_ball(ml): # many white balls on field
-    ml._collect_ball("filter_image_white")
+    ml.client.send_command("start_collect")
+    ml._collect_ball()
+    ml.client.send_command("stop_collect")
+
+
+def test_collect_5_white_balls(ml): # many white balls on field
+    ml.client.send_command("start_collect")
+    ml._collect_ball()
+    ml.client.send_command("stop_collect")
+
+
+def test_collect_5_balls(ml):
+    ml.client.send_command("start_collect")
+    ml._collect_white_balls()
+    ml.client.send_command("stop_collect")
+
+
+def test_collect_orange_ball(ml):
+    ml.client.send_command("start_collect")
+    ml._collect_and_deliver_orange_ball()
+    ml.client.send_command("stop_collect")
+
+
+def test_collect_remaining_balls(ml):
+    ml.client.send_command("start_collect")
+    ml._collect_remaining_balls()
+    ml.client.send_command("stop_collect")
+
+
+def test_start_main_loop(ml):
+    ml.client.send_command("start_collect")
+    ml.start_main_loop()
+    ml.client.send_command("stop_collect")
+
+
+def test_collect_ball_in_corner(ml):
+    ret, frame = ml.camera.read()
+    warped_img = warp_perspective(frame, ml.final_points, DST_SIZE)
+    print(f"testing colors {ml.direction_color}")
+    robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color)
+    while robot_pos is None or robot_direction is None:
+        robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color)
+    ball_coord = (230, 230)
+    ml.client.send_command("start_collect")
+    ml._collect_ball_in_corner(ball_coord, robot_pos, warped_img)
+    ml.client.send_command("stop_collect")
 
 
 main_loop = MainLoop()
 main_loop.initialize_field()
-# main_loop._detect_initial_balls()
+main_loop._detect_initial_balls()
 # test_nav_to_target_hardcoded_path(main_loop)
-test_nav_to_target_detected_path(main_loop)
+# test_nav_to_target_detected_path(main_loop)
 # test_collect_nearest_ball(main_loop)
+# test_collect_5_balls(main_loop)
+# test_collect_orange_ball(main_loop)
+test_collect_remaining_balls(main_loop)
+# test_start_main_loop(main_loop)
 

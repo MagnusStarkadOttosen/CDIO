@@ -10,8 +10,9 @@ if project_root not in sys.path:
 
 from src.client.field.coordinate_system import calculate_slope, find_corner_points_full, find_intersection, is_near_90_degrees, warp_perspective
 
-warp = True
+warp = False
 edges = False
+CAM_INDEX = 1
 
 def read_hsv_values(filename):
     hsv_values = {}
@@ -179,7 +180,7 @@ def load_color_presets(color, base_filename="hsv_presets"):
         return None, None
 
 # Capture from camera
-cap = cv2.VideoCapture(1,cv2.CAP_DSHOW)
+cap = cv2.VideoCapture(CAM_INDEX,cv2.CAP_DSHOW)
 dst_size = (1200, 1800)
 ret, frame = cap.read()
 
