@@ -163,7 +163,7 @@ def optimize_path(navmesh, path):
         i += 1
     return optimized_path
 
-# This find the nearest walkable cell using breath first
+# This find the nearest walkable coordinates using breath first
 def escape_dead_zone(navmesh, start):
     height, width = navmesh.shape
     visited = set()
