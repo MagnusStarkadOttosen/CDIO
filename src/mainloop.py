@@ -4,8 +4,8 @@ import cv2
 
 from src.client.pathfinding.FindPath import find_path
 # from src.client.pathfinding.GenerateNavMesh import find_path
-from src.client.search_targetpoint.obstacle_search import is_ball_in_obstacle, obstacle_Search
-from src.client.field.collect_from_corner import is_ball_in_corner, check_corners, robot_movement_based_on_corners
+# from src.client.search_targetpoint.obstacle_search import is_ball_in_obstacle, obstacle_Search
+# from src.client.field.collect_from_corner import is_ball_in_corner, check_corners, robot_movement_based_on_corners
 from src.client.field.coordinate_system import are_points_close, find_corner_points_full, warp_perspective, \
     get_transformed_center
 from src.client.pathfinding.CalculateCommandList import rotate_vector_to_point
@@ -49,7 +49,7 @@ class MainLoop:
         self.pivot_color = read_hsv_values("hsv_presets_white.txt")
         self.red = read_hsv_values("hsv_presets_red.txt")
         self.white = read_hsv_values("hsv_presets_white.txt")
-        self.transformed_center=None
+        self.transformed_center = None
 
     def start_main_loop(self):
         self.initialize_field()
@@ -110,9 +110,9 @@ class MainLoop:
         # final_points = find_corner_points_full(frame, doVerbose=False)
         warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
 
-        robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color, )
+        robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color,self.transformed_center )
         while robot_pos is None or robot_direction is None:
-            robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color, )
+            robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color, self.transformed_center)
 
         # if filter_image.equals(filter_image_orange):
         if self.collect_orange_ball:
@@ -129,9 +129,9 @@ class MainLoop:
             self.target_pos = find_nearest_ball(robot_pos, self.balls) # TODO handle target being null
             print(f"Nearest ball pos : {self.target_pos[0]},{self.target_pos[1]}")
 
-        if is_ball_in_corner(self.target_pos):
-            print("ball is in corner.")
-            self._collect_ball_in_corner(self.target_pos, robot_pos, warped_img)
+        # if is_ball_in_corner(self.target_pos):
+        #     print("ball is in corner.")
+        #     self._collect_ball_in_corner(self.target_pos, robot_pos, warped_img)
             # corner_result = check_corners(self.balls, threshold=50)
             # pivot_points, corner_points = robot_movement_based_on_corners(corner_result)
             # # path = find_path(self.grid, robot_pos, pivot_points)
@@ -161,16 +161,16 @@ class MainLoop:
         path = find_path(warped_img, robot_pos, self.target_pos)
         self._navigate_to_target(path)
 
-    def _collect_ball_in_corner(self, ball_pos, robot_pos, warped_img):
-        corner_result = check_corners(ball_pos, threshold=50)
-        pivot_points, corner_points = robot_movement_based_on_corners(corner_result)
-        path = find_path(warped_img, robot_pos, pivot_points)
-        self._navigate_to_target(path)
-        self.client.send_command("start_collect")
-        self._navigate_to_target(corner_points)
-        self._navigate_to_target(path)
-        self.client.send_command("stop_collect")
-        self.client.send_command("stop")
+    # def _collect_ball_in_corner(self, ball_pos, robot_pos, warped_img):
+    #     corner_result = check_corners(ball_pos, threshold=50)
+    #     pivot_points, corner_points = robot_movement_based_on_corners(corner_result)
+    #     path = find_path(warped_img, robot_pos, pivot_points)
+    #     self._navigate_to_target(path)
+    #     self.client.send_command("start_collect")
+    #     self._navigate_to_target(corner_points)
+    #     self._navigate_to_target(path)
+    #     self.client.send_command("stop_collect")
+    #     self.client.send_command("stop")
 
     def _deliver_balls(self):
         ret, frame = self.camera.read()
@@ -211,7 +211,6 @@ class MainLoop:
                 print(f"orange hsv values: {self.pivot_color}")
 
                 robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color, self.transformed_center)
-                robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color,self.transformed_center )
                 print(f"robot pos {robot_pos} and direction {robot_direction} and transformed center {self.transformed_center}")
                 while robot_pos is None or robot_direction is None:
                     robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color, self.transformed_center)

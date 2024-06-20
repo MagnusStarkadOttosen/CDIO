@@ -25,13 +25,19 @@ def detect_robot(image, direction_color, pivot_color, center_point):
         return None, None
     print(f"what pivot detect finds {pivot_dot}")
     # print("yellow dot found ", len(pivot_dot))
-
     x, y = center_point
-    relative_pos_x = x + (( x - pivot_dot[0][0]) * scale_factor )
-    relative_pos_y = y + (( y - pivot_dot[0][1]) * scale_factor)
+    relative_pos_x = pivot_dot[0][0]* scale_factor
+    relative_pos_y = pivot_dot[0][1] * scale_factor
 
-    relative_dir_x = x + ((x - direction_dot[0][0]) * scale_factor)
-    relative_dir_y = y + ((y - direction_dot[0][1]) * scale_factor)
+
+    # x, y = center_point
+    # relative_pos_x = x + (( x - pivot_dot[0][0]) * scale_factor )
+    # relative_pos_y = y + (( y - pivot_dot[0][1]) * scale_factor)
+
+    # relative_dir_x = x + ((x - direction_dot[0][0]) * scale_factor)
+    # relative_dir_y = y + ((y - direction_dot[0][1]) * scale_factor)
+    relative_dir_x = direction_dot[0][0] * scale_factor
+    relative_dir_y = direction_dot[0][1]* scale_factor
 
     robot_pos = (relative_pos_x, relative_pos_y)
     robot_direction = calc_vector_direction((relative_dir_x, relative_dir_y), robot_pos)
