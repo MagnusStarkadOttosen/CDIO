@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 
+from src.CONSTANTS import GRID_SIZE
 from src.client.hsvLoad import read_hsv_values
 from src.client.pathfinding.FindPath import pretty_print_navmesh
 from src.client.pathfinding.GenerateNavMesh import astar, GenerateNavMesh, optimize_path, coordinate_to_cell
@@ -19,7 +20,7 @@ image = cv2.imread(input_image_path)
 
 red_hsv_values = read_hsv_values('hsv_presets_red.txt')
 
-grid_size = 30
+grid_size = GRID_SIZE
 
 start = coordinate_to_cell(350, 600, grid_size)
 goal = coordinate_to_cell(1600, 600, grid_size)
@@ -38,7 +39,7 @@ print(path)
 opti_path = optimize_path(navmesh, path)
 print(opti_path)
 
-pretty_print_navmesh(navmesh, path, (350, 600), grid_size)
+pretty_print_navmesh(navmesh, path, (350, 600))
 
 combined_image = overlay_path_on_image(image, opti_path, grid_size)
 combined_image = draw_start_goal_on_image(combined_image, start, goal, grid_size)
