@@ -119,7 +119,7 @@ def astar(navmesh, start, goal):
                         f_cost = tentative_g_cost + heuristic(neighbor, goal)
                         heapq.heappush(open_set, (f_cost, neighbor))
                         came_from[neighbor] = current
-    
+    print("No path found.")
     return None  # Path not found
 
 def is_walkable(navmesh, start, end):
