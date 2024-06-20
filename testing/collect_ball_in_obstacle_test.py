@@ -1,6 +1,8 @@
 import time
 import sys
 import os
+
+import cv2
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from src.client.search_targetpoint.buffer_zone_search import buffer_zone_search, is_ball_in_buffer_zone
 from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, astar
@@ -43,63 +45,72 @@ def test_collect_ball_in_obstacle(ml, camera, final_points, direction_color, piv
         print(f"Error in filtering image: {e}")
         return
 
-    ball = detect_balls(filtered_img)
-    if not ball:
+    balls = detect_balls(filtered_img)
+    if not balls:
         print("No balls detected.")
         return
 
-    print(f"ball {ball}")
+    print(f"ball {balls}")
     midpoint = detect_obstacles(warped_img)
+# check if ball in balss is in obstacle
+    for ball in balls:
+        is_ball_in_obstacle, target_point, target = is_ball_in_obstacle(ball, midpoint)
+        if is_ball_in_obstacle:
+            path = astar(navmesh, robot_pos, target_point)
+            ml._navigate_to_target(path)
+            angle = rotate_vector_to_point(robot_pos, robot_direction, target_point)
+            print(f"after robot pos {robot_pos} and direction {robot_direction} and target {ball} and angle: {angle}")
+            if angle < -0.5 or angle > 0.5:
+                ml._course_correction(angle, ball, tol=0.5)
+            ml.client.send_command("start_collect")
+            ml.client.send_command("move 7")
+            time.sleep(0.5)
+            ml.client.send_command("move 1")
+            time.sleep(0.5)
+            ml.client.send_command("move 0.5")
+            time.sleep(0.5)
+            ml.client.send_command("move 0.5")
+            time.sleep(0.5)
+            ml.client.send_command("move 0.5")
+            time.sleep(0.5)
+            ml.client.send_command("move 0.5")
+            time.sleep(0.5)
+            ml.client.send_command("move 0.5")
+            time.sleep(0.5)
+            ml.client.send_command("move 0.5")
+            time.sleep(0.5)
+            ml.client.send_command("move -10")
+            ml.client.send_command("stop_collect")
+            ml.client.send_command("stop")
+            return
+# check if ball in balss is in buffer zone
+    for ball in balls:
+        is_ball_in_buffer_zone, target_point, target = is_ball_in_buffer_zone(ball, midpoint)
+        if is_ball_in_buffer_zone:
+            target_point = buffer_zone_search(ball[0], 0, 1)
+            path = astar(navmesh, robot_pos, target_point)
+            ml._navigate_to_target(path)
+            angle = rotate_vector_to_point(robot_pos, robot_direction, ball[0])
+            print(f"after robot pos {robot_pos} and direction {robot_direction} and target {ball} and angle: {angle}")
+            if angle < -0.5 or angle > 0.5:
+                ml._course_correction(angle, ball, tol=0.5)
+            ml.client.send_command("start_collect")
+            ml.client.send_command("move 5")
+            time.sleep(0.5)
+            ml.client.send_command("move 1")
+            time.sleep(0.5)
+            ml.client.send_command("move -6")
+            ml.client.send_command("stop_collect")
+            ml.client.send_command("stop")
+            return
+    print("No balls in buffer zone or obstacle.")
 
-    if is_ball_in_obstacle(ball[0], midpoint):
-        target_point, target = obstacle_Search(ball[0], 0, 1, midpoint)
-        path = astar(navmesh, robot_pos, target)
-        ml._navigate_to_target(path)
-        path = [target]
-        ml._navigate_to_target(path)
-    
-        angle = rotate_vector_to_point(robot_pos, robot_direction, target_point)
-        print(f"after robot pos {robot_pos} and direction {robot_direction} and target {target_point} and angle: {angle}")
-        if angle < -0.5 or angle > 0.5:
-            ml._course_correction(angle, target_point, tol=0.5)
-        ml.client.send_command("start_collect")
-        ml.client.send_command("move 7")
-        time.sleep(0.5)
-        ml.client.send_command("move 1")
-        time.sleep(0.5)
-        ml.client.send_command("move 0.5")
-        time.sleep(0.5)
-        ml.client.send_command("move 0.5")
-        time.sleep(0.5)
-        ml.client.send_command("move 0.5")
-        time.sleep(0.5)
-        ml.client.send_command("move 0.5")
-        time.sleep(0.5)
-        ml.client.send_command("move 0.5")
-        time.sleep(0.5)
-        ml.client.send_command("move 0.5")
-        time.sleep(0.5)
-        ml.client.send_command("move -10")
-        ml.client.send_command("stop_collect")
-        ml.client.send_command("stop")
+if __name__ == "__main__":
+    ml = MainLoop()
+    test_collect_ball_in_obstacle(ml, ml.camera, ml.final_points, ml.direction_color, ml.pivot_color, ml.client)
+    ml.client.send_command("stop")
+    ml.client.send_command("stop_collect")
+    ml.camera.release()
+    cv2.destroyAllWindows()
+    sys.exit(0)
 
-    if is_ball_in_buffer_zone(ball[0]):
-        target_point = buffer_zone_search(ball[0], 0, 1)
-        path = astar(navmesh, robot_pos, target_point)
-        ml._navigate_to_target(path)
-        angle = rotate_vector_to_point(robot_pos, robot_direction, ball[0])
-        print(f"after robot pos {robot_pos} and direction {robot_direction} and target {ball} and angle: {angle}")
-        if angle < -0.5 or angle > 0.5:
-            ml._course_correction(angle, ball, tol=0.5)
-        ml.client.send_command("start_collect")
-        ml.client.send_command("move 5")
-        time.sleep(0.5)
-        ml.client.send_command("move 1")
-        time.sleep(0.5)
-        ml.client.send_command("move -6")
-        ml.client.send_command("stop_collect")
-        ml.client.send_command("stop")
-
-main_loop = MainLoop()
-#main_loop.initialize_field()
-test_collect_ball_in_obstacle(main_loop)

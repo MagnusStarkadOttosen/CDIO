@@ -138,7 +138,7 @@ class MainLoop:
         elif is_ball_in_obstacle(self.balls, midpoint):
             midpoint=self._detect_obstacles()
             target_point = obstacle_Search(self.balls, 0, 1, midpoint)
-            target=  obstacle_Search(self.balls, 1, 0, midpoint)
+            target=  obstacle_Search(self.balls, 0, 1, midpoint)
             path= [target_point]
             self._navigate_to_target(path)
             self.client.send_command("start_collect")
@@ -150,21 +150,27 @@ class MainLoop:
             self.client.send_command("move -7")
             self.client.send_command("stop_collect")
             self.client.send_command("stop")
+
         elif is_ball_in_buffer_zone(self.balls):
-            ball_dot = self.balls[0]
-            target_point = buffer_zone_search(ball_dot, 0, 1)
-            path = [target_point]
-            self._navigate_to_target(path)
-            self.client.send_command("start_collect")
-            angle = rotate_vector_to_point(robot_pos, robot_direction,ball_dot)
-            print(f"after robot pos {robot_pos} and direction {robot_direction} and target {ball_dot} and angle: {angle}")
-            if angle < -1 or angle > 1:
-                self._course_correction(angle, ball_dot,tol=1)
-            self.client.send_command("start_collect")
-            self.client.send_command("move 5")
-            self.client.send_command("move -5")
-            self.client.send_command("stop_collect")
-            self.client.send_command("stop")
+            ball_dot = None
+            for ball in self.balls:
+                if is_ball_in_buffer_zone(ball):
+                    ball_dot = ball
+                break
+            if ball_dot is not None:
+                target_point = buffer_zone_search(ball_dot, 0, 1)
+                path = [target_point]
+                self._navigate_to_target(path)
+                self.client.send_command("start_collect")
+                angle = rotate_vector_to_point(robot_pos, robot_direction,ball_dot)
+                print(f"after robot pos {robot_pos} and direction {robot_direction} and target {ball_dot} and angle: {angle}")
+                if angle < -1 or angle > 1:
+                   self._course_correction(angle, ball_dot,tol=1)
+                self.client.send_command("start_collect")
+                self.client.send_command("move 5")
+                self.client.send_command("move -5")
+                self.client.send_command("stop_collect")
+                self.client.send_command("stop")
               
         else:
             path = find_path(warped_img, robot_pos, self.target_pos)
