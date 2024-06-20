@@ -174,6 +174,8 @@ def escape_dead_zone(navmesh, start):
             visited.add((x, y))
             if 0 <= y < height and 0 <= x < width and navmesh[int(y), int(x)] == 1:
                 log_path(f"new x and y: {x}, {y}")
+                coords = cells_to_coordinates([(x, y)], 30)
+                x, y = coords[0][0], coords[0][1]
                 return x, y
             neighbors = [
                 (x + 1, y),
