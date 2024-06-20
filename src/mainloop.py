@@ -246,7 +246,7 @@ class MainLoop:
                     fraction=distance/1800
                     print(fraction)
 
-                    pace = np.round(fraction*(MAXSPEED*1.2))
+                    pace = np.round(fraction*(MAXSPEED*1.5))
 
                     if pace>MAXSPEED:
                         pace=MAXSPEED
@@ -286,10 +286,10 @@ class MainLoop:
                # speed = TURN_SPEED
 
             if angle>=0:
-                 speed = np.round((angle/180)*MAXROTATION*1.2)
+                 speed = np.round((angle/180)*MAXROTATION * 1.5)
 
             else:
-                 speed = np.round((angle/-180)*MAXROTATION *1.2)
+                 speed = np.round((angle/-180)*MAXROTATION * 1.5)
 
             if speed< TURN_SPEED:
                 speed=TURN_SPEED
