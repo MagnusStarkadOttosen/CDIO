@@ -8,6 +8,7 @@ from src.client.utilities import log_path
 logging.basicConfig(filename='buffered_path.log', filemode='w',
                     format='%(asctime)s - %(message)s')
 
+
 def find_path(navmesh, warped_img, robot_pos, target_pos):
     # pretty_print_navmesh(navmesh, [])
     print("sdfdjsdjkjkdsfd")
@@ -32,10 +33,13 @@ def find_path(navmesh, warped_img, robot_pos, target_pos):
 
     coord_path = cells_to_coordinates(optimized_path, 30)
 
-    #print(f"coord_path: {coord_path}")
-    log_path(coord_path)
+    if coord_path is not None:
+        log_path(coord_path)
+    else:
+        log_path("No path found.")
 
     return coord_path
+
 
 #
 # def cell_is_in_dead_zone(pos, navmesh):
@@ -52,10 +56,22 @@ def cell_is_in_cross_zone(pos, navmesh):
     target_cell = coordinate_to_cell(pos[0], pos[1], 30)
     return navmesh[int(target_cell[1]), int(target_cell[0])] == 1
 
-def pretty_print_navmesh(navmesh, path):
+
+def pretty_print_navmesh(navmesh, path, robot_pos):
     navmesh_copy = navmesh.copy()
-    for (x, y) in path:
-        navmesh_copy[y, x] = 3  # Mark the path with '3'
+
+    if path is not None:
+        for (x, y) in path:
+            navmesh_copy[y, x] = 3  # Mark the path with '3'
+    navmesh_copy[int(robot_pos[1]), int(robot_pos[0])] = 4
+
+    symbols = {
+        0: 'B',
+        1: 'C',
+        2: '.',
+        3: 'P',
+        4: 'R'
+    }
 
     for row in navmesh_copy:
-        print(' '.join(str(cell) for cell in row))
+        print(' '.join(symbols[cell] for cell in row))

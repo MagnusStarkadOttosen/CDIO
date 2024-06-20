@@ -9,7 +9,7 @@ import cv2
 
 
 from src.client.pathfinding.FindPath import find_path, cell_is_in_border_zone, \
-    cell_is_in_cross_zone
+    cell_is_in_cross_zone, pretty_print_navmesh
 from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, escape_dead_zone
 # from src.client.pathfinding.GenerateNavMesh import find_path
 from src.client.search_targetpoint.obstacle_search import is_ball_in_obstacle, obstacle_Search
@@ -157,9 +157,11 @@ class MainLoop:
 
         front_x, front_y = self._calc_robot_front(robot_direction, robot_pos)
         if cell_is_in_border_zone((front_x, front_y), self.navmesh):
+            log_path("Is in border zone")
             self._escape_border(robot_pos, robot_direction)
             return
         elif cell_is_in_cross_zone((front_x, front_y), self.navmesh):
+            log_path("Is in cross zone")
             self._escape_cross(front_x, front_y)
 
         # if cell_is_in_dead_zone((int(front_x),int(front_y)), self.navmesh):
@@ -176,7 +178,11 @@ class MainLoop:
             #return
 
         path = find_path(self.navmesh, warped_img, robot_pos, self.target_pos)
-        self._navigate_to_target(path)
+        if path is not None:
+            self._navigate_to_target(path)
+        else:
+            pretty_print_navmesh(self.navmesh, path)
+            return
 
 
     def _calc_robot_front(self, robot_direction, robot_pos):
