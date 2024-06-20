@@ -3,7 +3,10 @@ import sys
 import os
 
 import cv2
+
+from client.vision.shape_detection import detect_robot
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from src.client.field.coordinate_system import warp_perspective
 from src.client.search_targetpoint.obstacle_search import is_ball_in_obstacle, obstacle_Search
 from src.client.search_targetpoint.buffer_zone_search import buffer_zone_search, is_ball_in_buffer_zone
 from src.client.pathfinding.GenerateNavMesh import  astar
@@ -52,8 +55,6 @@ def test_collect_ball_in_obstacle(ml,camera, final_point, direction_color, pivot
 
     balls = ml.balls
     midpoint = ml.midpoint
-    robot_pos = ml.robot_pos
-    robot_direction = ml.robot_direction
     navmesh = ml.navmesh
 # check if ball in balls is in obstacle
     for ball in ml.balls:
