@@ -22,8 +22,16 @@ def initialize():
     client_pc = ClientPC()
     camera = initialize_camera(index=2)
 
+# def calculate_distance(corner_point, target_point):
+#     return math.sqrt((target_point[0] - corner_point[0]) ** 2 + (target_point[1] - corner_point[1]) ** 2)
 def calculate_distance(corner_point, target_point):
+    """Calculate the Euclidean distance between two points in pixels."""
     return math.sqrt((target_point[0] - corner_point[0]) ** 2 + (target_point[1] - corner_point[1]) ** 2)
+
+def convert_distance_to_real_world(pixel_distance, scale_factor=10):
+    """Convert distance from pixels to centimeters using the scale factor."""
+    return pixel_distance / scale_factor  # 1 cm = 10 pixels
+
 
 
 def is_ball_in_corner(ball_coords):

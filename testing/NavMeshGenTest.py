@@ -1,10 +1,7 @@
 import heapq
 import cv2
 import numpy as np
-from scipy.spatial import Delaunay
-from shapely.geometry import Polygon, Point
-from shapely.ops import unary_union
-import matplotlib.pyplot as plt
+
 
 # Paths
 input_folder_path = 'originalImages/'

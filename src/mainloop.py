@@ -16,8 +16,8 @@ from src.client.vision.shape_detection import detect_balls, detect_obstacles, de
 from src.client.hsvLoad import read_hsv_values
 
 
-MAXSPEED = 12
-MAXROTATION = 40
+MAXSPEED = 40
+MAXROTATION = 20
 WHITE_BALL_COUNT = 10
 ROBOT_CAPACITY = 6
 TOLERANCE = 50
@@ -51,6 +51,7 @@ class MainLoop:
         self.pivot_color = read_hsv_values("hsv_presets_white.txt")
         self.red = read_hsv_values("hsv_presets_red.txt")
         self.white = read_hsv_values("hsv_presets_white.txt")
+        self.centerOfImage = None
 
     def start_main_loop(self):
         self.initialize_field()
@@ -79,7 +80,8 @@ class MainLoop:
         ]
 
         ret, frame = self.camera.read()
-        self.final_points = find_corner_points_full(frame, self.red, doVerbose=True)
+        self.final_points = find_corner_points_full(frame, self.red, doVerbose=False)
+        # image, self.centerOfImage = warp_perspective(frame, self.final_points, (1800,1200))
 
     def _detect_obstacles(self):
         ret, frame = self.camera.read()
@@ -161,16 +163,16 @@ class MainLoop:
         path = find_path(warped_img, robot_pos, self.target_pos)
         self._navigate_to_target(path)
 
-    def _collect_ball_in_corner(self, ball_pos, robot_pos, warped_img):
-        corner_result = check_corners(ball_pos, threshold=50)
-        pivot_points, corner_points = robot_movement_based_on_corners(corner_result)
-        path = find_path(warped_img, robot_pos, pivot_points)
-        self._navigate_to_target(path)
-        self.client.send_command("start_collect")
-        self._navigate_to_target(corner_points)
-        self._navigate_to_target(path)
-        self.client.send_command("stop_collect")
-        self.client.send_command("stop")
+    # def _collect_ball_in_corner(self, ball_pos, robot_pos, warped_img):
+    #     corner_result = check_corners(ball_pos, threshold=50)
+    #     pivot_points, corner_points = robot_movement_based_on_corners(corner_result)
+    #     path = find_path(warped_img, robot_pos, pivot_points)
+    #     self._navigate_to_target(path)
+    #     self.client.send_command("start_collect")
+    #     self._navigate_to_target(corner_points)
+    #     self._navigate_to_target(path)
+    #     self.client.send_command("stop_collect")
+    #     self.client.send_command("stop")
 
     def _deliver_balls(self):
         ret, frame = self.camera.read()
@@ -246,7 +248,7 @@ class MainLoop:
                     fraction=distance/1800
                     print(fraction)
 
-                    pace = np.round(fraction*(MAXSPEED*1.2))
+                    pace = np.round(fraction*(MAXSPEED*3.5))
 
                     if pace>MAXSPEED:
                         pace=MAXSPEED
@@ -286,10 +288,10 @@ class MainLoop:
                # speed = TURN_SPEED
 
             if angle>=0:
-                 speed = np.round((angle/180)*MAXROTATION*1.2)
+                 speed = np.round((angle/180)*MAXROTATION*1.8)
 
             else:
-                 speed = np.round((angle/-180)*MAXROTATION *1.2)
+                 speed = np.round((angle/-180)*MAXROTATION *1.8)
 
             if speed< TURN_SPEED:
                 speed=TURN_SPEED
