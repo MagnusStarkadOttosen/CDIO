@@ -16,7 +16,7 @@ class TestMainLoop(unittest.TestCase):
         image_name = "robot_ball_90.jpeg"
         image = cv2.imread('images/' + image_name)
 
-        robot_pos, robot_direction = detect_robot(image,,
+        robot_pos, robot_direction = detect_robot(image)
         balls = detect_balls(image)
 
         # Would call find_nearest_ball in normal loop

@@ -13,7 +13,7 @@ class BallsRemainingTest(unittest.TestCase):
         image = cv2.imread(input_image_path)
 
         balls = detect_balls(filter_image_white(image))
-        robot_pos, robot_direction = detect_robot(image,,
+        robot_pos, robot_direction = detect_robot(image)
         nearest = find_nearest_ball(robot_pos, balls)
         print(f"nearest x: {nearest[0]}, nearest y: {nearest[1]}")
 

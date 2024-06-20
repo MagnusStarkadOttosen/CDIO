@@ -5,9 +5,7 @@ from src.client.field.collect_from_corner import robot_movement_based_on_corners
 from src.client.pathfinding.CalculateCommandList import rotate_vector_to_point
 from src.client.pc_client import ClientPC
 from src.mainloop import MainLoop
-from src.client.field.coordinate_system import warp_perspective
-# from src.client.search_targetpoint.a_star_search import find_path
-from src.client.vision.shape_detection import detect_balls, detect_robot
+
 
 
 print("Test collecting from corners.")
