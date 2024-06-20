@@ -4,9 +4,9 @@ import os
 
 import cv2
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from src.client.search_targetpoint.obstacle_search import is_ball_in_obstacle
 from src.client.search_targetpoint.buffer_zone_search import buffer_zone_search, is_ball_in_buffer_zone
 from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, astar
-from src.client.search_targetpoint.obstacle_search import is_ball_in_obstacle, obstacle_Search
 from src.client.field.coordinate_system import warp_perspective
 from src.client.hsvLoad import read_hsv_values
 from src.client.pathfinding.CalculateCommandList import rotate_vector_to_point
@@ -54,12 +54,12 @@ def test_collect_ball_in_obstacle(ml, camera, final_points, direction_color, piv
     midpoint = detect_obstacles(warped_img)
 # check if ball in balss is in obstacle
     for ball in balls:
-        is_ball_in_obstacle, target_point, target = is_ball_in_obstacle(ball, midpoint)
-        if is_ball_in_obstacle:
-            path = astar(navmesh, robot_pos, target_point)
+         if is_ball_in_obstacle(ball, midpoint):
+            target_point, target = is_ball_in_obstacle(ball, midpoint)
+            path = astar(navmesh, robot_pos, target)
             ml._navigate_to_target(path)
             angle = rotate_vector_to_point(robot_pos, robot_direction, target_point)
-            print(f"after robot pos {robot_pos} and direction {robot_direction} and target {ball} and angle: {angle}")
+            print(f"after robot pos {robot_pos} and direction {robot_direction} and target {target_point} and angle: {angle}")
             if angle < -0.5 or angle > 0.5:
                 ml._course_correction(angle, ball, tol=0.5)
             ml.client.send_command("start_collect")
@@ -85,12 +85,11 @@ def test_collect_ball_in_obstacle(ml, camera, final_points, direction_color, piv
             return
 # check if ball in balss is in buffer zone
     for ball in balls:
-        is_ball_in_buffer_zone, target_point, target = is_ball_in_buffer_zone(ball, midpoint)
-        if is_ball_in_buffer_zone:
-            target_point = buffer_zone_search(ball[0], 0, 1)
+        if is_ball_in_buffer_zone(ball):
+            target_point = buffer_zone_search(ball)
             path = astar(navmesh, robot_pos, target_point)
             ml._navigate_to_target(path)
-            angle = rotate_vector_to_point(robot_pos, robot_direction, ball[0])
+            angle = rotate_vector_to_point(robot_pos, robot_direction, ball)
             print(f"after robot pos {robot_pos} and direction {robot_direction} and target {ball} and angle: {angle}")
             if angle < -0.5 or angle > 0.5:
                 ml._course_correction(angle, ball, tol=0.5)
