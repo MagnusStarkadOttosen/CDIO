@@ -210,9 +210,10 @@ class MainLoop:
         self.client.send_command("move 10")
 
     def _escape_cross(self, front_x, front_y):
-        log_path("front Is in deadzone")
-        new_x, new_y = escape_dead_zone(self.navmesh, (front_x, front_y))
-        self.target_pos = (new_x, new_y)
+        log_path("front is in cross buffer")
+        self.client.send_command("move -5")
+        # new_x, new_y = escape_dead_zone(self.navmesh, (front_x, front_y))
+        # self.target_pos = (new_x, new_y)
 
     def _collect_ball_in_corner(self, ball_pos, robot_pos, warped_img):
         corner_result = check_corners(ball_pos, threshold=50)
