@@ -194,7 +194,7 @@ class MainLoop:
         # Calculate the new point
         new_x = robot_pos[0] + distance * unit_a
         new_y = robot_pos[1] + distance * unit_b
-        return new_x, new_y
+        return int(new_x), int(new_y)
 
     def _escape_border(self, robot_pos, robot_direction):
         angle = rotate_vector_to_point(robot_pos, robot_direction, (900, 600))
