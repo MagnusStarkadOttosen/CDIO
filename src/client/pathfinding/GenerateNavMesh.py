@@ -4,6 +4,8 @@ import heapq
 import cv2
 import numpy as np
 
+from src.client.utilities import log_path
+
 WALKABLE_INDEX = 2
 OBSTACLE_INDEX = 1
 
@@ -171,7 +173,8 @@ def escape_dead_zone(navmesh, start):
         if (x, y) not in visited:
             visited.add((x, y))
             if 0 <= y < height and 0 <= x < width and navmesh[int(y), int(x)] == 1:
-                return (x, y)
+                log_path(f"new x and y: {x}, {y}")
+                return x, y
             neighbors = [
                 (x + 1, y),
                 (x - 1, y),
