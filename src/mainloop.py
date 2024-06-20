@@ -217,36 +217,23 @@ class MainLoop:
     def _navigate_to_target(self, path):
         for (x, y) in path:
             while True:
-                ret, frame = self.camera.read()
-                # final_points = find_corner_points_full(frame, doVerbose=False)
-                warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
-                print(f"orange hsv values: {self.pivot_color}")
-
                 robot_pos, robot_direction = safe_detect_robot(self.camera, self.final_points, DST_SIZE,
                                                                self.direction_color, self.pivot_color)
 
                 if robot_pos is None or robot_direction is None:
                     continue
                 if are_points_close(robot_pos, (x, y), tolerance=40):
-                    self.client.send_command("stop")
-                    # print(f"{robot_pos}aaa{(x,y)}aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
                     self.robot_is_moving = False
                     self.at_target = True
                     break
 
                 angle = rotate_vector_to_point(robot_pos, robot_direction, (x, y))
 
-                # angle = calc_degrees_to_rotate(robot_direction, target_direction)
                 print(
                     f"after robot pos {robot_pos} and direction {robot_direction} and target {(x, y)} and angle: {angle}")
                 tolerance = 10
                 if angle < -tolerance or angle > tolerance:
-                    print(f"asdsdkjfsdkjfsdkj {angle}")
                     self._course_correction(angle, (x, y), tol=tolerance)
-
-                # if self.robot_is_turning:
-                #     self.robot_is_turning = False
-                #     self.client.send_command("stop")
 
                 if not self.robot_is_moving and not self.robot_is_turning:
                     self.client.send_command("start_drive 10")
