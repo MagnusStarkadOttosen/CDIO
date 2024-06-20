@@ -260,6 +260,9 @@ class MainLoop:
         self.client.send_command("stop_collect")
 
     def _navigate_to_target(self, path):
+        if path is None:
+            log_path("Can't navigate, no path.")
+            return
         for (x, y) in path:
             while True:
                 ret, frame = self.camera.read()
