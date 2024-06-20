@@ -16,8 +16,8 @@ print("Test collecting from corners.")
 
 IMAGE_SIZE = [1200, 1800]
 ball_coords_1 = (1690, 574)
-ball_coords_2 = (1800, 1200) # bottom_right
-#ball_coords_2 = (0, 0) # top_left
+# ball_coords_2 = (1800, 1200) # bottom_right
+ball_coords_2 = (0, 0) # top_left
 # ball_coords_2 = (1800, 0) # top_right
 #ball_coords_2 = (0, 1200) # bottom_right
 
@@ -50,7 +50,7 @@ targets = [
 main_loop = MainLoop()
 main_loop.initialize_field()
 main_loop.client.send_command("start_drive 30")
-
+# main_loop._navigate_to_target([(300,600)])
 # Test one corner at the time
 if is_ball_in_corner(ball_coords_2):
     print("Checking if the ball is in the corner.")

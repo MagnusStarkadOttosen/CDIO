@@ -1,4 +1,4 @@
-# import time
+import time
 
 import cv2
 
@@ -203,55 +203,39 @@ class MainLoop:
         self.client.send_command("deliver")
 
     def _navigate_to_target(self, path):
+        start_time = time.time()  # Start time for timeout
+        max_duration = 30  # Maximum duration in seconds to try navigating to the target
+
         for (x, y) in path:
             while True:
-                ret, frame = self.camera.read()
-                #final_points = find_corner_points_full(frame, doVerbose=False)
-                warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
-                print(f"orange hsv values: {self.pivot_color}")
+                current_time = time.time()
+                if current_time - start_time > max_duration:
+                    print("Navigation timeout reached.")
+                    self.client.send_command("stop")
+                    return
 
-                robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color, self.transformed_center)
-                print(f"robot pos {robot_pos} and direction {robot_direction} and transformed center {self.transformed_center}")
-                while robot_pos is None or robot_direction is None:
-                    robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color, self.transformed_center)
+                ret, frame = self.camera.read()
+                warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
+                robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color,
+                                                          self.transformed_center)
 
                 if robot_pos is None or robot_direction is None:
                     continue
-                if are_points_close(robot_pos, (x,y), tolerance=40):
-                    print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+
+                print(f"Current robot position: {robot_pos}, Target: {(x, y)}")
+
+                if are_points_close(robot_pos, (x, y), tolerance=40):
+                    print("Target reached.")
                     self.client.send_command("stop")
-                    self.robot_is_moving = False
-                    self.at_target = True
                     break
 
                 angle = rotate_vector_to_point(robot_pos, robot_direction, (x, y))
+                print(f"Current angle to target: {angle}")
 
-                # angle = calc_degrees_to_rotate(robot_direction, target_direction)
-                print(f"after robot pos {robot_pos} and direction {robot_direction} and target {(x, y)} and angle: {angle}")
-                tolerance = 10
-                if angle < -tolerance or angle > tolerance:
-                    print(f"asdsdkjfsdkjfsdkj {angle}")
-                    self._course_correction(angle, (x,y), tol=tolerance)
+                if abs(angle) > 10:
+                    self._course_correction(angle, (x, y))
 
-                # if self.robot_is_turning:
-                #     self.robot_is_turning = False
-                #     self.client.send_command("stop")
-
-                if not self.robot_is_moving and not self.robot_is_turning:
-                    self.client.send_command("start_drive 10")
-                    self.robot_is_moving = True
-
-                if self.robot_is_moving:
-                    if are_points_close(robot_pos,(x,y),300):
-                        self.client.send_command("start_drive 10")
-                    else:
-                        self.client.send_command("start_drive 10")
-
-                    # if are_points_close(robot_pos,self.target_pos,300):
-                    #      self.client.send_command("start_collect")
-                    # else:
-                    #      self.client.send_command("stop_collect")
-
+                self.client.send_command("start_drive 10")
 
     def _course_correction(self, angle, target, tol=10): # TODO read final points only once at start?
         print(f"inside course correction. Angle: {angle}. Tolerance: {tol}")
