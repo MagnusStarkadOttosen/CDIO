@@ -4,6 +4,7 @@ import heapq
 import cv2
 import numpy as np
 
+from src.CONSTANTS import GRID_SIZE
 from src.client.utilities import log_path
 
 WALKABLE_INDEX = 2
@@ -14,7 +15,7 @@ def GenerateNavMesh(image, hsv_values):
     height, width = gray.shape
 
     # Define the grid size for the navmesh
-    grid_size = 25
+    grid_size = GRID_SIZE
     buffer_size = 150
     buffer_edge = 150
     rogue_pixel_threshold = 500
@@ -174,7 +175,7 @@ def escape_dead_zone(navmesh, start):
             visited.add((x, y))
             if 0 <= y < height and 0 <= x < width and navmesh[int(y), int(x)] == 1:
                 log_path(f"new x and y: {x}, {y}")
-                coords = cells_to_coordinates([(x, y)], 30)
+                coords = cells_to_coordinates([(x, y)], GRID_SIZE)
                 x, y = coords[0][0], coords[0][1]
                 return x, y
             neighbors = [

@@ -55,7 +55,7 @@ import numpy as np
 # height, width = gray.shape
 # print("converted to gray")
 # # Define the grid size for the navmesh
-# grid_size = 30
+# grid_size = GRID_SIZE
 # buffer_size = 100
 #
 # # Create an empty navmesh grid
