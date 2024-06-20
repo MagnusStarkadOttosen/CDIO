@@ -7,11 +7,16 @@ import cv2
 # logging.basicConfig(filename='safe_detect_balls.log', filemode='w',
 #                     format='%(asctime)s - %(message)s')
 
+<<<<<<< HEAD
+from src.client.pathfinding.FindPath import find_path
+from src.client.search_targetpoint.buffer_zone_search import buffer_zone_search, is_ball_in_buffer_zone
+=======
 
 from src.client.pathfinding.FindPath import find_path, cell_is_in_dead_zone, cell_is_in_border_zone, \
     cell_is_in_cross_zone
 from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, escape_dead_zone
 # from src.client.pathfinding.GenerateNavMesh import find_path
+>>>>>>> escape_buffer
 from src.client.search_targetpoint.obstacle_search import is_ball_in_obstacle, obstacle_Search
 from src.client.field.collect_from_corner import is_ball_in_corner, check_corners, robot_movement_based_on_corners
 from src.client.field.coordinate_system import are_points_close, find_corner_points_full, warp_perspective
