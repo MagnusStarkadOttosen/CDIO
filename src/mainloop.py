@@ -222,6 +222,9 @@ class MainLoop:
 
                 if robot_pos is None or robot_direction is None:
                     continue
+
+                self._dead_zone_check(robot_pos, robot_direction)
+
                 if are_points_close(robot_pos, (x, y), tolerance=40):
                     self.robot_is_moving = False
                     self.at_target = True
@@ -250,7 +253,7 @@ class MainLoop:
                     else:
                         self.client.send_command("stop_collect")
 
-    def _dead_zone_check(self, robot_direction, robot_pos):
+    def _dead_zone_check(self, robot_pos, robot_direction):
         front_x, front_y = _calc_robot_front(robot_direction, robot_pos)
         if cell_is_in_border_zone((front_x, front_y), self.navmesh):
             self._escape_border(robot_pos, robot_direction)
