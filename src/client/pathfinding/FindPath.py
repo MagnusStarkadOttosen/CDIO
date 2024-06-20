@@ -58,17 +58,15 @@ def cell_is_in_cross_zone(pos, navmesh):
 
 
 def pretty_print_navmesh(navmesh, path, robot_pos, grid_size):
-    pos_cell_x = coordinate_to_cell(robot_pos[0], robot_pos[1], grid_size)
-    pos_cell_y = coordinate_to_cell(robot_pos[0], robot_pos[1], grid_size)
-
+    pos_cell = coordinate_to_cell(robot_pos[0], robot_pos[1], grid_size)
     navmesh_copy = navmesh.copy()
 
     if path is not None:
         for (x, y) in path:
             navmesh_copy[y, x] = 3  # Mark the path with '3'
 
-    navmesh_copy[pos_cell_x, pos_cell_y] = 4
-
+    navmesh_copy[pos_cell[1], pos_cell[0]] = 4
+    # navmesh_copy[int(robot_pos[1]), int(robot_pos[0])] = 4
     symbols = {
         0: 'B',
         1: 'C',
