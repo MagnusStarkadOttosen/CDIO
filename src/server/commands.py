@@ -49,7 +49,7 @@ class Commands:
 
     def drive_inf(self,speed):
         speed2=speed+0.2
-        self.tank_drive.on(SpeedPercent(speed), SpeedPercent(speed2))
+        self.tank_drive.on(SpeedPercent(speed2), SpeedPercent(speed))
 
     def drive_back_save(self,speed1,speed2):
         self.tank_drive.on(SpeedPercent(speed1), SpeedPercent(speed2))
