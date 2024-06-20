@@ -46,17 +46,21 @@ def test_collect_ball_in_obstacle(ml, camera, final_points, direction_color, piv
         return
 
     balls = detect_balls(filtered_img)
-    if not balls:
+    if len(balls)<1:
         print("No balls detected.")
         return
+
+    # balls = ml.balls
 
     print(f"ball {balls}")
     midpoint = detect_obstacles(warped_img)
 # check if ball in balss is in obstacle
     for ball in balls:
          if is_ball_in_obstacle(ball, midpoint):
-            target_point, target = is_ball_in_obstacle(ball, midpoint)
-            path = astar(navmesh, robot_pos, target)
+            fbool, target_point, target = is_ball_in_obstacle(ball, midpoint)
+            # path = astar(navmesh, robot_pos, target)
+            path = [target]
+            print(f"path: {path} target point: {target_point} target: {target}")
             ml._navigate_to_target(path)
             angle = rotate_vector_to_point(robot_pos, robot_direction, target_point)
             print(f"after robot pos {robot_pos} and direction {robot_direction} and target {target_point} and angle: {angle}")
@@ -106,6 +110,8 @@ def test_collect_ball_in_obstacle(ml, camera, final_points, direction_color, piv
 
 if __name__ == "__main__":
     ml = MainLoop()
+    ml.initialize_field()
+    ml._detect_initial_balls()
     test_collect_ball_in_obstacle(ml, ml.camera, ml.final_points, ml.direction_color, ml.pivot_color, ml.client)
     ml.client.send_command("stop")
     ml.client.send_command("stop_collect")

@@ -17,6 +17,7 @@ def obstacle_Search(ball_dot, i, j, midpoint):
     return target_point, target
 
 def is_ball_in_obstacle(ball_coords, midpoint):
+    print(f"ball_coords: {ball_coords} midpoint: {midpoint}")
     if(abs(ball_coords[0]-midpoint[0])<100 and abs(ball_coords[1]-midpoint[1])<100):
         target_point = obstacle_Search(ball_coords, 0, 1, midpoint)
         target = obstacle_Search(ball_coords, 1, 0, midpoint)
