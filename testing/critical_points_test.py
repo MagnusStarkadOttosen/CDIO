@@ -2,7 +2,6 @@
 from src.client.field.collect_from_corner import is_ball_in_corner
 from src.client.pc_client import ClientPC
 from src.client.vision.camera import initialize_camera
-from src.client.vision.shape_detection import detect_robot
 
 # Setup your robot's client interface
 print("test321")

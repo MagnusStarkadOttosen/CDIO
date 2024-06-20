@@ -23,7 +23,7 @@ def detect_robot(image, direction_color, pivot_color, center_point):
     if len(pivot_dot) == 0:  # TODO Proper error handling for red_dot
         print("No pivot dot.")
         return None, None
-    print(f"what pivot detectfinds {pivot_dot}")
+    print(f"what pivot detect finds {pivot_dot}")
     # print("yellow dot found ", len(pivot_dot))
 
     x, y = center_point

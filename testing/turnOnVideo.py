@@ -33,7 +33,7 @@ try:
         gen_warped_image = warp_perspective(frame, final_points, dst_size)
 
         #find robot
-        robot_pos, robot_direction = detect_robot(gen_warped_image,,
+        robot_pos, robot_direction = detect_robot(gen_warped_image)
         if robot_pos is None or robot_direction is None:
             continue
         print(f"after robot pos {robot_pos} and direction {robot_direction}")
@@ -47,7 +47,7 @@ try:
         while angle < -tolerance or angle > tolerance:
             ret, frame = cap.read()
             gen_warped_image = warp_perspective(frame, final_points, dst_size)
-            robot_pos, robot_direction = detect_robot(gen_warped_image,,
+            robot_pos, robot_direction = detect_robot(gen_warped_image)
             print(f"after robot pos {robot_pos} and direction {robot_direction}")
             if robot_pos is None or robot_direction is None:
                 continue
