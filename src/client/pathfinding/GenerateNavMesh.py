@@ -100,7 +100,7 @@ def astar(navmesh, start, goal):
                 current = came_from[current]
             path.reverse()
             return path
-        
+
         # Get neighbors
         neighbors = [
             (current[0] + 1, current[1]),
@@ -112,7 +112,7 @@ def astar(navmesh, start, goal):
             (current[0] + 1, current[1] - 1),
             (current[0] - 1, current[1] + 1)
         ]
-        
+
         for neighbor in neighbors:
             if 0 <= neighbor[1] < navmesh.shape[0] and 0 <= neighbor[0] < navmesh.shape[1]:
                 if navmesh[neighbor[1], neighbor[0]] == WALKABLE_INDEX:  # Check if neighbor is walkable
@@ -168,18 +168,21 @@ def escape_dead_zone(navmesh, start):
     height, width = navmesh.shape
     visited = set()
     queue = deque([start])
-    
+
     while queue:
         x, y = queue.popleft()
         if (x, y) not in visited:
             visited.add((x, y))
-            if 0 <= y < height and 0 <= x < width and navmesh[int(y), int(x)] == 1:
-               coords = cells_to_coordinates([(x, y)], GRID_SIZE)
-               x, y = coords[0][0], coords[0][1]
-               log_path(x)
-               log_path(y)
+            if 0 <= y < height and 0 <= x < width and navmesh[int(y), int(x)] == WALKABLE_INDEX:
+                coords = cells_to_coordinates([(x, y)], GRID_SIZE)
+                x, y = coords[0][0], coords[0][1]
+                log_path(x)
+                log_path(y)
 
-            return x, y
+                print(f"coords: {coords}")
+                print(f"x and y in dead zone: {x}, {y}")
+                return x, y
+
             neighbors = [
                 (x + 1, y),
                 (x - 1, y),
@@ -193,5 +196,5 @@ def escape_dead_zone(navmesh, start):
             for neighbor in neighbors:
                 if neighbor not in visited:
                     queue.append(neighbor)
-    
+
     return None
