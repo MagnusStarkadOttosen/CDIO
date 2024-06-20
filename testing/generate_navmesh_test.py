@@ -38,7 +38,7 @@ print(path)
 opti_path = optimize_path(navmesh, path)
 print(opti_path)
 
-pretty_print_navmesh(navmesh, path, (start[0], start[1]))
+pretty_print_navmesh(navmesh, path, (350, 600), grid_size)
 
 combined_image = overlay_path_on_image(image, opti_path, grid_size)
 combined_image = draw_start_goal_on_image(combined_image, start, goal, grid_size)

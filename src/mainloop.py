@@ -181,7 +181,7 @@ class MainLoop:
         if path is not None:
             self._navigate_to_target(path)
         else:
-            pretty_print_navmesh(self.navmesh, path)
+            pretty_print_navmesh(self.navmesh, path, robot_pos)
             return
 
 
