@@ -17,7 +17,7 @@ from src.client.hsvLoad import read_hsv_values
 
 
 MAXSPEED = 40
-MAXROTATION = 20
+MAXROTATION = 15
 WHITE_BALL_COUNT = 10
 ROBOT_CAPACITY = 6
 TOLERANCE = 50
@@ -291,7 +291,7 @@ class MainLoop:
                  speed = np.round((angle/180)*MAXROTATION*1.8)
 
             else:
-                 speed = np.round((angle/-180)*MAXROTATION *1.8)
+                 speed = np.round((angle/-180)*MAXROTATION*1.8)
 
             if speed< TURN_SPEED:
                 speed=TURN_SPEED
