@@ -4,20 +4,18 @@ import os
 
 import cv2
 
-from client.vision.shape_detection import detect_robot
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from src.client.field.coordinate_system import warp_perspective
 from src.client.search_targetpoint.obstacle_search import is_ball_in_obstacle, obstacle_Search
 from src.client.search_targetpoint.buffer_zone_search import buffer_zone_search, is_ball_in_buffer_zone
 from src.client.pathfinding.GenerateNavMesh import  astar
 from src.client.pathfinding.CalculateCommandList import rotate_vector_to_point
+from src.client.vision.shape_detection import detect_robot
 from src.mainloop import MainLoop
 
 DST_SIZE = (1200, 1800)
-main_loop = MainLoop()
-main_loop.initialize_field()
-main_loop._detect_initial_balls()
-main_loop._detect_obstacles()
+
 
 def test_collect_ball_in_obstacle(ml,camera, final_point, direction_color, pivot_color, client):
     ret, frame = ml.camera.read()
@@ -106,7 +104,13 @@ def test_collect_ball_in_obstacle(ml,camera, final_point, direction_color, pivot
     print("No balls in buffer zone or obstacle.")
 
 
-test_collect_ball_in_obstacle(main_loop)
+main_loop = MainLoop()
+main_loop.initialize_field()
+main_loop._detect_initial_balls()
+main_loop._detect_obstacles()
+test_collect_ball_in_obstacle(main_loop, main_loop.camera, main_loop.final_points, main_loop.direction_color, main_loop.pivot_color, main_loop.client)
+
+
 
 # if __name__ == "__main__":
 #     ml = MainLoop()
