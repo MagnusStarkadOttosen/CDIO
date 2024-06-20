@@ -16,7 +16,7 @@ from src.client.vision.shape_detection import detect_balls, detect_obstacles, de
 from src.client.hsvLoad import read_hsv_values
 
 
-MAXSPEED = 40
+MAXSPEED = 50
 MAXROTATION = 20
 WHITE_BALL_COUNT = 10
 ROBOT_CAPACITY = 6
