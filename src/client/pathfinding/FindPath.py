@@ -16,11 +16,11 @@ def find_path(navmesh, warped_img, robot_pos, target_pos):
     targetCell = coordinate_to_cell(target_pos[0], target_pos[1], 30)
     print(f"robotCell: {robotCell}, targetCell: {targetCell}")
     print(f"x: {robotCell[0]}, y: {robotCell[1]}")
-    print(f"asdasdas {navmesh[robotCell[1], robotCell[0]]}")
+    # print(f"asdasdas {navmesh[robotCell[1], robotCell[0]]}")
     # if navmesh[robotCell[1], robotCell[0]] == 0:
     #     robotCell = escape_dead_zone(navmesh, robotCell)
-    if navmesh[targetCell[1], targetCell[0]] == 0:
-        targetCell = escape_dead_zone(navmesh, targetCell)
+    # if navmesh[targetCell[1], targetCell[0]] == 0:
+    #     targetCell = escape_dead_zone(navmesh, targetCell)
     path = astar(navmesh, robotCell, targetCell)
     # while path is None:
     #     print("try again")
@@ -45,12 +45,12 @@ def find_path(navmesh, warped_img, robot_pos, target_pos):
 
 def cell_is_in_border_zone(pos, navmesh):
     target_cell = coordinate_to_cell(pos[0], pos[1], 30)
-    return navmesh[target_cell[1], target_cell[0]] == 0
+    return navmesh[int(target_cell[1]), int(target_cell[0])] == 0
 
 
 def cell_is_in_cross_zone(pos, navmesh):
     target_cell = coordinate_to_cell(pos[0], pos[1], 30)
-    return navmesh[target_cell[1], target_cell[0]] == 1
+    return navmesh[int(target_cell[1]), int(target_cell[0])] == 1
 
 def pretty_print_navmesh(navmesh, path):
     navmesh_copy = navmesh.copy()

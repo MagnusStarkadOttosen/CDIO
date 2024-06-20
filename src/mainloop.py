@@ -8,7 +8,7 @@ import cv2
 #                     format='%(asctime)s - %(message)s')
 
 
-from src.client.pathfinding.FindPath import find_path, cell_is_in_dead_zone, cell_is_in_border_zone, \
+from src.client.pathfinding.FindPath import find_path, cell_is_in_border_zone, \
     cell_is_in_cross_zone
 from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, escape_dead_zone
 # from src.client.pathfinding.GenerateNavMesh import find_path

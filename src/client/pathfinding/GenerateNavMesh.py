@@ -170,7 +170,7 @@ def escape_dead_zone(navmesh, start):
         x, y = queue.popleft()
         if (x, y) not in visited:
             visited.add((x, y))
-            if 0 <= y < height and 0 <= x < width and navmesh[y, x] == 1:
+            if 0 <= y < height and 0 <= x < width and navmesh[int(y), int(x)] == 1:
                 return (x, y)
             neighbors = [
                 (x + 1, y),
