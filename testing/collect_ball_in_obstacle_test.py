@@ -11,29 +11,31 @@ from src.client.pathfinding.CalculateCommandList import rotate_vector_to_point
 from src.mainloop import MainLoop
 
 DST_SIZE = (1200, 1800)
-main = MainLoop()
-main.initialize_field()
-main._detect_initial_balls()
-def test_collect_ball_in_obstacle(ml, camera, final_points, direction_color, pivot_color, client):
-    # ret, frame = ml.camera.read()
-    # if not ret or frame is None or frame.size == 0:
-    #     print("Failed to read from camera or empty frame captured.")
-    #     return
-    
-    # warped_img = warp_perspective(frame, ml.final_points, DST_SIZE)
-    # if warped_img is None or warped_img.size == 0:
-    #     print("Failed to warp image or warped image is empty.")
-    #     return
+main_loop = MainLoop()
+main_loop.initialize_field()
+main_loop._detect_initial_balls()
+main_loop._detect_obstacles()
 
-    # print(f"testing colors {ml.direction_color}")
-    # robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color)
-    # while robot_pos is None or robot_direction is None:
-    #     robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color)
+def test_collect_ball_in_obstacle(ml,camera, final_point, direction_color, pivot_color, client):
+    ret, frame = ml.camera.read()
+    if not ret or frame is None or frame.size == 0:
+        print("Failed to read from camera or empty frame captured.")
+        return
+
+    warped_img = warp_perspective(frame, ml.final_points, DST_SIZE)
+    if warped_img is None or warped_img.size == 0:
+        print("Failed to warp image or warped image is empty.")
+        return
+
+    print(f"testing colors {ml.direction_color}")
+    robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color)
+    while robot_pos is None or robot_direction is None:
+        robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color)
 
     # white_hsv_values = read_hsv_values('hsv_presets_white.txt')
     # red_hsv_values = read_hsv_values('hsv_presets_red.txt')
     # navmesh = GenerateNavMesh(warped_img, red_hsv_values)
-    
+    #
     # try:
     #     filtered_img = filter_image(warped_img, hsv_values=white_hsv_values)
     #     if filtered_img is None or filtered_img.size == 0:
@@ -42,7 +44,7 @@ def test_collect_ball_in_obstacle(ml, camera, final_points, direction_color, piv
     # except Exception as e:
     #     print(f"Error in filtering image: {e}")
     #     return
-
+    #
     # balls = detect_balls(filtered_img)
     # if len(balls)<1:
     #     print("No balls detected.")
@@ -53,12 +55,12 @@ def test_collect_ball_in_obstacle(ml, camera, final_points, direction_color, piv
     robot_pos = ml.robot_pos
     robot_direction = ml.robot_direction
     navmesh = ml.navmesh
-# check if ball in balss is in obstacle
-    for ball in balls:
+# check if ball in balls is in obstacle
+    for ball in ml.balls:
         if is_ball_in_obstacle(ball, midpoint):
             target_point, target = obstacle_Search(ball, midpoint)
-            # path = astar(navmesh, robot_pos, target)
-            path = [target]
+            path = astar(navmesh, robot_pos, target)
+            # path = [target]
             print(f"path: {path} target point: {target_point} target: {target}")
             ml._navigate_to_target(path)
             angle = rotate_vector_to_point(robot_pos, robot_direction, target_point)
@@ -104,6 +106,9 @@ def test_collect_ball_in_obstacle(ml, camera, final_points, direction_color, piv
             ml.client.send_command("stop")
             return
     print("No balls in buffer zone or obstacle.")
+
+
+test_collect_ball_in_obstacle(main_loop)
 
 # if __name__ == "__main__":
 #     ml = MainLoop()
