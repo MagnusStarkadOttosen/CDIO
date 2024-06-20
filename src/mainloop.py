@@ -2,7 +2,7 @@ import math
 import time
 
 import cv2
-#import logging
+# import logging
 #
 # logging.basicConfig(filename='safe_detect_balls.log', filemode='w',
 #                     format='%(asctime)s - %(message)s')
@@ -37,6 +37,24 @@ CORNERS = {
     "top_right": (1800, 0),
     "bottom_right": (1800, 1200)
 }
+
+
+def _calc_robot_front(robot_direction, robot_pos):
+    # Calculate the magnitude of the direction vector
+    magnitude = math.sqrt(robot_direction[0] ** 2 + robot_direction[1] ** 2)
+
+    if magnitude == 0:
+        raise ValueError("Direction vector magnitude is zero, cannot move")
+
+    # Calculate the unit direction vector components
+    unit_a = robot_direction[0] / magnitude
+    unit_b = robot_direction[1] / magnitude
+
+    distance = 5
+    # Calculate the new point
+    new_x = robot_pos[0] + distance * unit_a
+    new_y = robot_pos[1] + distance * unit_b
+    return new_x, new_y
 
 
 class MainLoop:
@@ -145,68 +163,11 @@ class MainLoop:
                 return
             print(self.balls)
             self.target_pos = find_nearest_ball(robot_pos, self.balls)  # TODO handle target being null
-            #logging.warning(self.target_pos)
+            # logging.warning(self.target_pos)
             log_balls(self.target_pos)
-
-        # old find_corners code
-        # if cell_is_in_dead_zone(robot_pos, self.navmesh):
-        #     print("front is in deadzone")
-        #     log_path("Is in deadzone")
-        #     self.client.send_command("move -5")
-        #     return
-
-        front_x, front_y = self._calc_robot_front(robot_direction, robot_pos)
-        if cell_is_in_border_zone((front_x, front_y), self.navmesh):
-            self._escape_border(robot_pos, robot_direction)
-            return
-        elif cell_is_in_cross_zone((front_x, front_y), self.navmesh):
-            self._escape_cross(front_x, front_y)
-
-        # if cell_is_in_dead_zone((int(front_x),int(front_y)), self.navmesh):
-        #     log_balls(f"front pos: {front_x}, {front_y}")
-        #     print("front is in deadzone")
-        #     log_path("front Is in deadzone")
-        #     new_x, new_y = escape_dead_zone(self.navmesh, (int(front_x), int(front_y)))
-
-            # if new_x and new_y is not None:
-            #     self.target_pos = (new_x, new_y)
-            # else:
-            #     print("New target none")
-            # self.client.send_command("move -5")
-            #return
 
         path = find_path(self.navmesh, warped_img, robot_pos, self.target_pos)
         self._navigate_to_target(path)
-
-
-    def _calc_robot_front(self, robot_direction, robot_pos):
-        # Calculate the magnitude of the direction vector
-        magnitude = math.sqrt(robot_direction[0] ** 2 + robot_direction[1] ** 2)
-
-        if magnitude == 0:
-            raise ValueError("Direction vector magnitude is zero, cannot move")
-
-        # Calculate the unit direction vector components
-        unit_a = robot_direction[0] / magnitude
-        unit_b = robot_direction[1] / magnitude
-
-        distance = 5
-        # Calculate the new point
-        new_x = robot_pos[0] + distance * unit_a
-        new_y = robot_pos[1] + distance * unit_b
-        return new_x, new_y
-
-    def _escape_border(self, robot_pos, robot_direction):
-        angle = rotate_vector_to_point(robot_pos, robot_direction, (900, 600))
-        tolerance = 20
-        if angle < -tolerance or angle > tolerance:
-            self._course_correction(angle, (900, 600), tol=tolerance)
-        self.client.send_command("move 10")
-
-    def _escape_cross(self, front_x, front_y):
-        log_path("front Is in deadzone")
-        new_x, new_y = escape_dead_zone(self.navmesh, (front_x, front_y))
-        self.target_pos = (new_x, new_y)
 
     def _collect_ball_in_corner(self, ball_pos, robot_pos, warped_img):
         corner_result = check_corners(ball_pos, threshold=50)
@@ -246,7 +207,7 @@ class MainLoop:
         print(
             f"after robot pos {robot_pos} and direction {robot_direction} and target {(-100, 600)} and angle: {angle}")
         if angle < -1 or angle > 1:
-            #print(f"asdsdkjfsdkjfsdkj {angle}")
+            # print(f"asdsdkjfsdkjfsdkj {angle}")
             self._course_correction(angle, (-100, 600), 1)
 
         self.client.send_command("deliver")
@@ -271,7 +232,7 @@ class MainLoop:
                     ret, frame = self.camera.read()
                     gen_warped_image = warp_perspective(frame, self.final_points, DST_SIZE)
                     robot_pos, robot_direction = detect_robot(gen_warped_image, self.direction_color,
-                                                                   self.pivot_color)
+                                                              self.pivot_color)
 
                 if robot_pos is None or robot_direction is None:
                     continue
@@ -310,6 +271,27 @@ class MainLoop:
                         self.client.send_command("start_collect")
                     else:
                         self.client.send_command("stop_collect")
+
+    def _dead_zone_check(self, robot_direction, robot_pos):
+        front_x, front_y = _calc_robot_front(robot_direction, robot_pos)
+        if cell_is_in_border_zone((front_x, front_y), self.navmesh):
+            self._escape_border(robot_pos, robot_direction)
+            return
+        elif cell_is_in_cross_zone((front_x, front_y), self.navmesh):
+            self._escape_cross(front_x, front_y)
+
+    def _escape_border(self, robot_pos, robot_direction):
+        angle = rotate_vector_to_point(robot_pos, robot_direction, (900, 600))
+        tolerance = 20
+        if angle < -tolerance or angle > tolerance:
+            self._course_correction(angle, (900, 600), tol=tolerance)
+        self.client.send_command("move 10")
+
+    def _escape_cross(self, front_x, front_y):
+        log_path("front Is in deadzone")
+        new_x, new_y = escape_dead_zone(self.navmesh, (front_x, front_y))
+        self.target_pos = (new_x, new_y)
+        self._navigate_to_target([(new_x, new_y)])
 
     def _course_correction(self, angle, target, tol=10):
         print(f"inside course correction. Angle: {angle}. Tolerance: {tol}")
