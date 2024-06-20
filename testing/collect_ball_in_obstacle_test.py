@@ -53,14 +53,11 @@ def test_collect_ball_in_obstacle(ml,camera, final_point, direction_color, pivot
     #     print("No balls detected.")
     #     return
 
-    balls = ml.balls
-    midpoint = ml.midpoint
-    navmesh = ml.navmesh
 # check if ball in balls is in obstacle
     for ball in ml.balls:
-        if is_ball_in_obstacle(ball, midpoint):
-            target_point, target = obstacle_Search(ball, midpoint)
-            path = astar(navmesh, robot_pos, target)
+        if is_ball_in_obstacle(ball, ml.midpoint):
+            target_point, target = obstacle_Search(ball, ml.midpoint)
+            path = astar(ml.navmesh, robot_pos, target)
             # path = [target]
             print(f"path: {path} target point: {target_point} target: {target}")
             ml._navigate_to_target(path)
@@ -91,7 +88,7 @@ def test_collect_ball_in_obstacle(ml,camera, final_point, direction_color, pivot
             return
         elif is_ball_in_buffer_zone(ball):
             target_point = buffer_zone_search(ball)
-            path = astar(navmesh, robot_pos, target_point)
+            path = astar(ml.o4navmesh, robot_pos, target_point)
             ml._navigate_to_target(path)
             angle = rotate_vector_to_point(robot_pos, robot_direction, ball)
             print(f"after robot pos {robot_pos} and direction {robot_direction} and target {ball} and angle: {angle}")
