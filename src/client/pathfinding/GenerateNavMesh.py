@@ -14,7 +14,7 @@ def GenerateNavMesh(image, hsv_values):
     height, width = gray.shape
 
     # Define the grid size for the navmesh
-    grid_size = 30
+    grid_size = 25
     buffer_size = 150
     buffer_edge = 150
     rogue_pixel_threshold = 500
