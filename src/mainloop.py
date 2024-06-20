@@ -2,23 +2,21 @@ import math
 import time
 
 import cv2
-#import logging
+
+from src.CONSTANTS import GRID_SIZE
+# import logging
 #
 # logging.basicConfig(filename='safe_detect_balls.log', filemode='w',
 #                     format='%(asctime)s - %(message)s')
 
 
-from src.client.pathfinding.FindPath import find_path, cell_is_in_border_zone, \
-    cell_is_in_cross_zone, pretty_print_navmesh
-from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, escape_dead_zone
-# from src.client.pathfinding.GenerateNavMesh import find_path
-from src.client.search_targetpoint.obstacle_search import is_ball_in_obstacle, obstacle_Search
+from src.client.pathfinding.FindPath import find_path, pretty_print_navmesh
+from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, escape_dead_zone, coordinate_to_cell
 from src.client.field.collect_from_corner import is_ball_in_corner, check_corners, robot_movement_based_on_corners
 from src.client.field.coordinate_system import are_points_close, find_corner_points_full, warp_perspective
 from src.client.pathfinding.CalculateCommandList import rotate_vector_to_point
 from src.client.pc_client import ClientPC
 from src.client.utilities import log_balls, log_path
-from src.client.vision.filters import filter_image
 from src.client.vision.pathfinder import find_nearest_ball
 from src.client.vision.shape_detection import detect_balls, detect_obstacles, detect_robot, safe_detect_balls, \
     safe_detect_robot
@@ -122,14 +120,9 @@ class MainLoop:
 
     def _collect_ball(self):
         ret, frame = self.camera.read()
-        # final_points = find_corner_points_full(frame, doVerbose=False)
         warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
-
         robot_pos, robot_direction = safe_detect_robot(self.camera, self.final_points, DST_SIZE, self.white, self.white)
-        # while robot_pos is None or robot_direction is None:
-        #     robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color)
 
-        # if filter_image.equals(filter_image_orange):
         if self.collect_orange_ball:
             self.balls = safe_detect_balls(self.camera, self.final_points,
                                            DST_SIZE, self.orange)
@@ -145,45 +138,15 @@ class MainLoop:
                 return
             print(self.balls)
             self.target_pos = find_nearest_ball(robot_pos, self.balls)  # TODO handle target being null
-            #logging.warning(self.target_pos)
+
             log_balls(self.target_pos)
 
-        # old find_corners code
-        # if cell_is_in_dead_zone(robot_pos, self.navmesh):
-        #     print("front is in deadzone")
-        #     log_path("Is in deadzone")
-        #     self.client.send_command("move -5")
-        #     return
-
-        front_x, front_y = self._calc_robot_front(robot_direction, robot_pos)
-        if cell_is_in_border_zone((front_x, front_y), self.navmesh):
-            log_path("Is in border zone")
-            self._escape_border(robot_pos, robot_direction)
-            return
-        elif cell_is_in_cross_zone((front_x, front_y), self.navmesh):
-            log_path("Is in cross zone")
-            self._escape_cross(front_x, front_y)
-
-        # if cell_is_in_dead_zone((int(front_x),int(front_y)), self.navmesh):
-        #     log_balls(f"front pos: {front_x}, {front_y}")
-        #     print("front is in deadzone")
-        #     log_path("front Is in deadzone")
-        #     new_x, new_y = escape_dead_zone(self.navmesh, (int(front_x), int(front_y)))
-
-            # if new_x and new_y is not None:
-            #     self.target_pos = (new_x, new_y)
-            # else:
-            #     print("New target none")
-            # self.client.send_command("move -5")
-            #return
-
-        path = find_path(self.navmesh, warped_img, robot_pos, self.target_pos)
+        path = find_path(self.navmesh, robot_pos, self.target_pos)
         if path is not None:
             self._navigate_to_target(path)
         else:
-            pretty_print_navmesh(self.navmesh, path, robot_pos, 30)
+            pretty_print_navmesh(self.navmesh, path, robot_pos)
             return
-
 
     def _calc_robot_front(self, robot_direction, robot_pos):
         # Calculate the magnitude of the direction vector
@@ -201,19 +164,6 @@ class MainLoop:
         new_x = robot_pos[0] + distance * unit_a
         new_y = robot_pos[1] + distance * unit_b
         return new_x, new_y
-
-    def _escape_border(self, robot_pos, robot_direction):
-        angle = rotate_vector_to_point(robot_pos, robot_direction, (900, 600))
-        tolerance = 20
-        if angle < -tolerance or angle > tolerance:
-            self._course_correction(angle, (900, 600), tol=tolerance)
-        self.client.send_command("move 10")
-
-    def _escape_cross(self, front_x, front_y):
-        log_path("front is in cross buffer")
-        self.client.send_command("move -5")
-        # new_x, new_y = escape_dead_zone(self.navmesh, (front_x, front_y))
-        # self.target_pos = (new_x, new_y)
 
     def _collect_ball_in_corner(self, ball_pos, robot_pos, warped_img):
         corner_result = check_corners(ball_pos, threshold=50)
@@ -241,7 +191,7 @@ class MainLoop:
 
         # path_to_goal_A.append(goal_A_pivot_point)
 
-        path = find_path(self.navmesh, warped_img, robot_pos, goal_A_pivot_point)
+        path = find_path(self.navmesh, robot_pos, goal_A_pivot_point)
 
         # path_to_goal_A.append(goal_A_point)
         self.client.send_command("stop_collect")
@@ -253,7 +203,7 @@ class MainLoop:
         print(
             f"after robot pos {robot_pos} and direction {robot_direction} and target {(-100, 600)} and angle: {angle}")
         if angle < -1 or angle > 1:
-            #print(f"asdsdkjfsdkjfsdkj {angle}")
+            # print(f"asdsdkjfsdkjfsdkj {angle}")
             self._course_correction(angle, (-100, 600), 1)
 
         self.client.send_command("deliver")
@@ -266,10 +216,10 @@ class MainLoop:
             return
         for (x, y) in path:
             while True:
-                ret, frame = self.camera.read()
+                # ret, frame = self.camera.read()
                 # final_points = find_corner_points_full(frame, doVerbose=False)
-                warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
-                print(f"orange hsv values: {self.pivot_color}")
+                # warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
+
 
                 # robot_pos, robot_direction = safe_detect_robot(self.camera, self.final_points, DST_SIZE,
                 #                                                self.direction_color, self.pivot_color)
@@ -281,7 +231,7 @@ class MainLoop:
                     ret, frame = self.camera.read()
                     gen_warped_image = warp_perspective(frame, self.final_points, DST_SIZE)
                     robot_pos, robot_direction = detect_robot(gen_warped_image, self.direction_color,
-                                                                   self.pivot_color)
+                                                              self.pivot_color)
 
                 if robot_pos is None or robot_direction is None:
                     continue
@@ -294,9 +244,6 @@ class MainLoop:
 
                 angle = rotate_vector_to_point(robot_pos, robot_direction, (x, y))
 
-                # angle = calc_degrees_to_rotate(robot_direction, target_direction)
-                print(
-                    f"after robot pos {robot_pos} and direction {robot_direction} and target {(x, y)} and angle: {angle}")
                 tolerance = 10
                 if angle < -tolerance or angle > tolerance:
                     print(f"asdsdkjfsdkjfsdkj {angle}")
@@ -320,6 +267,9 @@ class MainLoop:
                         self.client.send_command("start_collect")
                     else:
                         self.client.send_command("stop_collect")
+
+                front_x, front_y = self._calc_robot_front(robot_direction, robot_pos)
+                self.dead_zone_check(front_x, front_y, self.navmesh, robot_pos, robot_direction)
 
     def _course_correction(self, angle, target, tol=10):
         print(f"inside course correction. Angle: {angle}. Tolerance: {tol}")
@@ -364,8 +314,40 @@ class MainLoop:
         self.client.send_command("stop")
         print("stop from course correction")
 
+    def dead_zone_check(self, front_x, front_y, navmesh, robot_pos, robot_direction):
+        if cell_is_in_border_zone((front_x, front_y), navmesh):
+            log_path("Is in border zone")
+            self._escape_border(robot_pos, robot_direction)
+            return
+        elif cell_is_in_cross_zone((front_x, front_y), navmesh):
+            log_path("Is in cross zone")
+            self._escape_cross(front_x, front_y)
+
+    def _escape_border(self, robot_pos, robot_direction):
+        angle = rotate_vector_to_point(robot_pos, robot_direction, (900, 600))
+        tolerance = 20
+        if angle < -tolerance or angle > tolerance:
+            self._course_correction(angle, (900, 600), tol=tolerance)
+        self.client.send_command("move 10")
+
+    def _escape_cross(self, front_x, front_y):
+        log_path("front is in cross buffer")
+        self.client.send_command("move -5")
+        # new_x, new_y = escape_dead_zone(self.navmesh, (front_x, front_y))
+        # self.target_pos = (new_x, new_y)
+
     def temp(self):
         ret, frame = self.camera.read()
         warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
         robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color)
         return robot_pos, robot_direction
+
+
+def cell_is_in_border_zone(pos, navmesh):
+    target_cell = coordinate_to_cell(pos[0], pos[1], GRID_SIZE)
+    return navmesh[int(target_cell[1]), int(target_cell[0])] == 0
+
+
+def cell_is_in_cross_zone(pos, navmesh):
+    target_cell = coordinate_to_cell(pos[0], pos[1], GRID_SIZE)
+    return navmesh[int(target_cell[1]), int(target_cell[0])] == 1

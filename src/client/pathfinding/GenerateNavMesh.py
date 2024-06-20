@@ -163,7 +163,7 @@ def optimize_path(navmesh, path):
         i += 1
     return optimized_path
 
-# This find the nearest walkable coordinates using breath first
+# This find the nearest walkable cells using breath first
 def escape_dead_zone(navmesh, start):
     height, width = navmesh.shape
     visited = set()
@@ -174,12 +174,12 @@ def escape_dead_zone(navmesh, start):
         if (x, y) not in visited:
             visited.add((x, y))
             if 0 <= y < height and 0 <= x < width and navmesh[int(y), int(x)] == WALKABLE_INDEX:
-                coords = cells_to_coordinates([(x, y)], GRID_SIZE)
-                x, y = coords[0][0], coords[0][1]
+                # coords = cells_to_coordinates([(x, y)], GRID_SIZE)
+                # x, y = coords[0][0], coords[0][1]
                 log_path(x)
                 log_path(y)
 
-                print(f"coords: {coords}")
+                # print(f"coords: {coords}")
                 print(f"x and y in dead zone: {x}, {y}")
                 return x, y
 
