@@ -55,7 +55,7 @@ try:
         gen_warped_image = warp_perspective(image, final_points, dst_size)
 
         # Find robot
-        robot_pos, robot_direction = detect_robot(gen_warped_image)
+        robot_pos, robot_direction = detect_robot(gen_warped_image,,
         print(f"Robot position: {robot_pos}, direction: {robot_direction}")
 
         # If robot at target, stop and break

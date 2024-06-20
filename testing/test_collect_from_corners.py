@@ -12,9 +12,9 @@ from src.client.vision.shape_detection import detect_balls, detect_robot
 
 print("Test collecting from corners.")
 
-CAMERA_HEIGHT = 182
-ROBOT_HEIGHT = 23
-scale_factor = (CAMERA_HEIGHT - ROBOT_HEIGHT) / CAMERA_HEIGHT
+# CAMERA_HEIGHT = 202
+# ROBOT_HEIGHT = 23
+# scale_factor = (CAMERA_HEIGHT - ROBOT_HEIGHT) / CAMERA_HEIGHT
 
 IMAGE_SIZE = [1200, 1800]
 ball_coords_1 = (1690, 574)
@@ -44,10 +44,10 @@ targets = [
     (1800, 1200)     # Scenario 4: Bottom Right
 ]
 # Define the function to adjust position
-def adjust_target_position(original_position, scale_factor):
-    adjusted_x = original_position[0] * scale_factor
-    adjusted_y = original_position[1] * scale_factor
-    return (adjusted_x, adjusted_y)
+# def adjust_target_position(original_position, scale_factor):
+#     adjusted_x = original_position[0] * scale_factor
+#     adjusted_y = original_position[1] * scale_factor
+#     return (adjusted_x, adjusted_y)
 
 main_loop = MainLoop()
 main_loop.initialize_field()
@@ -63,14 +63,14 @@ if is_ball_in_corner(ball_coords_2):
     print(f"pivot: {pivot_points} corner: {corner_points}")
 
     # Adjust corner points based on camera perspective
-    corrected_corner_point = adjust_target_position(corner_points, scale_factor)
+    #corrected_corner_point = adjust_target_position(corner_points, scale_factor)
 
     print("before navigate to pivot points")
     main_loop._navigate_to_target([pivot_points])
     print("after navigate to pivot points")
 
-    corrected_distance = calculate_distance(pivot_points, corrected_corner_point)
-    distance_to_move = corrected_distance * scale_factor
+    #corrected_distance = calculate_distance(pivot_points, corrected_corner_point)
+    distance_to_move = calculate_distance(pivot_points, corner_points)
     print(f"distance to move after scaling: {distance_to_move}")
     main_loop.client.send_command("stop")
 
@@ -87,7 +87,7 @@ if is_ball_in_corner(ball_coords_2):
 
     main_loop.client.send_command("start_collect")
     main_loop.client.send_command("move " + str(distance_to_move))
-    main_loop.client.send_command("move -50")
+    main_loop.client.send_command("move " + str(-distance_to_move))
 
 
     main_loop.client.send_command("stop")

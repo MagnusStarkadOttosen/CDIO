@@ -30,9 +30,9 @@ def test_nav_to_target_detected_path(ml):
     ret, frame = ml.camera.read()
     warped_img = warp_perspective(frame, ml.final_points, DST_SIZE)
     print(f"testing colors {ml.direction_color}")
-    robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color)
+    robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color, )
     while robot_pos is None or robot_direction is None:
-        robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color)
+        robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color, )
 
     print(f"robot_pos: {robot_pos}, robot_direction: {robot_direction}")
     # ml.target_pos = (ml.balls[0][0], ml.balls[0][1])
@@ -72,9 +72,9 @@ def test_nav_to_target_with_find_path(ml):
     ret, frame = ml.camera.read()
     warped_img = warp_perspective(frame, ml.final_points, DST_SIZE)
     print(f"testing colors {ml.direction_color}")
-    robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color)
+    robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color, )
     while robot_pos is None or robot_direction is None:
-        robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color)
+        robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color, )
 
     print(f"robot_pos: {robot_pos}, robot_direction: {robot_direction}")
     path = find_path(warped_img, robot_pos, (1400, 600))
@@ -121,9 +121,9 @@ def test_collect_ball_in_corner(ml):
     ret, frame = ml.camera.read()
     warped_img = warp_perspective(frame, ml.final_points, DST_SIZE)
     print(f"testing colors {ml.direction_color}")
-    robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color)
+    robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color, )
     while robot_pos is None or robot_direction is None:
-        robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color)
+        robot_pos, robot_direction = detect_robot(warped_img, ml.direction_color, ml.pivot_color, )
     ball_coord = (230, 230)
     ml.client.send_command("start_collect")
     ml._collect_ball_in_corner(ball_coord, robot_pos, warped_img)

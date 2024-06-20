@@ -23,7 +23,7 @@ def navigate_to_target(camera, client_pc, target_point, dst_size=(1200, 1800), t
         print(f"Target point: {target_point}, type: {type(target_point)}")
 
         # Find robot
-        robot_pos, robot_direction = detect_robot(gen_warped_image)
+        robot_pos, robot_direction = detect_robot(gen_warped_image,,
 
         # If robot at target, stop robot and break
         if are_points_close(robot_pos, target_point, tolerance=100):

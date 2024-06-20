@@ -49,13 +49,13 @@ try:
     gen_warped_image = warp_perspective(image, final_points, dst_size)
     print("after warp")
     #find robot
-    robot_pos, robot_direction = detect_robot(gen_warped_image)
+    robot_pos, robot_direction = detect_robot(gen_warped_image,,
     print(f"robot pos {robot_pos} and direction {robot_direction} before")
     #calculate degrees to turn
     angle = rotate_vector_to_point(robot_pos, robot_direction, target_point)
     print(f"angle before {angle}")
     client_pc.send_command(f"turn {angle}")
-    robot_pos, robot_direction = detect_robot(gen_warped_image)
+    robot_pos, robot_direction = detect_robot(gen_warped_image,,
     print(f"robot pos {robot_pos} and direction {robot_direction} after")
 
 except KeyboardInterrupt:

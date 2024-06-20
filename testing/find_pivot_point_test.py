@@ -9,9 +9,9 @@ main_loop.initialize_field()
 ret, frame = main_loop.camera.read()
 warped_img = warp_perspective(frame, main_loop.final_points, DST_SIZE)
 
-robot_pos, robot_direction = detect_robot(warped_img, main_loop.direction_color, main_loop.pivot_color)
+robot_pos, robot_direction = detect_robot(warped_img, main_loop.direction_color, main_loop.pivot_color, )
 while robot_pos is None or robot_direction is None:
-    robot_pos, robot_direction = detect_robot(warped_img, main_loop.direction_color, main_loop.pivot_color)
+    robot_pos, robot_direction = detect_robot(warped_img, main_loop.direction_color, main_loop.pivot_color, )
 print(f"robot_pos: {robot_pos}, robot_direction: {robot_direction}")
 main_loop.client.send_command("start_collect")
 while robot_pos[1] < 600:

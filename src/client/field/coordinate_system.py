@@ -25,13 +25,26 @@ def warp_perspective(image, src_points, dst_size):
     height, width = dst_size
 
     pts_dst = np.array([[0, 0], [width, 0], [width, height], [0, height]], dtype="float32")
-    # print(f"src_points: {src_points} pts_dst: {pts_dst} ")
 
     M = cv2.getPerspectiveTransform(src_points, pts_dst)
 
     warped_image = cv2.warpPerspective(image, M, (width, height))
 
     return warped_image
+
+
+def get_transformed_center(image, src_points, dst_size):
+    height, width = dst_size
+
+    pts_dst = np.array([[0, 0], [width, 0], [width, height], [0, height]], dtype="float32")
+
+    M = cv2.getPerspectiveTransform(src_points, pts_dst)
+
+    original_center = np.array([[[image.shape[1] / 2, image.shape[0] / 2]]], dtype="float32")
+    transformed_center = cv2.perspectiveTransform(original_center, M)
+    transformed_center = transformed_center.reshape((2,))
+
+    return transformed_center
 
 
 def draw_grid(image, real_world_size, grid_spacing_cm):
@@ -142,7 +155,7 @@ def find_corner_points_full(image, hsv_values, doVerbose=False):
                 intersection = find_intersection(lines[i][0], lines[j][0])
                 if intersection:
                     intersection_points.append(intersection)
-                    # print(f"Intersection point: {intersection}")
+                    # print(f"Intersection point: {intersection}") 
                     cv2.circle(edge_image, intersection, radius=5, color=(255, 0, 0), thickness=-1)
 
     height, width, _ = image.shape

@@ -20,7 +20,7 @@ class TestCalcDegrees(unittest.TestCase):
         self.assertEqual(expected_degrees, degrees)
 
     def test_calc_degrees_from_image(self):
-        robot_pos, robot_direction = detect_robot(image)
+        robot_pos, robot_direction = detect_robot(image,,
 
         balls = detect_balls(image, min_radius=20)
         target_pos = (balls[0][0], balls[0][1])
