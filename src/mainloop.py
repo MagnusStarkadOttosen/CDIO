@@ -239,7 +239,7 @@ class MainLoop:
                 #     self.client.send_command("stop")
 
                 if not self.robot_is_moving and not self.robot_is_turning:
-                    self.client.send_command("start_drive 10")
+                    self.client.send_command("start_drive 10 12")
                     self.robot_is_moving = True
 
                 if self.robot_is_moving:
@@ -249,6 +249,7 @@ class MainLoop:
                     print(fraction)
 
                     pace = np.round(fraction*(MAXSPEED*4))
+                    correction=pace/MAXSPEED*4
 
                     if pace>MAXSPEED:
                         pace=MAXSPEED
@@ -256,7 +257,7 @@ class MainLoop:
                     if pace<10:
                         pace=10
                     print(fraction)
-                    self.client.send_command(f"start_drive {pace}")
+                    self.client.send_command(f"start_drive {pace} {pace+correction}")
 
 
                     # if are_points_close(robot_pos,self.target_pos,300):
