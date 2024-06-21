@@ -293,7 +293,7 @@ class MainLoop:
                  speed = np.round((angle/-180)*MAXROTATION*1.8)
 
             if speed< TURN_SPEED:
-                speed=TURN_SPEED
+                speed=1
             if speed> MAXSPEED:
                 speed=MAXSPEED
 
