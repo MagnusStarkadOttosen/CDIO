@@ -53,15 +53,14 @@ def test_collect_ball_in_obstacle(ml):
         print("No balls detected.")
         return
 
-    
     midpoint = detect_obstacles(warped_img)
     print(f"midpoint {midpoint}")
 # check if ball in balls is in obstacle
     for ball in balls:
         in_obstacle, target_point, target = is_ball_in_obstacle(ball, midpoint)
         if in_obstacle:
-    
-            path = [target_point]
+
+            path = [target]
             print(f"path: {path} target point: {target_point} target: {target}")
             ml._navigate_to_target(path)
             angle = rotate_vector_to_point(robot_pos, robot_direction, target)
