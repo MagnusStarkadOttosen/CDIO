@@ -4,6 +4,9 @@ import heapq
 import cv2
 import numpy as np
 
+from src.CONSTANTS import GRID_SIZE
+from src.client.utilities import log_path
+
 WALKABLE_INDEX = 2
 OBSTACLE_INDEX = 1
 
@@ -12,7 +15,7 @@ def GenerateNavMesh(image, hsv_values):
     height, width = gray.shape
 
     # Define the grid size for the navmesh
-    grid_size = 30
+    grid_size = GRID_SIZE
     buffer_size = 150
     buffer_edge = 150
     rogue_pixel_threshold = 500
@@ -97,7 +100,7 @@ def astar(navmesh, start, goal):
                 current = came_from[current]
             path.reverse()
             return path
-        
+
         # Get neighbors
         neighbors = [
             (current[0] + 1, current[1]),
@@ -109,7 +112,7 @@ def astar(navmesh, start, goal):
             (current[0] + 1, current[1] - 1),
             (current[0] - 1, current[1] + 1)
         ]
-        
+
         for neighbor in neighbors:
             if 0 <= neighbor[1] < navmesh.shape[0] and 0 <= neighbor[0] < navmesh.shape[1]:
                 if navmesh[neighbor[1], neighbor[0]] == WALKABLE_INDEX:  # Check if neighbor is walkable
@@ -119,7 +122,7 @@ def astar(navmesh, start, goal):
                         f_cost = tentative_g_cost + heuristic(neighbor, goal)
                         heapq.heappush(open_set, (f_cost, neighbor))
                         came_from[neighbor] = current
-    
+    print("No path found.")
     return None  # Path not found
 
 def is_walkable(navmesh, start, end):
@@ -160,18 +163,26 @@ def optimize_path(navmesh, path):
         i += 1
     return optimized_path
 
-# This find the nearest walkable cell using breath first
+# This find the nearest walkable cells using breath first
 def escape_dead_zone(navmesh, start):
     height, width = navmesh.shape
     visited = set()
     queue = deque([start])
-    
+
     while queue:
         x, y = queue.popleft()
         if (x, y) not in visited:
             visited.add((x, y))
-            if 0 <= y < height and 0 <= x < width and navmesh[y, x] == 1:
-                return (x, y)
+            if 0 <= y < height and 0 <= x < width and navmesh[int(y), int(x)] == WALKABLE_INDEX:
+                # coords = cells_to_coordinates([(x, y)], GRID_SIZE)
+                # x, y = coords[0][0], coords[0][1]
+                log_path(x)
+                log_path(y)
+
+                # print(f"coords: {coords}")
+                print(f"x and y in dead zone: {x}, {y}")
+                return x, y
+
             neighbors = [
                 (x + 1, y),
                 (x - 1, y),
@@ -185,5 +196,5 @@ def escape_dead_zone(navmesh, start):
             for neighbor in neighbors:
                 if neighbor not in visited:
                     queue.append(neighbor)
-    
+
     return None
