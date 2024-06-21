@@ -12,11 +12,12 @@ from src.client.field.coordinate_system import calculate_slope, find_corner_poin
 
 warp = True
 edges = False
+CAM_INDEX = 2
 
 def read_hsv_values(filename):
     hsv_values = {}
-    temp = "C:/Users/bayou/PycharmProjects/CDIO/hsv_presets_red.txt"
-    with open(temp, 'r') as file:
+    # temp = "C:/Users/bayou/PycharmProjects/CDIO/hsv_presets_red.txt"
+    with open(filename, 'r') as file:
         for line in file:
             key, value = line.strip().split()
             hsv_values[key] = int(value)
@@ -179,7 +180,7 @@ def load_color_presets(color, base_filename="hsv_presets"):
         return None, None
 
 # Capture from camera
-cap = cv2.VideoCapture(1,cv2.CAP_DSHOW)
+cap = cv2.VideoCapture(CAM_INDEX,cv2.CAP_DSHOW)
 dst_size = (1200, 1800)
 ret, frame = cap.read()
 
