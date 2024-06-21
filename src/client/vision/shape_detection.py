@@ -8,7 +8,7 @@ from src.client.vision.filters import apply_gray, apply_canny
 from src.client.field.coordinate_system import find_intersection
 
 
-CAMERA_HEIGHT = 202
+CAMERA_HEIGHT = 200
 ROBOT_HEIGHT = 23
 scale_factor = (CAMERA_HEIGHT-ROBOT_HEIGHT)/CAMERA_HEIGHT
 def detect_robot(image, direction_color, pivot_color, center_point):

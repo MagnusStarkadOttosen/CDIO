@@ -17,9 +17,9 @@ print("Test collecting from corners.")
 IMAGE_SIZE = [1200, 1800]
 ball_coords_1 = (1690, 574)
 # ball_coords_2 = (1800, 1200) # bottom_right
-ball_coords_2 = (0, 0) # top_left
+# ball_coords_2 = (0, 0) # top_left
 # ball_coords_2 = (1800, 0) # top_right
-#ball_coords_2 = (0, 1200) # bottom_right
+ball_coords_2 = (0, 1200) # bottom_left
 
 WHITE_BALL_COUNT = 10
 ROBOT_CAPACITY = 6
@@ -68,7 +68,7 @@ if is_ball_in_corner(ball_coords_2):
     print("after navigate to pivot points")
 
     #corrected_distance = calculate_distance(pivot_points, corrected_corner_point)
-    distance_to_move = calculate_distance(pivot_points, corner_points)
+    distance_to_move =( calculate_distance(pivot_points, corner_points)-175 )/10
     print(f"distance to move after scaling: {distance_to_move}")
     main_loop.client.send_command("stop")
 
