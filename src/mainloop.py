@@ -141,6 +141,8 @@ class MainLoop:
 
             log_balls(self.target_pos)
 
+        front_x, front_y = self._calc_robot_front(robot_direction, robot_pos)
+        self.dead_zone_check(front_x, front_y, self.navmesh, robot_pos, robot_direction)
         path = find_path(self.navmesh, robot_pos, self.target_pos)
         if path is not None:
             self._navigate_to_target(path)

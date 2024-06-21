@@ -11,6 +11,7 @@ logging.basicConfig(filename='buffered_path.log', filemode='w',
 
 
 def find_path(navmesh, robot_pos, target_pos):
+
     robotCell = coordinate_to_cell(robot_pos[0], robot_pos[1], GRID_SIZE)
 
     targetCell = coordinate_to_cell(target_pos[0], target_pos[1], GRID_SIZE)
