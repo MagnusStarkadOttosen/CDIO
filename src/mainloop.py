@@ -12,8 +12,8 @@ from src.CONSTANTS import GRID_SIZE
 
 from src.client.pathfinding.FindPath import find_path, pretty_print_navmesh
 from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, escape_dead_zone, coordinate_to_cell
-from src.client.field.collect_from_corner import ball_is_in_corner, check_corners, get_corner_with_displacement, \
-    get_pivot_and_corner
+from src.client.field.collect_from_corner import ball_is_in_corner, check_corners, \
+    get_pivot_and_corner, calculate_distance
 from src.client.field.coordinate_system import are_points_close, find_corner_points_full, warp_perspective
 from src.client.pathfinding.CalculateCommandList import rotate_vector_to_point
 from src.client.pc_client import ClientPC
@@ -126,7 +126,7 @@ class MainLoop:
             log_balls(self.target_pos)
 
         if ball_is_in_corner(self.target_pos):
-            self._collect_ball_in_corner(self.target_pos, robot_pos)
+            self._collect_ball_in_corner(self.target_pos)
 
         elif ball_is_on_wall(self.target_pos, self.navmesh):
             self._collect_ball_from_wall()
@@ -161,18 +161,42 @@ class MainLoop:
         new_y = robot_pos[1] + distance * unit_b
         return new_x, new_y
 
-    def _collect_ball_in_corner(self, ball_pos, robot_pos):
-        result = check_corners(ball_pos)
-        get_pivot_and_corner(result, threshold=50)
-        # corner_result = check_corners(ball_pos, threshold=50)
-        # pivot_points, corner_points = robot_movement_based_on_corners(corner_result)
-        # path = find_path(warped_img, robot_pos, pivot_points)
-        # self._navigate_to_target(path)
-        # self.client.send_command("start_collect")
-        # self._navigate_to_target(corner_points)
-        # self._navigate_to_target(path)
-        # self.client.send_command("stop_collect")
-        # self.client.send_command("stop")
+    def _collect_ball_in_corner(self, ball_pos):
+        # ball_coords = (0, 0)
+        robot_pos, robot_direction = safe_detect_robot(
+            self.camera, self.final_points, DST_SIZE, self.direction_color,
+            self.pivot_color
+        )
+        result = check_corners(ball_pos, threshold=50)
+        pivot, corner = get_pivot_and_corner(result)
+        path = find_path(self.navmesh, robot_pos, pivot)
+        self._navigate_to_target(path)
+        angle = rotate_vector_to_point(robot_pos, robot_direction, ball_pos)
+
+        tolerance = 0.5
+        if angle < -tolerance or angle > tolerance:
+            print(f"The angle is: {angle}")
+            self._course_correction(angle, ball_pos, tol=tolerance)
+
+        front_x, front_y = self._calc_robot_front(robot_direction, robot_pos)
+        while not cell_is_in_border_zone((front_x, front_y), self.navmesh):
+            self.client.send_command("start_drive")
+            if angle < -tolerance or angle > tolerance:
+                print(f"The angle is: {angle}")
+                self._course_correction(angle, ball_pos, tol=tolerance)
+
+            robot_pos, robot_direction = safe_detect_robot(
+                self.camera, self.final_points, DST_SIZE, self.direction_color,
+                self.pivot_color
+            )
+            front_x, front_y = self._calc_robot_front(robot_direction, robot_pos)
+
+        self.client.send_command("stop")
+        self.client.send_command("start_collect")
+        self.client.send_command("move 15")
+        self.client.send_command("move -15")
+        self.client.send_command("stop_collect")
+        self.client.send_command("stop")
 
     def _deliver_balls(self):
         ret, frame = self.camera.read()
@@ -260,7 +284,7 @@ class MainLoop:
                     else:
                         self.client.send_command("stop_collect")
 
-    def _course_correction(self, angle, target, tol=10):
+    def _course_correction(self, angle, target, tol=10.5):
         print(f"inside course correction. Angle: {angle}. Tolerance: {tol}")
         while angle < -tol or angle > tol:
             ret, frame = self.camera.read()

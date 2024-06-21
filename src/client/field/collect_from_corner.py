@@ -26,7 +26,7 @@ def calculate_distance(corner_point, target_point):
     return math.sqrt((target_point[0] - corner_point[0]) ** 2 + (target_point[1] - corner_point[1]) ** 2)
 
 
-def is_ball_in_corner(ball_coords):
+def ball_is_in_corner(ball_coords):
     corner_results = check_corners(ball_coords, threshold=400)
     print(f"Is ball in a corner? {any(corner_results.values())}")
     return any(corner_results.values())
