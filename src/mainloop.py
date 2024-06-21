@@ -17,6 +17,7 @@ from src.client.field.coordinate_system import are_points_close, find_corner_poi
 from src.client.pathfinding.CalculateCommandList import rotate_vector_to_point
 from src.client.pc_client import ClientPC
 from src.client.utilities import log_balls, log_path
+from src.client.vision.AIBallDetection import detect_balls_with_model
 from src.client.vision.pathfinder import find_nearest_ball
 from src.client.vision.shape_detection import detect_balls, detect_obstacles, detect_robot, safe_detect_balls, \
     safe_detect_robot
@@ -36,6 +37,8 @@ CORNERS = {
     "bottom_right": (1800, 1200)
 }
 
+last_detection_time = time.time()
+detection_interval = 1  #Minimum amount of seconds between when it detects ball with ai
 
 class MainLoop:
     def __init__(self):
@@ -56,10 +59,12 @@ class MainLoop:
         self.pivot_color = read_hsv_values("hsv_presets_white.txt")
         self.red = read_hsv_values("hsv_presets_red.txt")
         self.white = read_hsv_values("hsv_presets_white.txt")
+        self.white_balls = None
+        self.orange_balls = None
 
     def start_main_loop(self):
         self.initialize_field()
-        self._detect_initial_balls()
+        self._detect_initial_balls_ai()
         # log_balls("Starting collect orange ball")
         # self._collect_and_deliver_orange_ball()
         log_balls("Starting collect white balls")
@@ -99,9 +104,18 @@ class MainLoop:
         # warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
         self.balls = safe_detect_balls(self.camera, self.final_points, DST_SIZE, self.white)
 
+    def _detect_initial_balls_ai(self):
+        current_time = time.time()
+        if current_time - last_detection_time >= detection_interval:
+            ret, frame = self.camera.read()
+            warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
+            self.white_balls, self.orange_balls = detect_balls_with_model(warped_img)
+            last_detection_time = current_time
+
+
     def _collect_white_balls(self):
-        while len(self.balls) > ROBOT_CAPACITY:
-            while len(self.balls) > WHITE_BALL_COUNT - ROBOT_CAPACITY:
+        while len(self.white_balls) > ROBOT_CAPACITY:
+            while len(self.white_balls) > WHITE_BALL_COUNT - ROBOT_CAPACITY:
                 self._collect_ball()
             self._deliver_balls()
         self._collect_remaining_balls()
@@ -113,8 +127,8 @@ class MainLoop:
         self._deliver_balls()
 
     def _collect_remaining_balls(self):
-        if self.balls is not None:
-            while len(self.balls) > 0:
+        if self.white_balls is not None:
+            while len(self.white_balls) > 0:
                 self._collect_ball()
             self._deliver_balls()
 
@@ -123,24 +137,34 @@ class MainLoop:
         warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
         robot_pos, robot_direction = safe_detect_robot(self.camera, self.final_points, DST_SIZE, self.white, self.white)
 
-        if self.collect_orange_ball:
-            self.balls = safe_detect_balls(self.camera, self.final_points,
-                                           DST_SIZE, self.orange)
-            if self.balls is None:
-                log_balls("No orange ball")
-                self.collect_orange_ball = False
-                return
-            self.target_pos = self.balls[0][:2]
+        current_time = time.time()
+        if current_time - last_detection_time >= detection_interval:
+            ret, frame = self.camera.read()
+            warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
+            self.white_balls, self.orange_balls = detect_balls_with_model(warped_img)
+            last_detection_time = current_time
+
+        if self.orange_balls is not None:
+            # self.balls = safe_detect_balls(self.camera, self.final_points,
+            #                                DST_SIZE, self.orange)
+            # if self.balls is None:
+            #     log_balls("No orange ball")
+            #     self.collect_orange_ball = False
+            #     return
+            self.target_pos = self.orange_balls[0][:2]
         else:
-            self.balls = safe_detect_balls(self.camera, self.final_points,
-                                           DST_SIZE, self.white)
-            if self.balls is None or len(self.balls) == 0:
+            # self.balls = safe_detect_balls(self.camera, self.final_points,
+            #                                DST_SIZE, self.white)
+            # if self.balls is None or len(self.balls) == 0:
+            #     return
+            # print(self.balls)
+            # self.target_pos = find_nearest_ball(robot_pos, self.balls)  # TODO handle target being null
+
+            
+            if self.white_balls is None or len(self.white_balls) == 0
                 return
-            print(self.balls)
-            self.target_pos = find_nearest_ball(robot_pos, self.balls)  # TODO handle target being null
-
+            self.target_pos = find_nearest_ball(robot_pos, self.white_balls)
             log_balls(self.target_pos)
-
         self.dead_zone_check(self.navmesh, robot_pos, robot_direction)
 
         path = find_path(self.navmesh, robot_pos, self.target_pos)
