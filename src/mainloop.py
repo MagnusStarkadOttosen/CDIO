@@ -119,23 +119,23 @@ class MainLoop:
                                            DST_SIZE, self.white)
             if self.balls is None or len(self.balls) == 0:
                 return
- 
+
             self.target_pos = find_nearest_ball(robot_pos, self.balls)  # TODO handle target being null
 
             log_balls(self.target_pos)
-        
-        if self._ball_is_in_corner():
+
+        if ball_is_in_corner(self.target_pos, self.navmesh):
             self._collect_ball_in_corner(self.target_pos, robot_pos, warped_img)
-            
-        elif self._ball_is_on_wall():
+
+        elif ball_is_on_wall(self.target_pos, self.navmesh):
             self._collect_ball_from_wall()
-            
-        elif self._ball_is_in_obstacle():
+
+        elif ball_is_in_obstacle(self.target_pos, self.navmesh):
             self._collect_ball_from_obstacle()
-            
+
         else:
             self.dead_zone_check(self.navmesh, robot_pos, robot_direction)
-    
+
             path = find_path(self.navmesh, robot_pos, self.target_pos)
             if path is not None:
                 self._navigate_to_target(path)
@@ -329,16 +329,7 @@ class MainLoop:
         robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color)
         return robot_pos, robot_direction
 
-    def _ball_is_in_corner(self):
-        pass
-
-    def _ball_is_on_wall(self):
-        pass
-
     def _collect_ball_from_wall(self):
-        pass
-
-    def _ball_is_in_obstacle(self):
         pass
 
     def _collect_ball_from_obstacle(self):
@@ -353,3 +344,14 @@ def cell_is_in_border_zone(pos, navmesh):
 def cell_is_in_cross_zone(pos, navmesh):
     target_cell = coordinate_to_cell(pos[0], pos[1], GRID_SIZE)
     return navmesh[int(target_cell[1]), int(target_cell[0])] == 1
+
+
+def ball_is_on_wall(ball_pos, navmesh):
+    return cell_is_in_border_zone(ball_pos, navmesh)
+
+def ball_is_in_obstacle(ball_pos, navmesh):
+    return cell_is_in_cross_zone(ball_pos, navmesh)
+
+
+def ball_is_in_corner(ball_pos, navmesh):
+    pass
