@@ -60,12 +60,12 @@ def test_collect_ball_in_obstacle(ml):
     for ball in balls:
         in_obstacle, target_point, target = is_ball_in_obstacle(ball, midpoint)
         if in_obstacle:
-            path = astar(navmesh, robot_pos, target)
-            # path = [target]
+    
+            path = [target_point]
             print(f"path: {path} target point: {target_point} target: {target}")
             ml._navigate_to_target(path)
-            angle = rotate_vector_to_point(robot_pos, robot_direction, target_point)
-            print(f"after robot pos {robot_pos} and direction {robot_direction} and target {target_point} and angle: {angle}")
+            angle = rotate_vector_to_point(robot_pos, robot_direction, target)
+            print(f"after robot pos {robot_pos} and direction {robot_direction} and target {target} and angle: {angle}")
             if angle < -0.5 or angle > 0.5:
                 ml._course_correction(angle, ball, tol=0.5)
             ml.client.send_command("start_collect")
