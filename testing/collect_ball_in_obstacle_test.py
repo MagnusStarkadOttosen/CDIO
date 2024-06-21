@@ -18,7 +18,7 @@ from src.mainloop import MainLoop
 DST_SIZE = (1200, 1800)
 
 
-def test_collect_ball_in_obstacle(ml,camera, final_point, direction_color, pivot_color, client):
+def test_collect_ball_in_obstacle(ml):
     ret, frame = ml.camera.read()
     if not ret or frame is None or frame.size == 0:
         print("Failed to read from camera or empty frame captured.")
@@ -113,7 +113,7 @@ main_loop = MainLoop()
 main_loop.initialize_field()
 main_loop._detect_initial_balls()
 main_loop._detect_obstacles()
-test_collect_ball_in_obstacle(main_loop, main_loop.camera, main_loop.final_points, main_loop.direction_color, main_loop.pivot_color, main_loop.client)
+test_collect_ball_in_obstacle(main_loop)
 
 
 
