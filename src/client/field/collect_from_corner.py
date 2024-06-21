@@ -48,7 +48,7 @@ def check_corners(ball_coords, threshold=100):
         return corner_result
 
 
-def robot_movement_based_on_corners(corner_results, current_position):
+def get_corner_with_displacement(corner_results, current_position):
     if corner_results["top_left"]:
         displacement = calculate_displacement(CORNERS["top_left"], current_position)
         print("Ball is near the top-left corner. Robot action: move directly to top-left.")

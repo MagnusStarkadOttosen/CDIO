@@ -12,7 +12,7 @@ from src.CONSTANTS import GRID_SIZE
 
 from src.client.pathfinding.FindPath import find_path, pretty_print_navmesh
 from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, escape_dead_zone, coordinate_to_cell
-from src.client.field.collect_from_corner import ball_is_in_corner, check_corners, robot_movement_based_on_corners
+from src.client.field.collect_from_corner import ball_is_in_corner, check_corners, get_corner_with_displacement
 from src.client.field.coordinate_system import are_points_close, find_corner_points_full, warp_perspective
 from src.client.pathfinding.CalculateCommandList import rotate_vector_to_point
 from src.client.pc_client import ClientPC
@@ -162,7 +162,7 @@ class MainLoop:
 
     def _collect_ball_in_corner(self, ball_pos, robot_pos):
         result = check_corners(ball_pos)
-        robot_movement_based_on_corners(result, robot_pos)
+        get_corner_with_displacement(result, robot_pos)
         # corner_result = check_corners(ball_pos, threshold=50)
         # pivot_points, corner_points = robot_movement_based_on_corners(corner_result)
         # path = find_path(warped_img, robot_pos, pivot_points)
