@@ -224,7 +224,7 @@ class MainLoop:
 
                 print(f"Current robot position: {robot_pos}, Target: {(x, y)}")
 
-                if are_points_close(robot_pos, (x, y), tolerance=40):
+                if are_points_close(robot_pos, (x, y), tolerance=0.5):
                     print("Target reached.")
                     self.client.send_command("stop")
                     break
