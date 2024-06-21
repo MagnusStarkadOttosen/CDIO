@@ -68,21 +68,6 @@ class MainLoop:
         self.client.send_command("stop_collect")
 
     def initialize_field(self):
-        # self.grid = [
-        #     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        #     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        #     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        #     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        #     [1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-        #     [1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-        #     [1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-        #     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        #     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        #     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        #     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        #     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        # ]
-
         ret, frame = self.camera.read()
         self.final_points = find_corner_points_full(frame, self.red, doVerbose=True)
         warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
@@ -95,8 +80,6 @@ class MainLoop:
         return detect_obstacles(warped_img)
 
     def _detect_initial_balls(self):
-        ret, frame = self.camera.read()
-        # warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
         self.balls = safe_detect_balls(self.camera, self.final_points, DST_SIZE, self.white)
 
     def _collect_white_balls(self):
@@ -190,9 +173,7 @@ class MainLoop:
 
     def _deliver_balls(self):
         ret, frame = self.camera.read()
-        # final_points = find_corner_points_full(frame, doVerbose=False)
         warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
-        print(f"orange hsv values: {self.pivot_color}")
 
         robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color)
         while robot_pos is None or robot_direction is None:
@@ -211,11 +192,9 @@ class MainLoop:
 
         angle = rotate_vector_to_point(robot_pos, robot_direction, (-100, 600))
 
-        # angle = calc_degrees_to_rotate(robot_direction, target_direction)
         print(
             f"after robot pos {robot_pos} and direction {robot_direction} and target {(-100, 600)} and angle: {angle}")
         if angle < -1 or angle > 1:
-            # print(f"asdsdkjfsdkjfsdkj {angle}")
             self._course_correction(angle, (-100, 600), 1)
 
         self.client.send_command("deliver")
@@ -252,7 +231,6 @@ class MainLoop:
 
                 if are_points_close(robot_pos, (x, y), tolerance=40):
                     self.client.send_command("stop")
-                    # print(f"{robot_pos}aaa{(x,y)}aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
                     self.robot_is_moving = False
                     self.at_target = True
                     break
@@ -263,10 +241,6 @@ class MainLoop:
                 if angle < -tolerance or angle > tolerance:
                     print(f"asdsdkjfsdkjfsdkj {angle}")
                     self._course_correction(angle, (x, y), tol=tolerance)
-
-                # if self.robot_is_turning:
-                #     self.robot_is_turning = False
-                #     self.client.send_command("stop")
 
                 if not self.robot_is_moving and not self.robot_is_turning:
                     self.client.send_command("start_drive 10")
