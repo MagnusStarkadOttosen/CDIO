@@ -1,5 +1,5 @@
 # Import necessary libraries and functions
-from src.client.field.collect_from_corner import is_ball_in_corner
+from src.client.field.collect_from_corner import ball_is_in_corner
 from src.client.pc_client import ClientPC
 from src.client.vision.camera import initialize_camera
 from src.client.vision.shape_detection import detect_robot
@@ -13,7 +13,7 @@ target_point = (300, 600)
 camera = initialize_camera(index=2)
 # Call the deliver_points function
 try:
-    is_ball_in_corner(client_pc, target_point, camera)
+    ball_is_in_corner(client_pc, target_point, camera)
     print("Delivery process started successfully.")
 except Exception as e:
     print(f"An error occurred during the delivery process: {str(e)}")
