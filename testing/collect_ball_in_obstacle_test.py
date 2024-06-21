@@ -52,16 +52,9 @@ def test_collect_ball_in_obstacle(ml,camera, final_point, direction_color, pivot
     if len(balls)<1:
         print("No balls detected.")
         return
-    try:
-        filtered_2img = filter_image(warped_img, hsv_values=white_hsv_values)
-        if filtered_2img is None or filtered_2img.size == 0:
-             print("Filtered image is empty.")
-             return
-    except Exception as e:
-         print(f"Error in filtering image: {e}")
-         return
+
     
-    midpoint = detect_obstacles(filtered_2img)
+    midpoint = detect_obstacles(warped_img)
     print(f"midpoint {midpoint}")
 # check if ball in balls is in obstacle
     for ball in balls:
