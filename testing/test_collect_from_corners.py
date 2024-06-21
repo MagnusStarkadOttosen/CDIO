@@ -68,24 +68,29 @@ if is_ball_in_corner(ball_coords_2):
     print("after navigate to pivot points")
 
     #corrected_distance = calculate_distance(pivot_points, corrected_corner_point)
-    distance_to_move = calculate_distance(pivot_points, corner_points)
-    print(f"distance to move after scaling: {distance_to_move}")
+    #distance_to_move = calculate_distance(pivot_points, corner_points)
+    #print(f"distance to move after scaling: {distance_to_move}")
     main_loop.client.send_command("stop")
-
-    robot_pos, robot_direction = main_loop.temp()
-    print(f"Robot Position: {robot_pos}, Robot Direction: {robot_direction}")
-
-    angle = rotate_vector_to_point(robot_pos, robot_direction, ball_coords_2)
-
-    tolerance = 0.5
-    if angle < -tolerance or angle > tolerance:
-        print(f"The angle is: {angle}")
-        main_loop._course_correction(angle, ball_coords_2, tol=tolerance)
-
-
     main_loop.client.send_command("start_collect")
-    main_loop.client.send_command("move " + str(distance_to_move))
-    main_loop.client.send_command("move " + str(-distance_to_move))
+    print(f"Now navigating to the corner points {corner_points}")
+    main_loop._navigate_to_target([corner_points])
+    print(f"After navigating to the corner points {corner_points}")
+
+    # robot_pos, robot_direction = main_loop.temp()
+    # print(f"Robot Position: {robot_pos}, Robot Direction: {robot_direction}")
+    #
+    # angle = rotate_vector_to_point(robot_pos, robot_direction, ball_coords_2)
+    #
+    # tolerance = 0.5
+    # if angle < -tolerance or angle > tolerance:
+    #     print(f"The angle is: {angle}")
+    #     main_loop._course_correction(angle, ball_coords_2, tol=tolerance)
+
+
+    # main_loop.client.send_command("start_collect")
+    #main_loop.client.send_command("move " + str(distance_to_move))
+    #main_loop.client.send_command("move " + str(-distance_to_move))
+    main_loop.client.send_command("move 20")
 
 
     main_loop.client.send_command("stop")
