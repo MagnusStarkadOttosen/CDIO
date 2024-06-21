@@ -168,19 +168,19 @@ class MainLoop:
             self.pivot_color
         )
         result = check_corners(ball_pos, threshold=50)
-        pivot, corner = get_pivot_and_corner(result)
-        path = find_path(self.navmesh, robot_pos, pivot)
+        self.target_pos, corner = get_pivot_and_corner(result)
+        path = find_path(self.navmesh, robot_pos, self.target_pos)
         self._navigate_to_target(path)
         angle = rotate_vector_to_point(robot_pos, robot_direction, ball_pos)
 
-        tolerance = 0.5
+        tolerance = 10
         if angle < -tolerance or angle > tolerance:
             print(f"The angle is: {angle}")
             self._course_correction(angle, ball_pos, tol=tolerance)
 
         front_x, front_y = self._calc_robot_front(robot_direction, robot_pos)
         while not cell_is_in_border_zone((front_x, front_y), self.navmesh):
-            self.client.send_command("start_drive")
+            self.client.send_command("start_drive 10")
             if angle < -tolerance or angle > tolerance:
                 print(f"The angle is: {angle}")
                 self._course_correction(angle, ball_pos, tol=tolerance)
@@ -193,8 +193,12 @@ class MainLoop:
 
         self.client.send_command("stop")
         self.client.send_command("start_collect")
-        self.client.send_command("move 15")
-        self.client.send_command("move -15")
+        self.client.send_command("move 10")
+        if angle < -tolerance or angle > tolerance:
+            print(f"The angle is: {angle}")
+            self._course_correction(angle, ball_pos, tol=tolerance)
+        self.client.send_command("move 9")
+        self.client.send_command("move -20")
         self.client.send_command("stop_collect")
         self.client.send_command("stop")
 

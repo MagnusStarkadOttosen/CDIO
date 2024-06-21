@@ -118,17 +118,19 @@ def test_start_main_loop(ml):
 
 
 def test_collect_ball_in_corner(ml):
-    ml._collect_ball_in_corner((0, 0))
+    ml.target_pos = (1200, 0)
+    ml._collect_ball_in_corner((1200,0))
 
 
 main_loop = MainLoop()
 main_loop.initialize_field()
 main_loop._detect_initial_balls()
+test_collect_ball_in_corner(main_loop)
 # test_nav_to_target_hardcoded_path(main_loop)
 # test_nav_to_target_detected_path(main_loop)
 # test_collect_nearest_ball(main_loop)
 # test_collect_5_balls(main_loop)
 # test_collect_orange_ball(main_loop)
-test_collect_remaining_balls(main_loop)
+# test_collect_remaining_balls(main_loop)
 # test_start_main_loop(main_loop)
 
