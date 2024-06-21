@@ -1,6 +1,6 @@
 import numpy as np
 from src.client.field import navigate_to_target
-from src.client.field.collect_from_corner import get_pivot_and_corner, check_corners, ball_is_in_corner, \
+from src.client.field.collect_from_corner import get_pivot, check_corners, ball_is_in_corner, \
     calculate_distance
 from src.client.pathfinding.CalculateCommandList import rotate_vector_to_point
 from src.client.pc_client import ClientPC
@@ -59,7 +59,7 @@ if ball_is_in_corner(ball_coords_2):
     print(f"There is a ball in {ball_coords_2} ")
     corner_result_2 = check_corners(ball_coords_2, threshold=50)
     print("corner result 2", corner_result_2)
-    pivot_points, corner_points = get_pivot_and_corner(corner_result_2)
+    pivot_points, corner_points = get_pivot(corner_result_2)
     print(f"pivot: {pivot_points} corner: {corner_points}")
 
     # Adjust corner points based on camera perspective

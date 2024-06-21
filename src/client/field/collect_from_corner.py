@@ -51,19 +51,19 @@ def check_corners(ball_coords, threshold=50):
         return corner_result
 
 
-def get_pivot_and_corner(corner_results):
+def get_pivot(corner_results):
     if corner_results["top_left"]:
         print("Ball is near the top-left corner. Robot action: move to PIVOT_POINT 0 and then navigate to top-left.")
-        return PIVOT_POINTS[0],CORNERS["top_left"]
+        return PIVOT_POINTS[0]  #, CORNERS["top_left"]
     elif corner_results["bottom_left"]:
         print("Ball is near the bottom-left corner. Robot action: move to PIVOT_POINT 0 and then navigate to bottom-left.")
-        return PIVOT_POINTS[0], CORNERS["bottom_left"]
+        return PIVOT_POINTS[0]  #, CORNERS["bottom_left"]
     elif corner_results["top_right"]:
         print("Ball is near the top-right corner. Robot action: move to PIVOT_POINT 1 and then navigate to top-right.")
-        return PIVOT_POINTS[1], CORNERS["top_right"]
+        return PIVOT_POINTS[1]  #, CORNERS["top_right"]
     elif corner_results["bottom_right"]:
         print("Ball is near the bottom-right corner. Robot action: move to PIVOT_POINT 1 and then navigate to bottom-right.")
-        return PIVOT_POINTS[1], CORNERS["bottom_right"]
+        return PIVOT_POINTS[1]  #, CORNERS["bottom_right"]
     else:
         print("No ball near any corner")
         return False

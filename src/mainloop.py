@@ -13,7 +13,7 @@ from src.CONSTANTS import GRID_SIZE
 from src.client.pathfinding.FindPath import find_path, pretty_print_navmesh
 from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, escape_dead_zone, coordinate_to_cell
 from src.client.field.collect_from_corner import ball_is_in_corner, check_corners, \
-    get_pivot_and_corner, calculate_distance
+    get_pivot, calculate_distance
 from src.client.field.coordinate_system import are_points_close, find_corner_points_full, warp_perspective
 from src.client.pathfinding.CalculateCommandList import rotate_vector_to_point
 from src.client.pc_client import ClientPC
@@ -168,7 +168,7 @@ class MainLoop:
             self.pivot_color
         )
         result = check_corners(ball_pos, threshold=50)
-        self.target_pos, corner = get_pivot_and_corner(result)
+        self.target_pos = get_pivot(result)
         path = find_path(self.navmesh, robot_pos, self.target_pos)
         self._navigate_to_target(path)
         angle = rotate_vector_to_point(robot_pos, robot_direction, ball_pos)
@@ -179,6 +179,8 @@ class MainLoop:
             self._course_correction(angle, ball_pos, tol=tolerance)
 
         front_x, front_y = self._calc_robot_front(robot_direction, robot_pos)
+
+        # Drive forward towards ball until the front of robot enters buffer
         while not cell_is_in_border_zone((front_x, front_y), self.navmesh):
             self.client.send_command("start_drive 10")
             if angle < -tolerance or angle > tolerance:
