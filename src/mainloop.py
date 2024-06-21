@@ -238,7 +238,7 @@ class MainLoop:
                 if robot_pos is None or robot_direction is None:
                     continue
 
-                self.dead_zone_check(self.navmesh, robot_pos, robot_direction)
+                # self.dead_zone_check(self.navmesh, robot_pos, robot_direction)
 
                 if are_points_close(robot_pos, (x, y), tolerance=40):
                     self.client.send_command("stop")
