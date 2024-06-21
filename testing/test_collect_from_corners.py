@@ -22,6 +22,7 @@ ball_coords_2 = (0, 0) # top_left
 #ball_coords_2 = (0, 1200) # bottom_right
 
 WHITE_BALL_COUNT = 10
+tolerance = 0.5
 ROBOT_CAPACITY = 6
 # TOLERANCE = 2
 TURN_SPEED = 3
@@ -52,6 +53,7 @@ main_loop.initialize_field()
 main_loop.client.send_command("start_drive 30")
 # main_loop._navigate_to_target([(300,600)])
 # Test one corner at the time
+# CORNER TOP LEFT
 if is_ball_in_corner(ball_coords_2):
     print("Checking if the ball is in the corner.")
     print(f"There is a ball in {ball_coords_2} ")
@@ -71,8 +73,8 @@ if is_ball_in_corner(ball_coords_2):
     # distance_to_move = calculate_distance(pivot_points, corner_points)
     # print(f"distance to move after scaling: {distance_to_move}")
     main_loop.client.send_command("stop")
-    #main_loop.client.send_command("start_collect")
-    # print(f"Now navigating to the corner points {corner_points}")
+    # main_loop.client.send_command("start_collect")
+    print(f"Now navigating to the corner points {corner_points}")
     # main_loop._navigate_to_target([corner_points])
     # print(f"After navigating to the corner points {corner_points}")
 
@@ -89,11 +91,9 @@ if is_ball_in_corner(ball_coords_2):
         print(f"The angle is: {angle}")
         main_loop._course_correction(angle, ball_coords_2, tol=tolerance)
 
-    distance_to_move = calculate_distance(pivot_points, corner_points)
-    print(f"distance to move after scaling: {distance_to_move}")
     main_loop.client.send_command("start_collect")
-    main_loop.client.send_command("move " + str(distance_to_move))
-    main_loop.client.send_command("move " + str(-distance_to_move))
+    main_loop.client.send_command("move 50")
+    main_loop.client.send_command("move -50" )
     # main_loop.client.send_command("move 20")
 
 
@@ -103,6 +103,7 @@ else:
     print("Ball is not in any corners.")
 print("Delivery process started successfully.")
 
+# CORNER BOTTOM LEFT
 
 
 # Loop through each corner scenario
