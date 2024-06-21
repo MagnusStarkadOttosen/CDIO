@@ -29,6 +29,7 @@ class TestMainLoop(unittest.TestCase):
 
         client_pc.send_command("start_collect")
         client_pc.send_command(f"turn {degrees_to_rotate}")
+        client_pc.send_command("start_drive 10")
         client_pc.send_command(f"exit")
 
 

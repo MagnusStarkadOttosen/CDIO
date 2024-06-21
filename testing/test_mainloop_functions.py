@@ -1,8 +1,7 @@
 from src.client.field.coordinate_system import warp_perspective
 from src.client.hsvLoad import read_hsv_values
 from src.client.pathfinding.FindPath import pretty_print_navmesh, find_path
-from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, astar, cells_to_coordinates, coordinate_to_cell, \
-    optimize_path
+from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, astar, cells_to_coordinates, coordinate_to_cell, optimize_path
 from src.mainloop import MainLoop
 from src.client.vision.shape_detection import detect_robot
 
