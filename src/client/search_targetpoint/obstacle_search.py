@@ -2,6 +2,7 @@
 
 def obstacle_Search(ball_dot, i, j, midpoint):
     target_point = [0, 0]
+    target = [0, 0]
     if ball_dot[i] < midpoint[i] and ball_dot[j] < midpoint[j]:
         target_point = [midpoint[0] - 95, midpoint[1] - 320]  
         target=   [midpoint[0] - 95, midpoint[1] + 320]  

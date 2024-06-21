@@ -65,8 +65,8 @@ def test_collect_ball_in_obstacle(ml,camera, final_point, direction_color, pivot
     print(f"midpoint {midpoint}")
 # check if ball in balls is in obstacle
     for ball in balls:
-        if is_ball_in_obstacle(ball, midpoint):
-            target_point, target = obstacle_Search(ball, midpoint)
+        in_obstacle, target_point, target = is_ball_in_obstacle(ball, midpoint)
+        if in_obstacle:
             path = astar(navmesh, robot_pos, target)
             # path = [target]
             print(f"path: {path} target point: {target_point} target: {target}")
