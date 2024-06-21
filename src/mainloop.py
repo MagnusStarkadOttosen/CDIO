@@ -135,7 +135,7 @@ class MainLoop:
             self._collect_ball_from_obstacle()
 
         else:
-            self.dead_zone_check(self.navmesh, robot_pos, robot_direction)
+            self._is_in_dead_zone(self.navmesh, robot_pos, robot_direction)
 
             path = find_path(self.navmesh, robot_pos, self.target_pos)
             if path is not None:
@@ -258,7 +258,8 @@ class MainLoop:
                 if robot_pos is None or robot_direction is None:
                     continue
 
-                # self.dead_zone_check(self.navmesh, robot_pos, robot_direction)
+                if self._is_in_dead_zone(self.navmesh, robot_pos, robot_direction):
+                    break
 
                 if are_points_close(robot_pos, (x, y), tolerance=40):
                     self.client.send_command("stop")
@@ -331,15 +332,17 @@ class MainLoop:
         self.client.send_command("stop")
         print("stop from course correction")
 
-    def dead_zone_check(self, navmesh, robot_pos, robot_direction):
+    def _is_in_dead_zone(self, navmesh, robot_pos, robot_direction):
         front_x, front_y = self._calc_robot_front(robot_direction, robot_pos)
         if cell_is_in_border_zone((front_x, front_y), navmesh):
             log_path("Is in border zone")
             self._escape_border(robot_pos, robot_direction)
-            return
+            return True
         elif cell_is_in_cross_zone((front_x, front_y), navmesh):
             log_path("Is in cross zone")
             self._escape_cross(front_x, front_y)
+            return True
+        return False
 
     def _escape_border(self, robot_pos, robot_direction):
         angle = rotate_vector_to_point(robot_pos, robot_direction, (900, 600))
