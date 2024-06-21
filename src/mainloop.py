@@ -247,9 +247,7 @@ class MainLoop:
                     print(distance)
                     fraction=distance/1800
                     print(fraction)
-
                     pace = np.round(fraction*(MAXSPEED*4))
-                    correction=pace/MAXSPEED*4
 
                     if pace>MAXSPEED:
                         pace=MAXSPEED
@@ -257,7 +255,7 @@ class MainLoop:
                     if pace<10:
                         pace=10
                     print(fraction)
-                    self.client.send_command(f"start_drive {pace} {pace+correction}")
+                    self.client.send_command(f"start_drive {pace}")
 
 
                     # if are_points_close(robot_pos,self.target_pos,300):
