@@ -95,7 +95,7 @@ def test_collect_ball_in_obstacle(ml):
             angle = rotate_vector_to_point(robot_pos, robot_direction, ball)
             print(f"after robot pos {robot_pos} and direction {robot_direction} and target {ball} and angle: {angle}")
             if angle < -0.5 or angle > 0.5:
-                ml._course_correction(angle, ball, tol=0.5)
+               ml._course_correction(angle, ball, tol=0.5)
             ml.client.send_command("start_collect")
             ml.client.send_command("move 5")
             time.sleep(0.5)
