@@ -131,12 +131,14 @@ def test_collect_ball_in_corner(ml):
 
 main_loop = MainLoop()
 main_loop.initialize_field()
-main_loop._detect_initial_balls()
+print("123")
+main_loop._detect_initial_balls_ai()
+print("321")
 # test_nav_to_target_hardcoded_path(main_loop)
 # test_nav_to_target_detected_path(main_loop)
 # test_collect_nearest_ball(main_loop)
 # test_collect_5_balls(main_loop)
 # test_collect_orange_ball(main_loop)
-test_collect_remaining_balls(main_loop)
-# test_start_main_loop(main_loop)
+# test_collect_remaining_balls(main_loop)
+test_start_main_loop(main_loop)
 

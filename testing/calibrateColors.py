@@ -10,7 +10,7 @@ if project_root not in sys.path:
 
 from src.client.field.coordinate_system import calculate_slope, find_corner_points_full, find_intersection, is_near_90_degrees, warp_perspective
 
-warp = False
+warp = True
 edges = False
 CAM_INDEX = 2
 
@@ -256,6 +256,9 @@ while True:
     
     if warp:
         gen_warped_frame = warp_perspective(res, final_points, dst_size)
+        frame_nameW = 'frame_warp_2.jpg'
+        frame_pathW = os.path.join(output_dir, frame_nameW)
+        cv2.imwrite(frame_pathW, gen_warped_frame)
 
     if edges:
         gray = cv2.cvtColor(res, cv2.COLOR_BGR2GRAY)
