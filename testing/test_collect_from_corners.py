@@ -1,6 +1,6 @@
 import numpy as np
 from src.client.field import navigate_to_target
-from src.client.field.collect_from_corner import robot_movement_based_on_corners, check_corners, is_ball_in_corner
+from src.client.field.collect_from_corner import robot_movement_based_on_corners, check_corners, ball_is_in_corner
 from src.client.pathfinding.CalculateCommandList import rotate_vector_to_point
 from src.client.pc_client import ClientPC
 from src.mainloop import MainLoop
@@ -35,14 +35,14 @@ CORNERS = {
     # robot_movement_based_on_corners(corner_results)
 main_loop = MainLoop()
 main_loop.initialize_field()
-if is_ball_in_corner(ball_coords_1):
+if ball_is_in_corner(ball_coords_1):
     corner_result = check_corners(ball_coords_1, threshold=50)
     pivot_points, corner_points = robot_movement_based_on_corners(corner_result)
     main_loop._navigate_to_target(pivot_points)
     main_loop._navigate_to_target(corner_points)
 else:
     print("Ball is not in any corners.")
-if is_ball_in_corner(ball_coords_2):
+if ball_is_in_corner(ball_coords_2):
     print("adasdsdfksdjfsdkjfdfhksd")
     corner_result_2 = check_corners(ball_coords_2, threshold=50)
     print("saddfsd19243284")

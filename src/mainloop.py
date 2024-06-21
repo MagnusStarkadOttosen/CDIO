@@ -12,7 +12,7 @@ from src.CONSTANTS import GRID_SIZE
 
 from src.client.pathfinding.FindPath import find_path, pretty_print_navmesh
 from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, escape_dead_zone, coordinate_to_cell
-from src.client.field.collect_from_corner import is_ball_in_corner, check_corners, robot_movement_based_on_corners
+from src.client.field.collect_from_corner import ball_is_in_corner, check_corners, robot_movement_based_on_corners
 from src.client.field.coordinate_system import are_points_close, find_corner_points_full, warp_perspective
 from src.client.pathfinding.CalculateCommandList import rotate_vector_to_point
 from src.client.pc_client import ClientPC
@@ -124,8 +124,8 @@ class MainLoop:
 
             log_balls(self.target_pos)
 
-        if ball_is_in_corner(self.target_pos, self.navmesh):
-            self._collect_ball_in_corner(self.target_pos, robot_pos, warped_img)
+        if ball_is_in_corner(self.target_pos):
+            self._collect_ball_in_corner(self.target_pos, robot_pos)
 
         elif ball_is_on_wall(self.target_pos, self.navmesh):
             self._collect_ball_from_wall()
@@ -160,16 +160,18 @@ class MainLoop:
         new_y = robot_pos[1] + distance * unit_b
         return new_x, new_y
 
-    def _collect_ball_in_corner(self, ball_pos, robot_pos, warped_img):
-        corner_result = check_corners(ball_pos, threshold=50)
-        pivot_points, corner_points = robot_movement_based_on_corners(corner_result)
-        path = find_path(warped_img, robot_pos, pivot_points)
-        self._navigate_to_target(path)
-        self.client.send_command("start_collect")
-        self._navigate_to_target(corner_points)
-        self._navigate_to_target(path)
-        self.client.send_command("stop_collect")
-        self.client.send_command("stop")
+    def _collect_ball_in_corner(self, ball_pos, robot_pos):
+        result = check_corners(ball_pos)
+        robot_movement_based_on_corners(result, robot_pos)
+        # corner_result = check_corners(ball_pos, threshold=50)
+        # pivot_points, corner_points = robot_movement_based_on_corners(corner_result)
+        # path = find_path(warped_img, robot_pos, pivot_points)
+        # self._navigate_to_target(path)
+        # self.client.send_command("start_collect")
+        # self._navigate_to_target(corner_points)
+        # self._navigate_to_target(path)
+        # self.client.send_command("stop_collect")
+        # self.client.send_command("stop")
 
     def _deliver_balls(self):
         ret, frame = self.camera.read()
@@ -352,6 +354,3 @@ def ball_is_on_wall(ball_pos, navmesh):
 def ball_is_in_obstacle(ball_pos, navmesh):
     return cell_is_in_cross_zone(ball_pos, navmesh)
 
-
-def ball_is_in_corner(ball_pos, navmesh):
-    pass
