@@ -214,12 +214,12 @@ class MainLoop:
         if path is None:
             log_path("Can't navigate, no path.")
             return
+
         for (x, y) in path:
             while True:
                 # ret, frame = self.camera.read()
                 # final_points = find_corner_points_full(frame, doVerbose=False)
                 # warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
-
 
                 # robot_pos, robot_direction = safe_detect_robot(self.camera, self.final_points, DST_SIZE,
                 #                                                self.direction_color, self.pivot_color)
@@ -235,6 +235,10 @@ class MainLoop:
 
                 if robot_pos is None or robot_direction is None:
                     continue
+
+                front_x, front_y = self._calc_robot_front(robot_direction, robot_pos)
+                self.dead_zone_check(front_x, front_y, self.navmesh, robot_pos, robot_direction)
+
                 if are_points_close(robot_pos, (x, y), tolerance=40):
                     self.client.send_command("stop")
                     # print(f"{robot_pos}aaa{(x,y)}aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
@@ -267,9 +271,6 @@ class MainLoop:
                         self.client.send_command("start_collect")
                     else:
                         self.client.send_command("stop_collect")
-
-                front_x, front_y = self._calc_robot_front(robot_direction, robot_pos)
-                self.dead_zone_check(front_x, front_y, self.navmesh, robot_pos, robot_direction)
 
     def _course_correction(self, angle, target, tol=10):
         print(f"inside course correction. Angle: {angle}. Tolerance: {tol}")
@@ -332,7 +333,7 @@ class MainLoop:
 
     def _escape_cross(self, front_x, front_y):
         log_path("front is in cross buffer")
-        self.client.send_command("move -5")
+        self.client.send_command("move -15")
         # new_x, new_y = escape_dead_zone(self.navmesh, (front_x, front_y))
         # self.target_pos = (new_x, new_y)
 
