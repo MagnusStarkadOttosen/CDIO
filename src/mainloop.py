@@ -472,7 +472,7 @@ class MainLoop:
             robot_pos, robot_direction = safe_detect_robot(
             self.camera, self.final_points, DST_SIZE, self.direction_color,
             self.pivot_color
-        )
+             )
             midpoint=self._detect_obstacles() 
             in_obstacle, target_point, target = is_ball_in_obstacle(ball_pos, midpoint)
             if in_obstacle:
