@@ -24,6 +24,7 @@ from src.client.vision.pathfinder import find_nearest_ball
 from src.client.vision.shape_detection import detect_balls, detect_obstacles, detect_robot, safe_detect_balls, \
     safe_detect_robot
 from src.client.hsvLoad import read_hsv_values
+from src.client.search_targetpoint.obstacle_search import is_ball_in_obstacle, obstacle_Search
 
 WHITE_BALL_COUNT = 10
 ROBOT_CAPACITY = 6
@@ -243,6 +244,7 @@ class MainLoop:
         self.client.send_command("move -20")
         self.client.send_command("stop_collect")
         self.client.send_command("stop")
+
 
     def _collect_ball_on_wall(self, ball_pos):
         # pivot_x, pivot_y = escape_dead_zone(self.navmesh, ball_pos)
@@ -466,9 +468,41 @@ class MainLoop:
         robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color)
         return robot_pos, robot_direction
 
-    def _collect_ball_from_obstacle(self):
-        pass
-
+    def _collect_ball_from_obstacle(self, ball_pos):
+            robot_pos, robot_direction = safe_detect_robot(
+            self.camera, self.final_points, DST_SIZE, self.direction_color,
+            self.pivot_color
+        )
+            midpoint=self._detect_obstacles() 
+            in_obstacle, target_point, target = is_ball_in_obstacle(ball_pos, midpoint)
+            if in_obstacle:
+             target_point,target = obstacle_Search(ball_pos, midpoint)
+            path = find_path(self.navmesh,robot_pos,target_point)
+            self._navigate_to_target(path)
+            angle = rotate_vector_to_point(robot_pos, robot_direction, target)
+            print(f"after robot pos {robot_pos} and direction {robot_direction} and target {target} and angle: {angle}")
+            if angle < -0.5 or angle > 0.5:
+                self._course_correction(angle, target, tol=0.5)
+            self.client.send_command("start_collect")
+            self.client.send_command("move 7")
+            time.sleep(0.5)
+            self.client.send_command("move 1")
+            time.sleep(0.5)
+            self.client.send_command("move 0.5")
+            time.sleep(0.5)
+            self.client.send_command("move 0.5")
+            time.sleep(0.5)
+            self.client.send_command("move 0.5")
+            time.sleep(0.5)
+            self.client.send_command("move 0.5")
+            time.sleep(0.5)
+            self.client.send_command("move 0.5")
+            time.sleep(0.5)
+            self.client.send_command("move 0.5")
+            time.sleep(0.5)
+            self.client.send_command("move -10")
+            self.client.send_command("stop_collect")
+            self.client.send_command("stop")
 
 def cell_is_in_border_zone(pos, navmesh):
     target_cell = coordinate_to_cell(pos[0], pos[1], GRID_SIZE)

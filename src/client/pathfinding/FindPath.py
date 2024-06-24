@@ -9,6 +9,10 @@ from src.client.utilities import log_path
 logging.basicConfig(filename='buffered_path.log', filemode='w',
                     format='%(asctime)s - %(message)s')
 
+def find_path(navmesh, robot_pos, target_pos):
+    # pretty_print_navmesh(navmesh, [])
+    print("sdfdjsdjkjkdsfd")
+    robotCell = coordinate_to_cell(robot_pos[0], robot_pos[1], 30)
 
 def find_path(navmesh, robot_pos, target_pos):
 
