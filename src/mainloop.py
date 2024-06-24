@@ -235,6 +235,27 @@ class MainLoop:
         self.client.send_command("stop_collect")
         self.client.send_command("stop")
 
+    def _collect_ball_on_wall(self, ball_pos):
+        pivot_x, pivot_y = escape_dead_zone(self.navmesh, ball_pos)
+        robot_pos, robot_direction = safe_detect_robot(
+            self.camera, self.final_points, DST_SIZE, self.direction_color,
+            self.pivot_color
+        )
+        path = find_path(self.navmesh, robot_pos, (pivot_x, pivot_y))
+        self._navigate_to_target(path)
+
+        angle = rotate_vector_to_point(robot_pos, robot_direction, ball_pos)
+
+        tolerance = 10
+        if angle < -tolerance or angle > tolerance:
+            print(f"The angle is: {angle}")
+            self._course_correction(angle, ball_pos, tol=tolerance)
+
+        self.client.send_command("move 5")
+        self.client.send_command("start_collect")
+        self.client.send_command("move -5")
+        self.client.send_command("stop_collect")
+
     def _deliver_balls(self):
         log_path("Start deliver")
         ret, frame = self.camera.read()
