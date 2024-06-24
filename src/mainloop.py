@@ -253,7 +253,7 @@ class MainLoop:
                         pace=MAXSPEED
 
                     if pace<10:
-                        pace=10
+                        pace=1
                     print(fraction)
                     self.client.send_command(f"start_drive {pace}")
 
