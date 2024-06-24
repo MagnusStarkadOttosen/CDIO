@@ -357,18 +357,19 @@ class MainLoop:
                 if not self.robot_is_moving and not self.robot_is_turning:
                     self.client.send_command("start_drive 10")
                     self.robot_is_moving = True
+                    self.client.send_command("stop")
+
+                # Check position and direction after starting to drive
+                ret, frame = self.camera.read()
+                gen_warped_image = warp_perspective(frame, self.final_points, DST_SIZE)
+                robot_pos, robot_direction = detect_robot(gen_warped_image, self.direction_color, self.pivot_color)
+
 
                 if self.robot_is_moving:
                     if are_points_close(robot_pos, (x, y), 300):
-                        self.client.send_command("start_drive 10")
-                    else:
                         self.client.send_command("start_collect")
-                       # self.client.send_command("start_drive 10")
-                    #print(f"path: {path} mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")
-                    #if are_points_close(robot_pos, self.target_pos, 300):
-                        #self.client.send_command("start_collect")
-                    #else:
-                        #self.client.send_command("stop_collect")
+                    else:
+                        self.client.send_command("stop_collect")
 
     def _course_correction(self, angle, target, tol=10):
         print(f"inside course correction. Angle: {angle}. Tolerance: {tol}")
