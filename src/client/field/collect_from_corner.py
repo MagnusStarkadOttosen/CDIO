@@ -26,8 +26,8 @@ def calculate_distance(corner_point, target_point):
     return math.sqrt((target_point[0] - corner_point[0]) ** 2 + (target_point[1] - corner_point[1]) ** 2)
 
 
-def is_ball_in_corner(ball_coords):
-    corner_results = check_corners(ball_coords, threshold=50)
+def ball_is_in_corner(ball_coords):
+    corner_results = check_corners(ball_coords, threshold=400)
     print(f"Is ball in a corner? {any(corner_results.values())}")
     return any(corner_results.values())
 
@@ -51,21 +51,19 @@ def check_corners(ball_coords, threshold=50):
         return corner_result
 
 
-def robot_movement_based_on_corners(corner_results):
+def get_pivot(corner_results):
     if corner_results["top_left"]:
         print("Ball is near the top-left corner. Robot action: move to PIVOT_POINT 0 and then navigate to top-left.")
-        return PIVOT_POINTS[0],CORNERS[0]
+        return PIVOT_POINTS[0]  #, CORNERS["top_left"]
     elif corner_results["bottom_left"]:
         print("Ball is near the bottom-left corner. Robot action: move to PIVOT_POINT 0 and then navigate to bottom-left.")
-        return PIVOT_POINTS[0], CORNERS[1]
+        return PIVOT_POINTS[0]  #, CORNERS["bottom_left"]
     elif corner_results["top_right"]:
         print("Ball is near the top-right corner. Robot action: move to PIVOT_POINT 1 and then navigate to top-right.")
-        print(f"pivot: {PIVOT_POINTS[1]} corner: {(1800, 0)}")
-        
-        return PIVOT_POINTS[1], (1800, 0)
+        return PIVOT_POINTS[1]  #, CORNERS["top_right"]
     elif corner_results["bottom_right"]:
         print("Ball is near the bottom-right corner. Robot action: move to PIVOT_POINT 1 and then navigate to bottom-right.")
-        return PIVOT_POINTS[1], CORNERS[3]
+        return PIVOT_POINTS[1]  #, CORNERS["bottom_right"]
     else:
         print("No ball near any corner")
         return False

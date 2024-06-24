@@ -36,7 +36,7 @@ def find_nearest_ball(robot_pos, circles):
             ball_pos[1] = y
             # print("dist: ", dist)
             nearest = dist
-            print(f"current nearest dist: {nearest}")
+            print(f"current nearest dist: {nearest} nearest ball: {ball_pos}")
     return ball_pos
 
 

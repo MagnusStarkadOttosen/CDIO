@@ -14,7 +14,8 @@ actions_functions = {
     "start_drive": commands.drive_inf,
     "turn_left": commands.turn_left,
     "drive_back": commands.drive_back,
-    "drive_backward": commands.drive_backwards
+    "drive_backward": commands.drive_backwards,
+    "comment" : commands.comment
 }
 
 

@@ -1,10 +1,9 @@
 from src.client.field.coordinate_system import warp_perspective
 from src.client.hsvLoad import read_hsv_values
 from src.client.pathfinding.FindPath import pretty_print_navmesh, find_path
-from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, astar, cells_to_coordinates, coordinate_to_cell, \
-    optimize_path
+from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, astar, cells_to_coordinates, coordinate_to_cell, optimize_path
 from src.mainloop import MainLoop
-from src.client.vision.shape_detection import detect_robot
+from src.client.vision.shape_detection import detect_robot, safe_detect_robot
 
 WHITE_BALL_COUNT = 10
 ROBOT_CAPACITY = 6
@@ -93,13 +92,49 @@ def test_collect_5_white_balls(ml): # many white balls on field
     ml.client.send_command("stop_collect")
 
 
+def test_collect_5_balls(ml):
+    ml.client.send_command("start_collect")
+    ml._collect_white_balls()
+    ml.client.send_command("stop_collect")
+
+
+def test_collect_orange_ball(ml):
+    ml.client.send_command("start_collect")
+    ml._collect_and_deliver_orange_ball()
+    ml.client.send_command("stop_collect")
+
+
+def test_collect_remaining_balls(ml):
+    ml.client.send_command("start_collect")
+    ml._collect_remaining_balls()
+    ml.client.send_command("stop_collect")
+
+
+def test_start_main_loop(ml):
+    ml.client.send_command("start_collect")
+    ml.start_main_loop()
+    ml.client.send_command("stop_collect")
+
+
+def test_collect_ball_in_corner(ml):
+    # ml.target_pos = (1200, 0)
+    ml._collect_ball_in_corner((1200,0))
 
 
 main_loop = MainLoop()
 main_loop.initialize_field()
 # main_loop._detect_initial_balls()
+# test_collect_ball_in_corner(main_loop)
+print("123")
+main_loop._detect_initial_balls_ai()
+print("321")
 # test_nav_to_target_hardcoded_path(main_loop)
 # test_nav_to_target_detected_path(main_loop)
-# test_nav_to_target_with_find_path(main_loop)
-test_collect_nearest_ball(main_loop)
+# test_collect_nearest_ball(main_loop)
+# test_collect_5_balls(main_loop)
+# test_collect_orange_ball(main_loop)
+# test_collect_remaining_balls(main_loop)
+# test_start_main_loop(main_loop)
+# test_collect_remaining_balls(main_loop)
+test_start_main_loop(main_loop)
 
