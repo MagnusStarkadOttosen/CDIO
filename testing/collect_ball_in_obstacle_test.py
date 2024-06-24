@@ -89,7 +89,7 @@ def test_collect_ball_in_obstacle(ml):
             ml.client.send_command("stop")
             return
         if is_ball_in_buffer_zone(ball):
-            target_point= buffer_zone_search(ball)
+            target_point=buffer_zone_search(ball)
             path = astar(ml.o4navmesh, robot_pos, target_point)
             ml._navigate_to_target(path)
             angle = rotate_vector_to_point(robot_pos, robot_direction, ball)
