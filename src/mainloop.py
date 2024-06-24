@@ -156,7 +156,7 @@ class MainLoop:
         #     self._collect_ball_in_corner(self.target_pos)
         #
         # elif ball_is_on_wall(self.target_pos, self.navmesh):
-        #     self._collect_ball_from_wall()
+        #     self._collect_ball_on_wall()
         #
         # elif ball_is_in_obstacle(self.target_pos, self.navmesh):
         #     self._collect_ball_from_obstacle()
@@ -438,9 +438,6 @@ class MainLoop:
         warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
         robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color)
         return robot_pos, robot_direction
-
-    def _collect_ball_from_wall(self):
-        pass
 
     def _collect_ball_from_obstacle(self):
         pass
