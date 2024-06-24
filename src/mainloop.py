@@ -68,8 +68,8 @@ class MainLoop:
     def start_main_loop(self):
         self.initialize_field()
         self._detect_initial_balls_ai()
-        # log_balls("Starting collect orange ball")
-        # self._collect_and_deliver_orange_ball()
+        log_balls("Starting collect orange ball")
+        self._collect_and_deliver_orange_ball()
         log_balls("Starting collect white balls")
         self._collect_white_balls()
 
@@ -108,10 +108,11 @@ class MainLoop:
         self._collect_remaining_balls()
 
     def _collect_and_deliver_orange_ball(self):
-        self.collect_orange_ball = True
-        while self.collect_orange_ball:
+        # self.collect_orange_ball = True
+        while len(self.orange_balls) > 0:
             self._collect_ball()
         self._deliver_balls()
+
 
     def _collect_remaining_balls(self):
         if self.white_balls is not None:
@@ -130,12 +131,11 @@ class MainLoop:
 
         if len(self.orange_balls) > 0 and self.collect_orange_ball:
             self.target_pos = self.orange_balls[0][:2]
-            self.collect_orange_ball = False
-            print("Collect orange ball to false")
 
-        if self.white_balls is None or len(self.white_balls) == 0:
+        elif self.white_balls is None or len(self.white_balls) == 0:
             return
-        self.target_pos = find_nearest_ball(robot_pos, self.white_balls)
+        else:
+            self.target_pos = find_nearest_ball(robot_pos, self.white_balls)
         # else:
         #     self.balls = safe_detect_balls(self.camera, self.final_points,
         #                                    DST_SIZE, self.white)
@@ -260,6 +260,7 @@ class MainLoop:
             log_path("Can't navigate, no path.")
             return
 
+        path_is_valid = False
         for (x, y) in path:
             while True:
                 # ret, frame = self.camera.read()
@@ -282,10 +283,12 @@ class MainLoop:
                     continue
 
                 if self._is_in_dead_zone(self.navmesh, robot_pos, robot_direction):
+                    path_is_valid =True
                     break
 
                 if are_points_close(robot_pos, (x, y), tolerance=40):
                     self.client.send_command("stop")
+                    self.client.send_command("sendFrom_are_points_close")
                     self.robot_is_moving = False
                     self.at_target = True
                     break
@@ -311,6 +314,8 @@ class MainLoop:
                         self.client.send_command("start_collect")
                     else:
                         self.client.send_command("stop_collect")
+            if path_is_valid:
+                break
 
     def _course_correction(self, angle, target, tol=10.5):
         print(f"inside course correction. Angle: {angle}. Tolerance: {tol}")

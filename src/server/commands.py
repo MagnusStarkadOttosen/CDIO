@@ -62,6 +62,9 @@ class Commands:
     def turn_left(self, speed):
         self.tank_drive.on(speed, -speed)
 
+    def comment(self, text):
+        print(text)
+
 
 def convert_distance_to_degrees(distance_to_move):
     revolutions = distance_to_move / WHEEL_CIRCUMF_CM

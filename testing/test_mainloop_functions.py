@@ -123,8 +123,8 @@ def test_collect_ball_in_corner(ml):
 
 main_loop = MainLoop()
 main_loop.initialize_field()
-main_loop._detect_initial_balls()
-test_collect_ball_in_corner(main_loop)
+# main_loop._detect_initial_balls()
+# test_collect_ball_in_corner(main_loop)
 print("123")
 main_loop._detect_initial_balls_ai()
 print("321")
