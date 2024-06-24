@@ -23,8 +23,7 @@ class Commands:
 
     def run_collector_counterclockwise(self):
         self.collector_motor.on(-55)
-        time.sleep(20)
-        self.collector_motor.off()
+        
 
 
 
@@ -64,6 +63,9 @@ class Commands:
         self.tank_drive.off()
     def turn_left(self, speed):
         self.tank_drive.on(speed, -speed)
+
+    def comment(self, text):
+        print(text)
 
 
 def convert_distance_to_degrees(distance_to_move):

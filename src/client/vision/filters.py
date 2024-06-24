@@ -1,3 +1,4 @@
+
 import cv2
 import numpy as np
 
@@ -64,6 +65,7 @@ def filter_image_by_color(image, color):
 
     return img
 
+
 def filter_image_red(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     lower_red1 = np.array([0, 70, 50])
@@ -78,6 +80,7 @@ def filter_image_red(image):
     red_image = cv2.bitwise_and(image, image, mask=mask)
 
     return red_image
+
 
 def filter_image_green(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
@@ -98,6 +101,7 @@ def filter_image_green(image):
     green_image = cv2.bitwise_and(image, image, mask=mask)
 
     return green_image
+
 
 def filter_image_orange(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
@@ -153,7 +157,6 @@ def temp_filter_for_red_wall(image):
 
     return red_image
 
-
 def filter_image_white(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
@@ -165,6 +168,7 @@ def filter_image_white(image):
     white_image = cv2.bitwise_and(image, image, mask=mask)
     print("white image")
     return white_image
+
 
 def filter_for_yellow(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
