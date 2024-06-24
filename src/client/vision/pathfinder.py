@@ -1,8 +1,12 @@
 # from src.vision.shape_detection import Shapes,Pos
 import numpy as np
 
+from src.CONSTANTS import GRID_SIZE
+from src.client.pathfinding.GenerateNavMesh import coordinate_to_cell
+from src.client.search_targetpoint.obstacle_search import is_ball_in_obstacle
 from src.client.utilities import convert_px_to_cm, convert_px_cm_temp, get_distance
-from src.client.vision.shape_detection import Shapes
+from src.client.vision.shape_detection import Shapes, detect_obstacles
+from src.mainloop import cell_is_in_cross_zone
 
 
 class Route:
@@ -21,22 +25,26 @@ def balls_are_remaining(circles):
         return False
 
 
-def find_nearest_ball(robot_pos, circles):
+def find_nearest_ball(robot_pos, circles, navmesh):
     # ball_pos = (220, 388)  # hard-coded placeholder
     ball_pos = np.array([0, 0])
     nearest = 300000
     for (x, y, r) in circles:
-        # width_cm, height_cm = convert_px_cm(circle.x, circle.y)
-        # ball = np.array([width_cm, height_cm])
-        # print(f"width : {width_cm} heigth: {height_cm}")
-        dist = get_distance(robot_pos, np.array([x, y]))
-        # print("dist before if: ", dist)
-        if dist < nearest:
-            ball_pos[0] = x
-            ball_pos[1] = y
-            # print("dist: ", dist)
-            nearest = dist
-            print(f"current nearest dist: {nearest} nearest ball: {ball_pos}")
+        cell = coordinate_to_cell(x,y,GRID_SIZE)
+        if cell_is_in_cross_zone(cell, navmesh):
+            continue
+        else:
+            # width_cm, height_cm = convert_px_cm(circle.x, circle.y)
+            # ball = np.array([width_cm, height_cm])
+            # print(f"width : {width_cm} heigth: {height_cm}")
+            dist = get_distance(robot_pos, np.array([x, y]))
+            # print("dist before if: ", dist)
+            if dist < nearest:
+                ball_pos[0] = x
+                ball_pos[1] = y
+                # print("dist: ", dist)
+                nearest = dist
+                print(f"current nearest dist: {nearest} nearest ball: {ball_pos}")
     return ball_pos
 
 

@@ -126,8 +126,8 @@ class MainLoop:
             self._deliver_balls()
 
     def _collect_ball(self):
-        ret, frame = self.camera.read()
-        warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
+        # ret, frame = self.camera.read()
+        # warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
         robot_pos, robot_direction = safe_detect_robot(self.camera, self.final_points, DST_SIZE, self.white, self.white)
 
         ret, frame = self.camera.read()
@@ -146,7 +146,7 @@ class MainLoop:
             return
         else:
             print("target nearest")
-            self.target_pos = find_nearest_ball(robot_pos, self.white_balls)
+            self.target_pos = find_nearest_ball(robot_pos, self.white_balls, self.navmesh)
         # else:
         #     self.balls = safe_detect_balls(self.camera, self.final_points,
         #                                    DST_SIZE, self.white)
