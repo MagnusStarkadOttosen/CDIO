@@ -16,7 +16,7 @@ from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, escape_dead_
     cells_to_coordinates
 from src.client.field.collect_from_corner import ball_is_in_corner, check_corners, \
     get_pivot, calculate_distance
-from src.client.field.coordinate_system import are_points_close, find_corner_points_full, warp_perspective
+from src.client.field.coordinate_system import are_points_close,distance_left ,find_corner_points_full, warp_perspective
 from src.client.pathfinding.CalculateCommandList import rotate_vector_to_point
 from src.client.pc_client import ClientPC
 from src.client.utilities import log_balls, log_path
