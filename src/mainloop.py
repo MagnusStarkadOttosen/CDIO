@@ -135,6 +135,7 @@ class MainLoop:
         elif self.white_balls is None or len(self.white_balls) == 0:
             return
         else:
+            print("else")
             self.target_pos = find_nearest_ball(robot_pos, self.white_balls)
         # else:
         #     self.balls = safe_detect_balls(self.camera, self.final_points,
@@ -146,15 +147,16 @@ class MainLoop:
         #
         #     log_balls(self.target_pos)
 
-        if ball_is_in_corner(self.target_pos):
-            self._collect_ball_in_corner(self.target_pos)
-
-        elif ball_is_on_wall(self.target_pos, self.navmesh):
-            self._collect_ball_from_wall()
-
-        elif ball_is_in_obstacle(self.target_pos, self.navmesh):
-            self._collect_ball_from_obstacle()
-
+        # if ball_is_in_corner(self.target_pos):
+        #     self._collect_ball_in_corner(self.target_pos)
+        #
+        # elif ball_is_on_wall(self.target_pos, self.navmesh):
+        #     self._collect_ball_from_wall()
+        #
+        # elif ball_is_in_obstacle(self.target_pos, self.navmesh):
+        #     self._collect_ball_from_obstacle()
+        if False:
+            print()
         else:
             self._is_in_dead_zone(self.navmesh, robot_pos, robot_direction)
 
@@ -288,7 +290,7 @@ class MainLoop:
 
                 if are_points_close(robot_pos, (x, y), tolerance=40):
                     self.client.send_command("stop")
-                    self.client.send_command("sendFrom_are_points_close")
+                    self.client.send_command("comment 1")
                     self.robot_is_moving = False
                     self.at_target = True
                     break
