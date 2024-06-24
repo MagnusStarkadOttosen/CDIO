@@ -10,7 +10,7 @@ from src.client.utilities import log_path
 WALKABLE_INDEX = 2
 OBSTACLE_INDEX = 1
 
-def GenerateNavMesh(image, hsv_values):
+def  GenerateNavMesh(image, hsv_values):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     height, width = gray.shape
 
