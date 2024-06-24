@@ -341,8 +341,10 @@ class MainLoop:
                         pace=MAXSPEED
 
                     if pace<10:
-                        pace=10
-                    print(fraction)
+                        pace=1
+                    self.client.send_command(f"start_drive {pace}")
+
+                print(fraction)
             if path_is_invalid:
                 log_path("path invalid, breaking")
                 break
