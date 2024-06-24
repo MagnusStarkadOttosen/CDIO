@@ -39,7 +39,6 @@ CORNERS = {
 }
 
 
-
 class MainLoop:
 
     def __init__(self):
@@ -101,7 +100,6 @@ class MainLoop:
             print(f"white: {self.white_balls}, orange {self.orange_balls}")
             # self.last_detection_time = current_time
 
-
     def _collect_white_balls(self):
         while len(self.white_balls) > ROBOT_CAPACITY:
             while len(self.white_balls) > WHITE_BALL_COUNT - ROBOT_CAPACITY:
@@ -126,42 +124,27 @@ class MainLoop:
         warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
         robot_pos, robot_direction = safe_detect_robot(self.camera, self.final_points, DST_SIZE, self.white, self.white)
 
-        # current_time = time.time()
-        if True:
-            ret, frame = self.camera.read()
-            warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
-            self.white_balls, self.orange_balls = detect_balls_with_model(warped_img)
-            # last_detection_time = current_time
+        ret, frame = self.camera.read()
+        warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
+        self.white_balls, self.orange_balls = detect_balls_with_model(warped_img)
 
-        # if self.orange_balls is not None:
-        #     # self.balls = safe_detect_balls(self.camera, self.final_points,
-        #     #                                DST_SIZE, self.orange)
-        #     # if self.balls is None:
-        #     #     log_balls("No orange ball")
-        #     #     self.collect_orange_ball = False
-        #     #     return
-        #     self.target_pos = self.orange_balls[0][:2]
+        if len(self.orange_balls) > 0 and self.collect_orange_ball:
+            self.target_pos = self.orange_balls[0][:2]
+            self.collect_orange_ball = False
+            print("Collect orange ball to false")
+
+        if self.white_balls is None or len(self.white_balls) == 0:
+            return
+        self.target_pos = find_nearest_ball(robot_pos, self.white_balls)
         # else:
-            # self.balls = safe_detect_balls(self.camera, self.final_points,
-            #                                DST_SIZE, self.white)
-            # if self.balls is None or len(self.balls) == 0:
-            #     return
-            # print(self.balls)
-            # self.target_pos = find_nearest_ball(robot_pos, self.balls)  # TODO handle target being null
-
-
-            if self.white_balls is None or len(self.white_balls) == 0:
-                return
-            self.target_pos = self.balls[0][:2]
-        else:
-            self.balls = safe_detect_balls(self.camera, self.final_points,
-                                           DST_SIZE, self.white)
-            if self.balls is None or len(self.balls) == 0:
-                return
-
-            self.target_pos = find_nearest_ball(robot_pos, self.balls)  # TODO handle target being null
-
-            log_balls(self.target_pos)
+        #     self.balls = safe_detect_balls(self.camera, self.final_points,
+        #                                    DST_SIZE, self.white)
+        #     if self.balls is None or len(self.balls) == 0:
+        #         return
+        #
+        #     self.target_pos = find_nearest_ball(robot_pos, self.balls)  # TODO handle target being null
+        #
+        #     log_balls(self.target_pos)
 
         if ball_is_in_corner(self.target_pos):
             self._collect_ball_in_corner(self.target_pos)
@@ -423,6 +406,6 @@ def cell_is_in_cross_zone(pos, navmesh):
 def ball_is_on_wall(ball_pos, navmesh):
     return cell_is_in_border_zone(ball_pos, navmesh)
 
+
 def ball_is_in_obstacle(ball_pos, navmesh):
     return cell_is_in_cross_zone(ball_pos, navmesh)
-
