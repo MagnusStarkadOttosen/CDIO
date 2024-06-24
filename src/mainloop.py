@@ -11,7 +11,8 @@ from src.CONSTANTS import GRID_SIZE
 
 
 from src.client.pathfinding.FindPath import find_path, pretty_print_navmesh
-from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, escape_dead_zone, coordinate_to_cell
+from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, escape_dead_zone, coordinate_to_cell, \
+    cells_to_coordinates
 from src.client.field.collect_from_corner import ball_is_in_corner, check_corners, \
     get_pivot, calculate_distance
 from src.client.field.coordinate_system import are_points_close, find_corner_points_full, warp_perspective
@@ -390,7 +391,11 @@ class MainLoop:
             log_path("Is in cross zone")
             log_path(front_x)
             log_path(front_y)
-            self._escape_cross(front_x, front_y)
+            safe_dist = 30
+            new_x, new_y = escape_dead_zone(self.navmesh, (front_x, front_y))
+            new_coords = cells_to_coordinates([(new_x, new_y)], GRID_SIZE)
+            if not are_points_close((front_x, front_y), new_coords[0], tolerance=safe_dist):
+                self._escape_cross(front_x, front_y)
             return True
         return False
 
