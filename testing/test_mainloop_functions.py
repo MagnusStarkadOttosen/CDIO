@@ -118,8 +118,8 @@ def test_start_main_loop(ml):
 
 
 def test_collect_ball_in_corner(ml):
-    # ml.target_pos = (1200, 0)
-    ml._collect_ball_in_corner((1200,0))
+    ml.target_pos = (80, 0)
+    ml._collect_ball_in_corner((80,0))
 
 
 main_loop = MainLoop()
