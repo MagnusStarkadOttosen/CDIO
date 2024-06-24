@@ -168,15 +168,15 @@ class MainLoop:
             self.pivot_color
         )
         result = check_corners(ball_pos, threshold=50)
-        self.target_pos = get_pivot(result)
+        self.target_pos, self.new_target = get_pivot(result)
         path = find_path(self.navmesh, robot_pos, self.target_pos)
         self._navigate_to_target(path)
-        angle = rotate_vector_to_point(robot_pos, robot_direction, ball_pos)
+        angle = rotate_vector_to_point(robot_pos, self.new_target, ball_pos)
 
         tolerance = 10
         if angle < -tolerance or angle > tolerance:
             print(f"The angle is: {angle}")
-            self._course_correction(angle, ball_pos, tol=tolerance)
+            self._course_correction(angle, self.new_target, tol=tolerance)
 
         front_x, front_y = self._calc_robot_front(robot_direction, robot_pos)
 
@@ -185,7 +185,7 @@ class MainLoop:
             self.client.send_command("start_drive 10")
             if angle < -tolerance or angle > tolerance:
                 print(f"The angle is: {angle}")
-                self._course_correction(angle, ball_pos, tol=tolerance)
+                self._course_correction(angle, self.new_target, tol=tolerance)
 
             robot_pos, robot_direction = safe_detect_robot(
                 self.camera, self.final_points, DST_SIZE, self.direction_color,
