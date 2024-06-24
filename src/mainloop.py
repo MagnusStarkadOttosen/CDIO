@@ -333,7 +333,7 @@ class MainLoop:
                 if self.robot_is_moving:
                     distance = distance_left(robot_pos,path[len(path)-1])
                     print(distance)
-                    fraction=distance*100/1800
+                    fraction=distance/1800
                     print(fraction)
                     pace = np.round(fraction*(MAXSPEED*4))
 
