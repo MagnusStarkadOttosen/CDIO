@@ -68,11 +68,10 @@ class MainLoop:
     def start_main_loop(self):
         self.initialize_field()
         self._detect_initial_balls_ai()
-        log_balls("Starting collect orange ball")
-        self._collect_and_deliver_orange_ball()
+        # log_balls("Starting collect orange ball")
+        # self._collect_and_deliver_orange_ball()
         log_balls("Starting collect white balls")
         self._collect_white_balls()
-
         self.client.send_command("stop_collect")
 
     def initialize_field(self):
@@ -103,9 +102,12 @@ class MainLoop:
     def _collect_white_balls(self):
         while len(self.white_balls) > ROBOT_CAPACITY:
             while len(self.white_balls) > WHITE_BALL_COUNT - ROBOT_CAPACITY:
+                print(f"white_balls {len(self.white_balls)}")
                 self._collect_ball()
+            print(f"white_balls {len(self.white_balls)} gggggg")
             self._deliver_balls()
         self._collect_remaining_balls()
+        # self._deliver_balls()
 
     def _collect_and_deliver_orange_ball(self):
         # self.collect_orange_ball = True
@@ -129,13 +131,15 @@ class MainLoop:
         warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
         self.white_balls, self.orange_balls = detect_balls_with_model(warped_img)
 
-        if len(self.orange_balls) > 0 and self.collect_orange_ball:
-            self.target_pos = self.orange_balls[0][:2]
-
-        elif self.white_balls is None or len(self.white_balls) == 0:
+        # if len(self.orange_balls) > 0:
+        #     print("target orange")
+        #     self.target_pos = self.orange_balls[0][:2]
+        # el
+        if self.white_balls is None or len(self.white_balls) == 0:
+            print("No more balls")
             return
         else:
-            print("else")
+            print("target nearest")
             self.target_pos = find_nearest_ball(robot_pos, self.white_balls)
         # else:
         #     self.balls = safe_detect_balls(self.camera, self.final_points,
@@ -159,7 +163,10 @@ class MainLoop:
             print()
         else:
             self._is_in_dead_zone(self.navmesh, robot_pos, robot_direction)
-
+            robot_pos, robot_direction = safe_detect_robot(
+                self.camera, self.final_points, DST_SIZE, self.direction_color,
+                self.pivot_color
+            )
             path = find_path(self.navmesh, robot_pos, self.target_pos)
             if path is not None:
                 self._navigate_to_target(path)
@@ -228,23 +235,31 @@ class MainLoop:
         self.client.send_command("stop")
 
     def _deliver_balls(self):
+        log_path("Start deliver")
         ret, frame = self.camera.read()
         warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
 
         robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color)
         while robot_pos is None or robot_direction is None:
+            print("from Deliver balls")
             robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color)
 
         # path_to_goal_A = []
         goal_A_pivot_point = (150, 600)
 
         # path_to_goal_A.append(goal_A_pivot_point)
+        while not are_points_close(robot_pos, goal_A_pivot_point, tolerance=50):
+            robot_pos, robot_direction = safe_detect_robot(
+                self.camera, self.final_points, DST_SIZE, self.direction_color,
+                self.pivot_color
+            )
+            path = find_path(self.navmesh, robot_pos, goal_A_pivot_point)
 
-        path = find_path(self.navmesh, robot_pos, goal_A_pivot_point)
-
-        # path_to_goal_A.append(goal_A_point)
-        self.client.send_command("stop_collect")
-        self._navigate_to_target(path)
+            # path_to_goal_A.append(goal_A_point)
+            self.client.send_command("stop_collect")
+            self._navigate_to_target(path)
+        if not are_points_close(robot_pos, goal_A_pivot_point, tolerance=50):
+            self._navigate_to_target([goal_A_pivot_point])
 
         angle = rotate_vector_to_point(robot_pos, robot_direction, (-100, 600))
 
@@ -252,7 +267,7 @@ class MainLoop:
             f"after robot pos {robot_pos} and direction {robot_direction} and target {(-100, 600)} and angle: {angle}")
         if angle < -1 or angle > 1:
             self._course_correction(angle, (-100, 600), 1)
-
+        print("delivering balls hhhhhhhhhh")
         self.client.send_command("deliver")
         time.sleep(5)
         self.client.send_command("stop_collect")
@@ -262,7 +277,7 @@ class MainLoop:
             log_path("Can't navigate, no path.")
             return
 
-        path_is_valid = False
+        path_is_invalid = False
         for (x, y) in path:
             while True:
                 # ret, frame = self.camera.read()
@@ -276,6 +291,7 @@ class MainLoop:
                 robot_pos = None
                 robot_direction = None
                 while robot_pos is None or robot_direction is None:
+                    print("test")
                     ret, frame = self.camera.read()
                     gen_warped_image = warp_perspective(frame, self.final_points, DST_SIZE)
                     robot_pos, robot_direction = detect_robot(gen_warped_image, self.direction_color,
@@ -285,7 +301,7 @@ class MainLoop:
                     continue
 
                 if self._is_in_dead_zone(self.navmesh, robot_pos, robot_direction):
-                    path_is_valid =True
+                    path_is_invalid =True
                     break
 
                 if are_points_close(robot_pos, (x, y), tolerance=40):
@@ -316,7 +332,8 @@ class MainLoop:
                         self.client.send_command("start_collect")
                     else:
                         self.client.send_command("stop_collect")
-            if path_is_valid:
+            if path_is_invalid:
+                log_path("path invalid, breaking")
                 break
 
     def _course_correction(self, angle, target, tol=10.5):
@@ -333,6 +350,7 @@ class MainLoop:
             robot_pos = None
             robot_direction = None
             while robot_pos is None or robot_direction is None:
+                print("from course correction")
                 ret, frame = self.camera.read()
                 gen_warped_image = warp_perspective(frame, self.final_points, DST_SIZE)
                 robot_pos, robot_direction = detect_robot(gen_warped_image, self.direction_color, self.pivot_color)
@@ -370,6 +388,8 @@ class MainLoop:
             return True
         elif cell_is_in_cross_zone((front_x, front_y), navmesh):
             log_path("Is in cross zone")
+            log_path(front_x)
+            log_path(front_y)
             self._escape_cross(front_x, front_y)
             return True
         return False

@@ -24,6 +24,7 @@ def navigate_to_target(camera, client_pc, target_point, dst_size=(1200, 1800), t
 
         # Find robot
         robot_pos, robot_direction = detect_robot(gen_warped_image)
+        print("from navigate_to_target")
 
         # If robot at target, stop robot and break
         if are_points_close(robot_pos, target_point, tolerance=100):

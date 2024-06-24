@@ -18,11 +18,14 @@ from src.client.field.coordinate_system import find_intersection
 
 def safe_detect_robot(camera, final_points, dst_size, direction_col, pivot_col):
     while True:
+        print("from safe_detect_robot")
         ret, frame = camera.read()
         warped_img = warp_perspective(frame, final_points, dst_size)
         robot_pos, robot_direction = detect_robot(warped_img, direction_col,
                                                   pivot_col)
-        if robot_pos and robot_direction is not None:
+        print(f"from safe_detect_robot: {robot_pos}, {robot_direction}")
+        if robot_pos is not None and robot_direction is not None:
+            print("from if")
             return robot_pos, robot_direction
 
 

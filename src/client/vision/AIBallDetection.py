@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 import inference
 import numpy as np
 
+from src.client.utilities import log_balls
+
 # Suppress specific warnings
 warnings.filterwarnings("ignore", message="Specified provider 'CUDAExecutionProvider'")
 warnings.filterwarnings("ignore", message="Specified provider 'OpenVINOExecutionProvider'")
@@ -32,5 +34,7 @@ def detect_balls_with_model(image, min_confidence=0.5):
                     white_balls.append(ball_data)
                 elif prediction.class_name == 'orange_ball':
                     orange_balls.append(ball_data)
-    
+    log_balls(white_balls)
+    log_balls(len(white_balls))
+    log_balls(orange_balls)
     return np.array(white_balls, dtype=int), np.array(orange_balls, dtype=int)
