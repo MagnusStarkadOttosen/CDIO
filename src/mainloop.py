@@ -157,14 +157,12 @@ class MainLoop:
         #
         #     log_balls(self.target_pos)
 
-        # if ball_is_in_corner(self.target_pos):
-        #     self._collect_ball_in_corner(self.target_pos)
-        #
-        # el
+        if ball_is_in_corner(self.target_pos):
+            self._collect_ball_in_corner(self.target_pos)
 
-        print(f"target pos {self.target_pos}")
+            print(f"target pos {self.target_pos}")
 
-        if ball_is_on_wall(self.target_pos, self.navmesh):
+        elif ball_is_on_wall(self.target_pos, self.navmesh):
             print("ball on wall")
             self._collect_ball_on_wall(self.target_pos)
         #
