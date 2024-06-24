@@ -195,11 +195,11 @@ class MainLoop:
 
         self.client.send_command("stop")
         self.client.send_command("start_collect")
-        self.client.send_command("move 10")
+        self.client.send_command("move_to_corner 10")
         if angle < -tolerance or angle > tolerance:
             print(f"The angle is: {angle}")
             self._course_correction(angle, ball_pos, tol=tolerance)
-        self.client.send_command("move 9")
+        self.client.send_command("move_to_corner 9")
         self.client.send_command("move -20")
         self.client.send_command("stop_collect")
         self.client.send_command("stop")
