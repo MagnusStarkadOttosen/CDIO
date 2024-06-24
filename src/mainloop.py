@@ -363,7 +363,7 @@ class MainLoop:
                         self.client.send_command("start_drive 10")
                     else:
                         self.client.send_command("start_drive 10")
-
+                    print(f"path: {path} mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")
                     if are_points_close(robot_pos, self.target_pos, 300):
                         self.client.send_command("start_collect")
                     else:
