@@ -69,8 +69,8 @@ class MainLoop:
     def start_main_loop(self):
         self.initialize_field()
         self._detect_initial_balls_ai()
-        # log_balls("Starting collect orange ball")
-        # self._collect_and_deliver_orange_ball()
+        log_balls("Starting collect orange ball")
+        self._collect_and_deliver_orange_ball()
         log_balls("Starting collect white balls")
         self._collect_white_balls()
         self.client.send_command("stop_collect")
@@ -111,7 +111,7 @@ class MainLoop:
         # self._deliver_balls()
 
     def _collect_and_deliver_orange_ball(self):
-        # self.collect_orange_ball = True
+        self.collect_orange_ball = True
         while len(self.orange_balls) > 0:
             self._collect_ball()
         self._deliver_balls()
@@ -132,11 +132,14 @@ class MainLoop:
         warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
         self.white_balls, self.orange_balls = detect_balls_with_model(warped_img)
 
-        # if len(self.orange_balls) > 0:
-        #     print("target orange")
-        #     self.target_pos = self.orange_balls[0][:2]
-        # el
-        if self.white_balls is None or len(self.white_balls) == 0:
+        if len(self.orange_balls) > 0:
+            print("target orange")
+            self.target_pos = self.orange_balls[0][:2]
+            self.collect_orange_ball = True
+        elif self.collect_orange_ball:
+            self.collect_orange_ball = False
+            return
+        elif self.white_balls is None or len(self.white_balls) == 0:
             print("No more balls")
             return
         else:
@@ -155,14 +158,20 @@ class MainLoop:
         # if ball_is_in_corner(self.target_pos):
         #     self._collect_ball_in_corner(self.target_pos)
         #
-        # elif ball_is_on_wall(self.target_pos, self.navmesh):
-        #     self._collect_ball_on_wall()
+        # el
+
+        print(f"target pos {self.target_pos}")
+
+        if ball_is_on_wall(self.target_pos, self.navmesh):
+            print("ball on wall")
+            self._collect_ball_on_wall(self.target_pos)
         #
         # elif ball_is_in_obstacle(self.target_pos, self.navmesh):
         #     self._collect_ball_from_obstacle()
-        if False:
-            print()
+        # if False:
+        #     print()
         else:
+            print("ball not on wall")
             self._is_in_dead_zone(self.navmesh, robot_pos, robot_direction)
             robot_pos, robot_direction = safe_detect_robot(
                 self.camera, self.final_points, DST_SIZE, self.direction_color,
@@ -237,11 +246,14 @@ class MainLoop:
 
     def _collect_ball_on_wall(self, ball_pos):
         pivot_x, pivot_y = escape_dead_zone(self.navmesh, ball_pos)
+        print(f"ball on wall: {pivot_x}, {pivot_y} ball_pos {ball_pos}")
+        newCoord = cells_to_coordinates([(pivot_x, pivot_y)], GRID_SIZE)[0]
         robot_pos, robot_direction = safe_detect_robot(
             self.camera, self.final_points, DST_SIZE, self.direction_color,
             self.pivot_color
         )
-        path = find_path(self.navmesh, robot_pos, (pivot_x, pivot_y))
+        path = find_path(self.navmesh, robot_pos, newCoord)
+        print(path)
         self._navigate_to_target(path)
 
         angle = rotate_vector_to_point(robot_pos, robot_direction, ball_pos)

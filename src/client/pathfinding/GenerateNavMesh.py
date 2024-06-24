@@ -180,6 +180,10 @@ def escape_dead_zone(navmesh, start):
 
                 # print(f"coords: {coords}")
                 print(f"x and y in dead zone: {x}, {y}")
+                if x == 6 and y == 6:
+                    print(f"x == 6 and y == 6")
+                    # while True:
+                    #     continue
                 return x, y
 
             neighbors = [
