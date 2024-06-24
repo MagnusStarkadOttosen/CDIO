@@ -5,6 +5,7 @@ import os
 
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from src.client.pathfinding.FindPath import find_path
 from src.client.hsvLoad import read_hsv_values
 from src.client.field.coordinate_system import warp_perspective
 from src.client.search_targetpoint.obstacle_search import is_ball_in_obstacle, obstacle_Search
@@ -59,7 +60,8 @@ def test_collect_ball_in_obstacle(ml):
     for ball in balls:
         in_obstacle, target_point, target = is_ball_in_obstacle(ball, midpoint)
         if in_obstacle:
-            path = [target_point]
+            path = find_path(navmesh,robot_pos,target_point)
+            #path = astar(ml.o4navmesh, robot_pos, target_point)
             print(f"path: {path} target point: {target_point} target: {target}")
             ml._navigate_to_target(path)
             angle = rotate_vector_to_point(robot_pos, robot_direction, target)
