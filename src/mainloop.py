@@ -102,7 +102,7 @@ class MainLoop:
 
     def _collect_white_balls(self):
         while len(self.white_balls) > ROBOT_CAPACITY:
-            while len(self.white_balls) > WHITE_BALL_COUNT - ROBOT_CAPACITY:
+            while len(self.white_balls) > WHITE_BALL_COUNT - ROBOT_CAPACITY - 1:
                 print(f"white_balls {len(self.white_balls)}")
                 self._collect_ball()
             print(f"white_balls {len(self.white_balls)} gggggg")
@@ -280,6 +280,8 @@ class MainLoop:
             # path_to_goal_A.append(goal_A_point)
             self.client.send_command("stop_collect")
             self._navigate_to_target(path)
+            log_path("in front of goal:")
+            log_path(robot_pos)
         if not are_points_close(robot_pos, goal_A_pivot_point, tolerance=50):
             self._navigate_to_target([goal_A_pivot_point])
 
@@ -290,6 +292,7 @@ class MainLoop:
         if angle < -1 or angle > 1:
             self._course_correction(angle, (-100, 600), 1)
         print("delivering balls hhhhhhhhhh")
+
         self.client.send_command("deliver")
         time.sleep(5)
         self.client.send_command("stop_collect")
