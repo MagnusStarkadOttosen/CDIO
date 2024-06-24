@@ -362,12 +362,13 @@ class MainLoop:
                     if are_points_close(robot_pos, (x, y), 300):
                         self.client.send_command("start_drive 10")
                     else:
-                        self.client.send_command("start_drive 10")
-                    print(f"path: {path} mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")
-                    if are_points_close(robot_pos, self.target_pos, 300):
                         self.client.send_command("start_collect")
-                    else:
-                        self.client.send_command("stop_collect")
+                       # self.client.send_command("start_drive 10")
+                    #print(f"path: {path} mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")
+                    #if are_points_close(robot_pos, self.target_pos, 300):
+                        #self.client.send_command("start_collect")
+                    #else:
+                        #self.client.send_command("stop_collect")
 
     def _course_correction(self, angle, target, tol=10):
         print(f"inside course correction. Angle: {angle}. Tolerance: {tol}")
