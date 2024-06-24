@@ -51,7 +51,7 @@ class MainLoop:
         self.balls = None
         self.collect_orange_ball = False
         self.target_pos = None
-        self.camera = cv2.VideoCapture(1, cv2.CAP_DSHOW)
+        self.camera = cv2.VideoCapture(2, cv2.CAP_DSHOW)
         self.final_points = None
         self.navmesh = None
         self.robot_is_moving = False
@@ -333,7 +333,7 @@ class MainLoop:
                 if self.robot_is_moving:
                     distance = distance_left(robot_pos,path[len(path)-1])
                     print(distance)
-                    fraction=distance/1800
+                    fraction=distance*100/1800
                     print(fraction)
                     pace = np.round(fraction*(MAXSPEED*4))
 
@@ -341,7 +341,7 @@ class MainLoop:
                         pace=MAXSPEED
 
                     if pace<10:
-                        pace=1
+                        pace=10
                     print(fraction)
             if path_is_invalid:
                 log_path("path invalid, breaking")
