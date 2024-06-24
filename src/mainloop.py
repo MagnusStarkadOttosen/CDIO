@@ -47,7 +47,7 @@ class MainLoop:
         self.balls = None
         self.collect_orange_ball = False
         self.target_pos = None
-        self.camera = cv2.VideoCapture(1, cv2.CAP_DSHOW)
+        self.camera = cv2.VideoCapture(2, cv2.CAP_DSHOW)
         self.final_points = None
         self.navmesh = None
         self.robot_is_moving = False
@@ -102,16 +102,18 @@ class MainLoop:
 
     def _collect_white_balls(self):
         while len(self.white_balls) > ROBOT_CAPACITY:
-            while len(self.white_balls) > WHITE_BALL_COUNT - ROBOT_CAPACITY - 1:
-                print(f"white_balls {len(self.white_balls)}")
+            while len(self.white_balls) > WHITE_BALL_COUNT - ROBOT_CAPACITY + 1:
+                print(f"white_balls {len(self.white_balls)}vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv")
                 self._collect_ball()
-            print(f"white_balls {len(self.white_balls)} gggggg")
+            print(f"white_balls {len(self.white_balls)} ggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg")
             self._deliver_balls()
         self._collect_remaining_balls()
         # self._deliver_balls()
 
     def _collect_and_deliver_orange_ball(self):
         self.collect_orange_ball = True
+        if len(self.orange_balls) == 0:
+            return
         while len(self.orange_balls) > 0:
             self._collect_ball()
         self._deliver_balls()
@@ -245,14 +247,26 @@ class MainLoop:
         self.client.send_command("stop")
 
     def _collect_ball_on_wall(self, ball_pos):
-        pivot_x, pivot_y = escape_dead_zone(self.navmesh, ball_pos)
-        print(f"ball on wall: {pivot_x}, {pivot_y} ball_pos {ball_pos}")
-        newCoord = cells_to_coordinates([(pivot_x, pivot_y)], GRID_SIZE)[0]
+        # pivot_x, pivot_y = escape_dead_zone(self.navmesh, ball_pos)
+        # print(f"ball on wall: {pivot_x}, {pivot_y} ball_pos {ball_pos}")
+        # newCoord = cells_to_coordinates([(pivot_x, pivot_y)], GRID_SIZE)[0]
+        pivot_x, pivot_y = ball_pos
+
+        adjustment = 200
+        if pivot_x > 1800-adjustment:
+            pivot_x = 1800-adjustment
+        elif pivot_x < adjustment:
+            pivot_x = adjustment
+        if pivot_y > 1200-adjustment:
+            pivot_y = 1200-adjustment
+        elif pivot_y < adjustment:
+            pivot_y = adjustment
+
         robot_pos, robot_direction = safe_detect_robot(
             self.camera, self.final_points, DST_SIZE, self.direction_color,
             self.pivot_color
         )
-        path = find_path(self.navmesh, robot_pos, newCoord)
+        path = find_path(self.navmesh, robot_pos, (pivot_x, pivot_y))
         print(path)
         self._navigate_to_target(path)
 
