@@ -9,9 +9,9 @@ from testing.NavMeshGenTest import overlay_path_on_image, draw_start_goal_on_ima
 
 
 # Paths
-input_folder_path = 'originalImages/'
+input_folder_path = 'images/outputCalibrate/'
 output_folder_path = 'NavMeshImage/'
-image_name = 'PreWarpedCourse.jpg'
+image_name = 'frame_warp_2.jpg'
 input_image_path = input_folder_path + image_name
 output_image_path = output_folder_path + 'NavMesh_' + image_name
 
