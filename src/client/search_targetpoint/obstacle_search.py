@@ -5,16 +5,16 @@ def obstacle_Search(ball_dot, midpoint):
     target = (0,0)
     if ball_dot[0] < midpoint[0] and ball_dot[1] < midpoint[1]:
         target_point = (midpoint[0] - 95, midpoint[1] - 320)
-        target= (midpoint[0] - 85, midpoint[1] + 230)
+        target= (midpoint[0] - 95, midpoint[1] + 200)
     elif ball_dot[0] < midpoint[0] and ball_dot[1] > midpoint[1]:
         target_point = (midpoint[0] - 85, midpoint[1] + 320)
-        target=(midpoint[0] - 85, midpoint[1] - 230)
+        target=(midpoint[0] - 95, midpoint[1] - 200)
     elif ball_dot[0] > midpoint[0] and ball_dot[1] > midpoint[1]:
-        target_point = (midpoint[0] + 95, midpoint[1] +320)
-        target= (midpoint[0] + 85, midpoint[1] - 230)
+        target_point = (midpoint[0] + 95, midpoint[1] + 320)
+        target= (midpoint[0] + 95, midpoint[1] - 200)
     elif ball_dot[0] > midpoint[0] and ball_dot[1] < midpoint[1]:
         target_point = (midpoint[0] + 95, midpoint[1] - 320)
-        target=(midpoint[0] + 85, midpoint[1] +230)
+        target=(midpoint[0] + 95, midpoint[1] + 200)
 
     return target_point, target
 

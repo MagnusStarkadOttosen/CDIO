@@ -371,7 +371,7 @@ class MainLoop:
                 if not self.robot_is_moving and not self.robot_is_turning:
                     self.client.send_command("start_drive 10")
                     self.robot_is_moving = True
-                    self.client.send_command("stop")
+
 
                 # Check position and direction after starting to drive
                 ret, frame = self.camera.read()
