@@ -69,8 +69,8 @@ class MainLoop:
     def start_main_loop(self):
         self.initialize_field()
         self._detect_initial_balls_ai()
-        log_balls("Starting collect orange ball")
-        self._collect_and_deliver_orange_ball()
+        # log_balls("Starting collect orange ball")
+        # self._collect_and_deliver_orange_ball()
         log_balls("Starting collect white balls")
         self._collect_white_balls()
         self.client.send_command("stop_collect")
@@ -90,6 +90,7 @@ class MainLoop:
     def _detect_initial_balls(self):
         self.balls = safe_detect_balls(self.camera, self.final_points, DST_SIZE, self.white)
 
+
     def _detect_initial_balls_ai(self):
         # current_time = time.time()
         if True:
@@ -97,6 +98,17 @@ class MainLoop:
             ret, frame = self.camera.read()
             warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
             self.white_balls, self.orange_balls = detect_balls_with_model(warped_img)
+            
+            center_x = DST_SIZE[0] / 2
+            center_y = DST_SIZE[1] / 2
+
+            def distance_from_center(ball):
+                x, y, _ = ball
+                return math.sqrt((x - center_x) ** 2 + (y - center_y) ** 2)
+        
+            # Filter out the white balls within the specified radius
+            self.white_balls = [ball for ball in self.white_balls if distance_from_center(ball) > 200]
+
             print(f"white: {self.white_balls}, orange {self.orange_balls}")
             # self.last_detection_time = current_time
 
@@ -133,6 +145,16 @@ class MainLoop:
         ret, frame = self.camera.read()
         warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
         self.white_balls, self.orange_balls = detect_balls_with_model(warped_img)
+
+        center_x = DST_SIZE[0] / 2
+        center_y = DST_SIZE[1] / 2
+
+        def distance_from_center(ball):
+            x, y, _ = ball
+            return math.sqrt((x - center_x) ** 2 + (y - center_y) ** 2)
+        
+        # Filter out the white balls within the specified radius
+        self.white_balls = [ball for ball in self.white_balls if distance_from_center(ball) > 200]
 
         if len(self.orange_balls) > 0:
             print("target orange")
@@ -207,7 +229,7 @@ class MainLoop:
             self.camera, self.final_points, DST_SIZE, self.direction_color,
             self.pivot_color
         )
-        result = check_corners(ball_pos, threshold=50)
+        result = check_corners(ball_pos, threshold=100)
         self.target_pos = get_pivot(result)
         path = find_path(self.navmesh, robot_pos, self.target_pos)
         self._navigate_to_target(path)
@@ -306,7 +328,7 @@ class MainLoop:
             self._navigate_to_target(path)
             log_path("in front of goal:")
             log_path(robot_pos)
-        if not are_points_close(robot_pos, goal_A_pivot_point, tolerance=50):
+        if not are_points_close(robot_pos, goal_A_pivot_point, tolerance=20):
             self._navigate_to_target([goal_A_pivot_point])
 
         angle = rotate_vector_to_point(robot_pos, robot_direction, (-100, 600))

@@ -15,7 +15,7 @@ warnings.filterwarnings("ignore", message="Specified provider 'OpenVINOExecution
 load_dotenv()
 
 # Load the model once, so it doesn't reload every time the function is called
-model = inference.get_model("detect-balls/5")
+model = inference.get_model("detect-balls/6")
 
 def detect_balls_with_model(image, min_confidence=0.5):
     

@@ -12,11 +12,11 @@ from src.client.field.coordinate_system import calculate_slope, find_corner_poin
 
 warp = False
 edges = False
-CAM_INDEX = 1
+CAM_INDEX = 2
 
 def read_hsv_values(filename):
     hsv_values = {}
-    temp = "C:/Users/bayou/PycharmProjects/CDIO/hsv_presets_red.txt"
+    temp = "hsv_presets_red.txt"
     with open(temp, 'r') as file:
         for line in file:
             key, value = line.strip().split()
@@ -167,7 +167,7 @@ def save_color_presets(color, lower_bound, upper_bound, base_filename="hsv_prese
     print(f"{color.capitalize()} HSV values saved to {filename}")
 
 def load_color_presets(color, base_filename="hsv_presets"):
-    filename = f"C:/Users/bayou/PycharmProjects/CDIO/{base_filename}_{color}.txt"
+    filename = f"{base_filename}_{color}.txt"
     if os.path.isfile(filename):
         with open(filename, "r") as file:
             lines = file.readlines()
@@ -184,7 +184,7 @@ cap = cv2.VideoCapture(CAM_INDEX,cv2.CAP_DSHOW)
 dst_size = (1200, 1800)
 ret, frame = cap.read()
 
-output_dir = 'C:/Users/bayou/PycharmProjects/CDIO/images/outputCalibrate'
+output_dir = 'images/outputCalibrate'
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 frame_name = 'frame_1.jpg'
@@ -194,7 +194,7 @@ cv2.imwrite(frame_path, frame)
 
 lower_bound, upper_bound = load_color_presets("default")
 if warp:
-    red_hsv_values = read_hsv_values('C:/Users/bayou/PycharmProjects/CDIO/hsv_presets_red.txt')
+    red_hsv_values = read_hsv_values('hsv_presets_red.txt')
     final_points = find_corner_points_full(frame, red_hsv_values, doVerbose=True)
 
 # Create windows
