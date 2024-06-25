@@ -67,3 +67,4 @@ def get_pivot(corner_results):
     else:
         print("No ball near any corner")
         return False
+
