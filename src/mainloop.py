@@ -24,7 +24,7 @@ from src.client.vision.pathfinder import find_nearest_ball
 from src.client.vision.shape_detection import detect_balls, detect_obstacles, detect_robot, safe_detect_balls, \
     safe_detect_robot
 from src.client.hsvLoad import read_hsv_values
-
+TOLERANCE_RADIUS = 30  # Adjust this value based on your requirements
 WHITE_BALL_COUNT = 10
 ROBOT_CAPACITY = 6
 TOLERANCE = 10
@@ -470,6 +470,7 @@ class MainLoop:
         return False
 
     def _escape_border(self, robot_pos, robot_direction):
+        log_path("escape border")
         angle = rotate_vector_to_point(robot_pos, robot_direction, (900, 600))
         tolerance = 20
         if angle < -tolerance or angle > tolerance:
@@ -478,9 +479,11 @@ class MainLoop:
 
     def _escape_cross(self, front_x, front_y):
         log_path("front is in cross buffer")
+        # Ensure the robot stops before making any move
+        self.client.send_command("stop")
+        time.sleep(0.5)  # brief pause to ensure the stop command is executed
         self.client.send_command("move -15")
-        # new_x, new_y = escape_dead_zone(self.navmesh, (front_x, front_y))
-        # self.target_pos = (new_x, new_y)
+        time.sleep(2)  # wait for the move command to execute properly
 
     def temp(self):
         ret, frame = self.camera.read()
@@ -494,13 +497,24 @@ class MainLoop:
 
 def cell_is_in_border_zone(pos, navmesh):
     target_cell = coordinate_to_cell(pos[0], pos[1], GRID_SIZE)
-    return navmesh[int(target_cell[1]), int(target_cell[0])] == 0
-
+    if navmesh[int(target_cell[1]), int(target_cell[0])] == 0:
+        return True
+    return is_near_zone(pos, navmesh, 0)
 
 def cell_is_in_cross_zone(pos, navmesh):
     target_cell = coordinate_to_cell(pos[0], pos[1], GRID_SIZE)
-    return navmesh[int(target_cell[1]), int(target_cell[0])] == 1
+    if navmesh[int(target_cell[1]), int(target_cell[0])] == 1:
+        return True
+    return is_near_zone(pos, navmesh, 1)
 
+def is_near_zone(pos, navmesh, zone_value):
+    x, y = pos
+    for dx in range(-TOLERANCE_RADIUS, TOLERANCE_RADIUS + 1, GRID_SIZE):
+        for dy in range(-TOLERANCE_RADIUS, TOLERANCE_RADIUS + 1, GRID_SIZE):
+            check_cell = coordinate_to_cell(x + dx, y + dy, GRID_SIZE)
+            if navmesh[int(check_cell[1]), int(check_cell[0])] == zone_value:
+                return True
+    return False
 
 def ball_is_on_wall(ball_pos, navmesh):
     return cell_is_in_border_zone(ball_pos, navmesh)
