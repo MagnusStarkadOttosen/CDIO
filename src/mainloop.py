@@ -103,9 +103,11 @@ class MainLoop:
     def _collect_white_balls(self):
         while len(self.white_balls) > ROBOT_CAPACITY:
             while len(self.white_balls) > WHITE_BALL_COUNT - ROBOT_CAPACITY + 1:
-                print(f"white_balls {len(self.white_balls)}vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv")
+                print(
+                    f"white_balls {len(self.white_balls)}vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv")
                 self._collect_ball()
-            print(f"white_balls {len(self.white_balls)} ggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg")
+            print(
+                f"white_balls {len(self.white_balls)} ggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg")
             self._deliver_balls()
         self._collect_remaining_balls()
         # self._deliver_balls()
@@ -117,7 +119,6 @@ class MainLoop:
         while len(self.orange_balls) > 0:
             self._collect_ball()
         self._deliver_balls()
-
 
     def _collect_remaining_balls(self):
         if self.white_balls is not None:
@@ -251,12 +252,12 @@ class MainLoop:
         pivot_x, pivot_y = ball_pos
 
         adjustment = 200
-        if pivot_x > 1800-adjustment:
-            pivot_x = 1800-adjustment
+        if pivot_x > 1800 - adjustment:
+            pivot_x = 1800 - adjustment
         elif pivot_x < adjustment:
             pivot_x = adjustment
-        if pivot_y > 1200-adjustment:
-            pivot_y = 1200-adjustment
+        if pivot_y > 1200 - adjustment:
+            pivot_y = 1200 - adjustment
         elif pivot_y < adjustment:
             pivot_y = adjustment
 
@@ -350,7 +351,7 @@ class MainLoop:
                     continue
 
                 if self._is_in_dead_zone(self.navmesh, robot_pos, robot_direction):
-                    path_is_invalid =True
+                    path_is_invalid = True
                     break
 
                 if are_points_close(robot_pos, (x, y), tolerance=40):
@@ -442,8 +443,13 @@ class MainLoop:
             safe_dist = 30
             new_x, new_y = escape_dead_zone(self.navmesh, (front_x, front_y))
             new_coords = cells_to_coordinates([(new_x, new_y)], GRID_SIZE)
-            if not are_points_close((front_x, front_y), new_coords[0], tolerance=safe_dist):
+            while not are_points_close((front_x, front_y), new_coords[0], tolerance=safe_dist):
                 self._escape_cross(front_x, front_y)
+                robot_pos, robot_direction = safe_detect_robot(
+                    self.camera, self.final_points, DST_SIZE, self.direction_color,
+                    self.pivot_color)
+                front_x, front_y = self._calc_robot_front(robot_direction, robot_pos)
+
             return True
         return False
 
