@@ -16,7 +16,7 @@ def GenerateNavMesh(image, hsv_values):
 
     # Define the grid size for the navmesh
     grid_size = GRID_SIZE
-    buffer_size = 150
+    buffer_size = 185
     buffer_edge = 150
     rogue_pixel_threshold = 1000
 
@@ -175,13 +175,13 @@ def escape_dead_zone(navmesh, start):
             if 0 <= y < height and 0 <= x < width and navmesh[int(y), int(x)] == WALKABLE_INDEX:
                 # coords = cells_to_coordinates([(x, y)], GRID_SIZE)
                 # x, y = coords[0][0], coords[0][1]
-                log_path(x)
-                log_path(y)
+                # log_path(x)
+                # log_path(y)
 
                 # print(f"coords: {coords}")
-                print(f"x and y in dead zone: {x}, {y}")
-                if x == 6 and y == 6:
-                    print(f"x == 6 and y == 6")
+                # print(f"x and y in dead zone: {x}, {y}")
+                # if x == 6 and y == 6:
+                #     print(f"x == 6 and y == 6")
                     # while True:
                     #     continue
                 return x, y

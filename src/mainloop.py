@@ -62,6 +62,7 @@ class MainLoop:
         self.white = read_hsv_values("hsv_presets_white.txt")
         self.white_balls = None
         self.orange_balls = None
+        self.tempdeadbool = True
         # self.last_detection_time = time.time()
         # self.detection_interval = 1  #Minimum amount of seconds between when it detects ball with ai
         # self.tempbool = False
@@ -69,8 +70,8 @@ class MainLoop:
     def start_main_loop(self):
         self.initialize_field()
         self._detect_initial_balls_ai()
-        # log_balls("Starting collect orange ball")
-        # self._collect_and_deliver_orange_ball()
+        log_balls("Starting collect orange ball")
+        self._collect_and_deliver_orange_ball()
         log_balls("Starting collect white balls")
         self._collect_white_balls()
         self.client.send_command("stop_collect")
@@ -99,16 +100,23 @@ class MainLoop:
             warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
             self.white_balls, self.orange_balls = detect_balls_with_model(warped_img)
             
-            center_x = DST_SIZE[0] / 2
-            center_y = DST_SIZE[1] / 2
+            center_x = DST_SIZE[1] / 2
+            center_y = DST_SIZE[0] / 2
 
+            # intersection, mid = detect_obstacles(warped_img)
+            # print(f"mid {mid}")
+            # center_x, center_y = mid
+
+            # print(mid)
             def distance_from_center(ball):
                 x, y, _ = ball
                 return math.sqrt((x - center_x) ** 2 + (y - center_y) ** 2)
-        
+            print(f"white1: {self.white_balls}")
             # Filter out the white balls within the specified radius
             self.white_balls = [ball for ball in self.white_balls if distance_from_center(ball) > 200]
-
+            
+            # self.white_balls = [ball for ball in self.white_balls if ball_is_in_obstacle]
+            print(f"white2: {self.white_balls}")
             print(f"white: {self.white_balls}, orange {self.orange_balls}")
             # self.last_detection_time = current_time
 
@@ -146,13 +154,14 @@ class MainLoop:
         warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
         self.white_balls, self.orange_balls = detect_balls_with_model(warped_img)
 
-        center_x = DST_SIZE[0] / 2
-        center_y = DST_SIZE[1] / 2
+        # intersection, mid = detect_obstacles(warped_img)
+        # center_x, center_y = mid
+        center_x = DST_SIZE[1] / 2
+        center_y = DST_SIZE[0] / 2
 
         def distance_from_center(ball):
             x, y, _ = ball
             return math.sqrt((x - center_x) ** 2 + (y - center_y) ** 2)
-        
         # Filter out the white balls within the specified radius
         self.white_balls = [ball for ball in self.white_balls if distance_from_center(ball) > 200]
 
@@ -367,21 +376,23 @@ class MainLoop:
                     gen_warped_image = warp_perspective(frame, self.final_points, DST_SIZE)
                     robot_pos, robot_direction = detect_robot(gen_warped_image, self.direction_color,
                                                               self.pivot_color)
-
+                print("123")
                 if robot_pos is None or robot_direction is None:
                     continue
-
-                if self._is_in_dead_zone(self.navmesh, robot_pos, robot_direction):
-                    path_is_invalid =True
-                    break
-
+                print("1234")
+                # if self._is_in_dead_zone(self.navmesh, robot_pos, robot_direction) and self.tempdeadbool:
+                #     path_is_invalid =True
+                #     print("before break")
+                #     break
+                print("1235")
                 if are_points_close(robot_pos, (x, y), tolerance=40):
                     self.client.send_command("stop")
                     self.client.send_command("comment 1")
                     self.robot_is_moving = False
                     self.at_target = True
+                    self.tempdeadbool = True
                     break
-
+                print("1236")
                 angle = rotate_vector_to_point(robot_pos, robot_direction, (x, y))
 
                 tolerance = 10
@@ -392,6 +403,11 @@ class MainLoop:
                 if not self.robot_is_moving and not self.robot_is_turning:
                     self.client.send_command("start_drive 10")
                     self.robot_is_moving = True
+
+                # Check position and direction after starting to drive
+                ret, frame = self.camera.read()
+                gen_warped_image = warp_perspective(frame, self.final_points, DST_SIZE)
+                robot_pos, robot_direction = detect_robot(gen_warped_image, self.direction_color, self.pivot_color)
 
                 if self.robot_is_moving:
                     if are_points_close(robot_pos, (x, y), 300):
@@ -458,14 +474,52 @@ class MainLoop:
             self._escape_border(robot_pos, robot_direction)
             return True
         elif cell_is_in_cross_zone((front_x, front_y), navmesh):
+            self.tempdeadbool = False
             log_path("Is in cross zone")
             log_path(front_x)
             log_path(front_y)
             safe_dist = 30
-            new_x, new_y = escape_dead_zone(self.navmesh, (front_x, front_y))
-            new_coords = cells_to_coordinates([(new_x, new_y)], GRID_SIZE)
-            if not are_points_close((front_x, front_y), new_coords[0], tolerance=safe_dist):
-                self._escape_cross(front_x, front_y)
+            print("a1")
+            self.client.send_command("stop")
+            # new_x, new_y = escape_dead_zone(self.navmesh, (front_x, front_y))
+            print("a2")
+            # new_coords = cells_to_coordinates([(new_x, new_y)], GRID_SIZE)
+            # print(f"a3 {new_coords}")
+            cellCoord = coordinate_to_cell(front_x, front_y, GRID_SIZE)
+            print(f"a4 {cellCoord}")
+
+            robot_pos, robot_direction = safe_detect_robot(
+                    self.camera, self.final_points, DST_SIZE, self.direction_color,
+                    self.pivot_color)
+
+            temp = 500
+
+            distance = math.sqrt((robot_pos[0] - 900-temp) ** 2 + (robot_pos[1] - 600) ** 2)
+            target = (900-temp, 600)
+            if distance > math.sqrt((robot_pos[0] - 900) ** 2 + (robot_pos[1] - 600-temp) ** 2):
+                distance = math.sqrt((robot_pos[0] - 900) ** 2 + (robot_pos[1] - 600-temp) ** 2)
+                target = (900, 600-temp)
+            if distance > math.sqrt((robot_pos[0] - 900+temp) ** 2 + (robot_pos[1] - 600) ** 2):
+                distance = math.sqrt((robot_pos[0] - 900+temp) ** 2 + (robot_pos[1] - 600) ** 2)
+                target = (900+temp, 600)
+            if distance > math.sqrt((robot_pos[0] - 900) ** 2 + (robot_pos[1] - 600+temp) ** 2):
+                distance = math.sqrt((robot_pos[0] - 900) ** 2 + (robot_pos[1] - 600+temp) ** 2)
+                target = (900, 600+temp)
+            print(f"{target} ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss")
+            self._navigate_to_target([target])
+            # self._navigate_to_target([(1600,600)])
+
+            # self._escape_cross(front_x, front_y)
+            # print("before WHile")
+            # while not are_points_close((front_x, front_y), new_coords[0], tolerance=safe_dist) and cell_is_in_cross_zone(cellCoord, self.navmesh):
+            #     print("in while")
+            #     self._escape_cross(front_x, front_y)
+            #     robot_pos, robot_direction = safe_detect_robot(
+            #         self.camera, self.final_points, DST_SIZE, self.direction_color,
+            #         self.pivot_color)
+            #     front_x, front_y = self._calc_robot_front(robot_direction,robot_pos)
+            #     cellCoord = coordinate_to_cell((front_x, front_y), GRID_SIZE)
+            # self.tempdeadbool = True
             return True
         return False
 
