@@ -18,7 +18,21 @@ load_dotenv()
 model = inference.get_model("detect-balls/6")
 
 def detect_balls_with_model(image, min_confidence=0.5):
-    
+    """
+    Detects white and orange balls in the given image using a pre-trained model.
+
+    Parameters
+    ----------
+    image : numpy.ndarray
+        The input image in which to detect balls.
+    min_confidence : float, optional
+        The minimum confidence threshold for detections, default is 0.5.
+
+    Returns
+    -------
+    tuple
+        Two numpy arrays containing the detected white balls and orange balls respectively.
+    """
     results_list = model.infer(image=image)
     
     # Lists to store detected balls

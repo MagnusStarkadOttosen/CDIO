@@ -4,6 +4,25 @@ import sys
 import cv2
 import numpy as np
 
+"""
+This mess is a "test" aka we did test some functions here but we mostly used it to line up the camera and adjust HSV values.
+
+To start set warp to False and CAM_INDEX to whatever coresponds with the camera.
+Press "r", "l" and then "i" line the camera up so you can see blue dots at the arenas corners press "q" set warp to true.
+
+
+Keybinds:
+"r": filter for red
+"w": filter for white
+"o": filter for orange
+"l": show lines
+"i": show intersections
+"c": show balls
+"s": save current selected HSV values to the most recent selected filter color
+"q": exits
+"""
+# BUG: The window is to big for my screen
+
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if project_root not in sys.path:
     sys.path.append(project_root)

@@ -59,6 +59,9 @@ class MainLoop:
         self.tempdeadbool = True
 
     def start_main_loop(self):
+        """
+        Starts the main loop, initializes the field, detects initial balls, and handles ball collection and delivery.
+        """
         self.initialize_field()
         self._detect_initial_balls_ai()
         self._collect_and_deliver_orange_ball()
@@ -66,6 +69,9 @@ class MainLoop:
         self.client.send_command("stop_collect")
 
     def initialize_field(self):
+        """
+        Initializes the field by detecting the corners and generating the navigation mesh.
+        """
         ret, frame = self.camera.read()
         self.final_points = find_corner_points_full(frame, self.red, doVerbose=True)
         warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
@@ -98,6 +104,9 @@ class MainLoop:
             self.white_balls = [ball for ball in self.white_balls if distance_from_center(ball) > 200]
 
     def _collect_white_balls(self):
+        """
+        Collects white balls until the robot's capacity is reached.
+        """
         while len(self.white_balls) > ROBOT_CAPACITY:
             while len(self.white_balls) > WHITE_BALL_COUNT - ROBOT_CAPACITY + 1:
                 self._collect_ball()
@@ -106,6 +115,9 @@ class MainLoop:
 
 
     def _collect_and_deliver_orange_ball(self):
+        """
+        Collects and delivers orange balls.
+        """
         self.collect_orange_ball = True
         if len(self.orange_balls) == 0:
             return
@@ -115,12 +127,20 @@ class MainLoop:
 
 
     def _collect_remaining_balls(self):
+        """
+        Collects remaining white balls.
+        """
         if self.white_balls is not None:
             while len(self.white_balls) > 0:
                 self._collect_ball()
             self._deliver_balls()
 
     def _collect_ball(self):
+        """
+        Collects a single ball based on its position.
+        """
+        ret, frame = self.camera.read()
+        warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
         robot_pos, robot_direction = safe_detect_robot(self.camera, self.final_points, DST_SIZE, self.white, self.white)
 
         ret, frame = self.camera.read()
@@ -167,6 +187,21 @@ class MainLoop:
                 return
 
     def _calc_robot_front(self, robot_direction, robot_pos):
+        """
+        Calculates the position in front of the robot.
+
+        Parameters
+        ----------
+        robot_direction : tuple
+            The current direction vector of the robot.
+        robot_pos : tuple
+            The current position of the robot.
+
+        Returns
+        -------
+        tuple
+            The position in front of the robot.
+        """
         # Calculate the magnitude of the direction vector
         magnitude = math.sqrt(robot_direction[0] ** 2 + robot_direction[1] ** 2)
 
@@ -184,6 +219,14 @@ class MainLoop:
         return new_x, new_y
 
     def _collect_ball_in_corner(self, ball_pos):
+        """
+        Collects a ball located in a corner.
+
+        Parameters
+        ----------
+        ball_pos : tuple
+            The position of the ball.
+        """
         robot_pos, robot_direction = safe_detect_robot(
             self.camera, self.final_points, DST_SIZE, self.direction_color,
             self.pivot_color
@@ -223,6 +266,14 @@ class MainLoop:
         self.client.send_command("stop")
 
     def _collect_ball_on_wall(self, ball_pos):
+        """
+        Collects a ball located on a wall.
+
+        Parameters
+        ----------
+        ball_pos : tuple
+            The position of the ball.
+        """
         pivot_x, pivot_y = ball_pos
 
         adjustment = 200
@@ -254,6 +305,9 @@ class MainLoop:
         self.client.send_command("stop_collect")
 
     def _deliver_balls(self):
+        """
+        Delivers collected balls to the goal.
+        """
         log_path("Start deliver")
         ret, frame = self.camera.read()
         warped_img = warp_perspective(frame, self.final_points, DST_SIZE)
@@ -287,6 +341,14 @@ class MainLoop:
         self.client.send_command("stop_collect")
 
     def _navigate_to_target(self, path):
+        """
+        Navigates the robot to the target position following the given path.
+
+        Parameters
+        ----------
+        path : list
+            The path to follow. List of coordinates [(x, y)]
+        """
         if path is None:
             log_path("Can't navigate, no path.")
             return
@@ -304,7 +366,10 @@ class MainLoop:
 
                 if robot_pos is None or robot_direction is None:
                     continue
-
+                #Last minute removal of broken code
+                # if self._is_in_dead_zone(self.navmesh, robot_pos, robot_direction) and self.tempdeadbool:
+                #     path_is_invalid =True
+                #     break
                 if are_points_close(robot_pos, (x, y), tolerance=40):
                     self.client.send_command("stop")
                     self.robot_is_moving = False
@@ -342,7 +407,22 @@ class MainLoop:
                 break
 
     def _course_correction(self, angle, target, tol=10.5):
+        """
+        Corrects the robot's course to align with the target.
+
+        Parameters
+        ----------
+        angle : float
+            The angle by which the robot needs to turn.
+        target : tuple
+            The target position.
+        tol : float, optional
+            The tolerance for course correction, default is 10.5.
+        """
         while angle < -tol or angle > tol:
+            ret, frame = self.camera.read()
+            gen_warped_image = warp_perspective(frame, self.final_points, DST_SIZE)
+
             robot_pos = None
             robot_direction = None
             while robot_pos is None or robot_direction is None:
@@ -372,7 +452,25 @@ class MainLoop:
         self.robot_is_turning = False
         self.client.send_command("stop")
 
+    # BUG: Robot gets stuck in here and its just bad
     def _is_in_dead_zone(self, navmesh, robot_pos, robot_direction):
+        """
+        Checks if the robot is in a dead zone and navigates out if necessary.
+
+        Parameters
+        ----------
+        navmesh : numpy.ndarray
+            The navigation mesh.
+        robot_pos : tuple
+            The current position of the robot.
+        robot_direction : tuple
+            The current direction of the robot.
+
+        Returns
+        -------
+        bool
+            True if the robot is in a dead zone, False otherwise.
+        """
         front_x, front_y = self._calc_robot_front(robot_direction, robot_pos)
         if cell_is_in_border_zone((front_x, front_y), navmesh):
             self._escape_border(robot_pos, robot_direction)
@@ -405,6 +503,16 @@ class MainLoop:
         return False
 
     def _escape_border(self, robot_pos, robot_direction):
+        """
+        Escapes from a border zone by moving towards the center.
+
+        Parameters
+        ----------
+        robot_pos : tuple
+            The current position of the robot.
+        robot_direction : tuple
+            The current direction of the robot.
+        """
         angle = rotate_vector_to_point(robot_pos, robot_direction, (900, 600))
         tolerance = 20
         if angle < -tolerance or angle > tolerance:
@@ -412,6 +520,17 @@ class MainLoop:
         self.client.send_command("move 10")
 
     def _escape_cross(self, front_x, front_y):
+        """
+        Escapes from a cross zone by moving backwards.
+
+        Parameters
+        ----------
+        front_x : int
+            The x-coordinate of the front of the robot.
+        front_y : int
+            The y-coordinate of the front of the robot.
+        """
+        log_path("front is in cross buffer")
         self.client.send_command("move -15")
 
     def temp(self):

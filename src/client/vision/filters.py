@@ -85,14 +85,6 @@ def filter_image_red(image):
 def filter_image_green(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
-    # lower_green1 = np.array([35, 70, 50])
-    # upper_green1 = np.array([85, 255, 255])
-    # lower_green2 = np.array([85, 70, 50])
-    # upper_green2 = np.array([92, 163, 99])
-    #
-    # mask1 = cv2.inRange(hsv, lower_green1, upper_green1)
-    # mask2 = cv2.inRange(hsv, lower_green2, upper_green2)
-    # mask = cv2.bitwise_or(mask1, mask2)
     lower_green = np.array([35, 0, 0])
     upper_green = np.array([92, 255, 255])
 
@@ -145,13 +137,9 @@ def erode_image(image, i=1):
 def temp_filter_for_red_wall(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     lower_red1 = np.array([0, 175, 186])
-    upper_red1 = np.array([152, 255, 255])  # The first value need to be 10 for the wall
-    # lower_red2 = np.array([170, 70, 50])
-    # upper_red2 = np.array([180, 255, 255])
+    upper_red1 = np.array([152, 255, 255]) 
 
     mask = cv2.inRange(hsv, lower_red1, upper_red1)
-    # mask2 = cv2.inRange(hsv, lower_red2, upper_red2)
-    # mask = cv2.bitwise_or(mask1, mask2)
 
     red_image = cv2.bitwise_and(image, image, mask=mask)
 
@@ -184,6 +172,21 @@ def filter_for_yellow(image):
     return yellow_image
 
 def filter_image(image, hsv_values):
+    """
+    Filters the input image based on the specified HSV values.
+
+    Parameters
+    ----------
+    image : numpy.ndarray
+        The input image.
+    hsv_values : dict
+        Dictionary containing the lower and upper HSV values for masking.
+
+    Returns
+    -------
+    numpy.ndarray
+        The filtered image.
+    """
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
     lower_bound = np.array([hsv_values['LowerH'], hsv_values['LowerS'], hsv_values['LowerV']])

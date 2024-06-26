@@ -17,25 +17,22 @@ from src.client.field.coordinate_system import find_intersection
 
 def safe_detect_robot(camera, final_points, dst_size, direction_col, pivot_col):
     while True:
-        print("from safe_detect_robot")
         ret, frame = camera.read()
         warped_img = warp_perspective(frame, final_points, dst_size)
         robot_pos, robot_direction = detect_robot(warped_img, direction_col,
                                                   pivot_col)
-        print(f"from safe_detect_robot: {robot_pos}, {robot_direction}")
         if robot_pos is not None and robot_direction is not None:
-            print("from if")
             return robot_pos, robot_direction
 
 
 def detect_robot(image, direction_color, pivot_color):
     direction_dot = detect_balls(filter_image(image, direction_color), min_radius=45, max_radius=50)
-    if len(direction_dot) < 1:  # TODO Proper error handling for green_dot
+    if len(direction_dot) < 1:
         print("No direction dot.")
         return None, None
 
     pivot_dot = detect_balls(filter_image(image, pivot_color), min_radius=60, max_radius=65)
-    if len(pivot_dot) < 1:  # TODO Proper error handling for red_dot
+    if len(pivot_dot) < 1:
         print("No pivot dot.")
         return None, None
     robot_pos = (pivot_dot[0][0], pivot_dot[0][1])

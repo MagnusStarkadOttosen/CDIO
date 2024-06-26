@@ -2,11 +2,9 @@ import socket
 import sys
 
 from src.server.command_processor import process_command
-# cp = CommandProcessor()
 
 # Set up the server
 server_address = ('', 10000)
-#server_address = ('127.0.0.1', 10000)
 buffer_size = 1024
 
 # Create a TCP/IP socket
@@ -17,7 +15,7 @@ sock.bind(server_address)
 sock.listen(1)
 
 print("EV3 Server listening for commands...")
-# connection = None
+
 try:
     # Wait for a connection
     connection, client_address = sock.accept()

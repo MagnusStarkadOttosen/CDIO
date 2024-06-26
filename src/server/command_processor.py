@@ -20,6 +20,19 @@ actions_functions = {
 
 
 def process_command(command):
+    """
+    Processes a command string and executes the corresponding robot action.
+
+    Parameters
+    ----------
+    command : str
+        The command string to be processed. The format should be "action [value]" or this format "action".
+
+    Raises
+    ------
+    IndexError
+        If the command format is incorrect.
+    """
     command_parsed = command.split(" ")
     try:
         action = command_parsed[0].lower()
