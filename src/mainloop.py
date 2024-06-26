@@ -100,7 +100,6 @@ class MainLoop:
             def distance_from_center(ball):
                 x, y, _ = ball
                 return math.sqrt((x - center_x) ** 2 + (y - center_y) ** 2)
-            print(f"white1: {self.white_balls}")
             # Filter out the white balls within the specified radius
             self.white_balls = [ball for ball in self.white_balls if distance_from_center(ball) > 200]
 
@@ -144,30 +143,23 @@ class MainLoop:
         self.white_balls = [ball for ball in self.white_balls if distance_from_center(ball) > 200]
 
         if len(self.orange_balls) > 0:
-            print("target orange")
             self.target_pos = self.orange_balls[0][:2]
             self.collect_orange_ball = True
         elif self.collect_orange_ball:
             self.collect_orange_ball = False
             return
         elif self.white_balls is None or len(self.white_balls) == 0:
-            print("No more balls")
             return
         else:
-            print("target nearest")
             self.target_pos = find_nearest_ball(robot_pos, self.white_balls)
 
         if ball_is_in_corner(self.target_pos):
             self._collect_ball_in_corner(self.target_pos)
 
-            print(f"target pos {self.target_pos}")
-
         elif ball_is_on_wall(self.target_pos, self.navmesh):
-            print("ball on wall")
             self._collect_ball_on_wall(self.target_pos)
 
         else:
-            print("ball not on wall")
             self._is_in_dead_zone(self.navmesh, robot_pos, robot_direction)
             robot_pos, robot_direction = safe_detect_robot(
                 self.camera, self.final_points, DST_SIZE, self.direction_color,
@@ -210,7 +202,6 @@ class MainLoop:
 
         tolerance = 10
         if angle < -tolerance or angle > tolerance:
-            print(f"The angle is: {angle}")
             self._course_correction(angle, ball_pos, tol=tolerance)
 
         front_x, front_y = self._calc_robot_front(robot_direction, robot_pos)
@@ -219,7 +210,6 @@ class MainLoop:
         while not cell_is_in_border_zone((front_x, front_y), self.navmesh):
             self.client.send_command("start_drive 10")
             if angle < -tolerance or angle > tolerance:
-                print(f"The angle is: {angle}")
                 self._course_correction(angle, ball_pos, tol=tolerance)
 
             robot_pos, robot_direction = safe_detect_robot(
@@ -232,7 +222,6 @@ class MainLoop:
         self.client.send_command("start_collect")
         self.client.send_command("move 10")
         if angle < -tolerance or angle > tolerance:
-            print(f"The angle is: {angle}")
             self._course_correction(angle, ball_pos, tol=tolerance)
         self.client.send_command("move 9")
         self.client.send_command("move -20")
@@ -257,14 +246,12 @@ class MainLoop:
             self.pivot_color
         )
         path = find_path(self.navmesh, robot_pos, (pivot_x, pivot_y))
-        print(path)
         self._navigate_to_target(path)
 
         angle = rotate_vector_to_point(robot_pos, robot_direction, ball_pos)
 
         tolerance = 10
         if angle < -tolerance or angle > tolerance:
-            print(f"The angle is: {angle}")
             self._course_correction(angle, ball_pos, tol=tolerance)
 
         self.client.send_command("move 5")
@@ -279,7 +266,6 @@ class MainLoop:
 
         robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color)
         while robot_pos is None or robot_direction is None:
-            print("from Deliver balls")
             robot_pos, robot_direction = detect_robot(warped_img, self.direction_color, self.pivot_color)
 
         goal_A_pivot_point = (150, 600)
@@ -317,7 +303,6 @@ class MainLoop:
                 robot_pos = None
                 robot_direction = None
                 while robot_pos is None or robot_direction is None:
-                    print("test")
                     ret, frame = self.camera.read()
                     gen_warped_image = warp_perspective(frame, self.final_points, DST_SIZE)
                     robot_pos, robot_direction = detect_robot(gen_warped_image, self.direction_color,
