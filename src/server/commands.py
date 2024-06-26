@@ -35,10 +35,8 @@ class Commands:
         self.tank_drive.on(SpeedPercent(30), SpeedPercent(30))
 
     def drive(self, distance_to_move):
-        # revs = get_wheel_revolutions(distance_to_move)
         degrees = convert_distance_to_degrees(distance_to_move)
         self.tank_drive.on_for_degrees(SpeedPercent(10), SpeedPercent(10), degrees)
-        print('Wheel motor turning this many degrees: ', degrees)  # Placeholder
 
     def drive_backwards(self, distance_to_move):
         # revs = get_wheel_revolutions(distance_to_move)
@@ -51,10 +49,6 @@ class Commands:
 
     def drive_back(self):
         self.tank_drive.on(SpeedPercent(-10), SpeedPercent(-10))
-
-    # def turn(degrees_to_rotate):
-    #     self.turn_by_x_degrees(degrees_to_rotate)
-    #     print('Turning this many degrees: ', degrees_to_rotate)  # Placeholder
 
     def stop(self):
         self.tank_drive.off()

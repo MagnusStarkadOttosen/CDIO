@@ -465,28 +465,16 @@ class MainLoop:
                 self.robot_is_turning = False
         self.robot_is_turning = False
         self.client.send_command("stop")
-        print("stop from course correction")
 
     def _is_in_dead_zone(self, navmesh, robot_pos, robot_direction):
         front_x, front_y = self._calc_robot_front(robot_direction, robot_pos)
         if cell_is_in_border_zone((front_x, front_y), navmesh):
-            log_path("Is in border zone")
             self._escape_border(robot_pos, robot_direction)
             return True
         elif cell_is_in_cross_zone((front_x, front_y), navmesh):
             self.tempdeadbool = False
-            log_path("Is in cross zone")
-            log_path(front_x)
-            log_path(front_y)
-            safe_dist = 30
-            print("a1")
             self.client.send_command("stop")
-            # new_x, new_y = escape_dead_zone(self.navmesh, (front_x, front_y))
-            print("a2")
-            # new_coords = cells_to_coordinates([(new_x, new_y)], GRID_SIZE)
-            # print(f"a3 {new_coords}")
             cellCoord = coordinate_to_cell(front_x, front_y, GRID_SIZE)
-            print(f"a4 {cellCoord}")
 
             robot_pos, robot_direction = safe_detect_robot(
                     self.camera, self.final_points, DST_SIZE, self.direction_color,
@@ -505,21 +493,8 @@ class MainLoop:
             if distance > math.sqrt((robot_pos[0] - 900) ** 2 + (robot_pos[1] - 600+temp) ** 2):
                 distance = math.sqrt((robot_pos[0] - 900) ** 2 + (robot_pos[1] - 600+temp) ** 2)
                 target = (900, 600+temp)
-            print(f"{target} ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss")
-            self._navigate_to_target([target])
-            # self._navigate_to_target([(1600,600)])
 
-            # self._escape_cross(front_x, front_y)
-            # print("before WHile")
-            # while not are_points_close((front_x, front_y), new_coords[0], tolerance=safe_dist) and cell_is_in_cross_zone(cellCoord, self.navmesh):
-            #     print("in while")
-            #     self._escape_cross(front_x, front_y)
-            #     robot_pos, robot_direction = safe_detect_robot(
-            #         self.camera, self.final_points, DST_SIZE, self.direction_color,
-            #         self.pivot_color)
-            #     front_x, front_y = self._calc_robot_front(robot_direction,robot_pos)
-            #     cellCoord = coordinate_to_cell((front_x, front_y), GRID_SIZE)
-            # self.tempdeadbool = True
+            self._navigate_to_target([target])
             return True
         return False
 
@@ -533,8 +508,6 @@ class MainLoop:
     def _escape_cross(self, front_x, front_y):
         log_path("front is in cross buffer")
         self.client.send_command("move -15")
-        # new_x, new_y = escape_dead_zone(self.navmesh, (front_x, front_y))
-        # self.target_pos = (new_x, new_y)
 
     def temp(self):
         ret, frame = self.camera.read()

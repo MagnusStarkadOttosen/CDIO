@@ -8,9 +8,9 @@ logging.basicConfig(filename='safe_detect_balls.log', filemode='w',
                     format='%(asctime)s - %(message)s')
 
 from src.client.field.robot import calc_vector_direction
-from src.client.vision.filters import clean_the_image, convert_hsv, filter_for_yellow, filter_image, filter_image_green, \
-    filter_image_red, temp_filter_for_red_wall
-from src.client.field.coordinate_system import calculate_slope, find_corner_points_full, find_corners, find_lines, \
+from src.client.vision.filters import clean_the_image, convert_hsv, filter_image, \
+    temp_filter_for_red_wall
+from src.client.field.coordinate_system import calculate_slope, find_corners, find_lines, \
     is_near_90_degrees, warp_perspective
 from src.client.vision.filters import apply_gray, apply_canny
 from src.client.field.coordinate_system import find_intersection
@@ -34,15 +34,11 @@ def detect_robot(image, direction_color, pivot_color):
     if len(direction_dot) < 1:  # TODO Proper error handling for green_dot
         print("No direction dot.")
         return None, None
-    print(f"what direction detectfinds {direction_dot}")
-    # print("green dot found ", len(green_dot))
 
     pivot_dot = detect_balls(filter_image(image, pivot_color), min_radius=60, max_radius=65)
     if len(pivot_dot) < 1:  # TODO Proper error handling for red_dot
         print("No pivot dot.")
         return None, None
-    print(f"what pivot detectfinds {pivot_dot}")
-    # print("yellow dot found ", len(pivot_dot))
     robot_pos = (pivot_dot[0][0], pivot_dot[0][1])
     robot_direction = calc_vector_direction(direction_dot[0], robot_pos)
 
@@ -63,7 +59,6 @@ def detect_egg(image, min_radius=45, max_radius=55):
                                minRadius=min_radius, maxRadius=max_radius)
     if circles is not None:
         circles = np.round(circles[0, :]).astype("int")
-        print("balls count: ", len(circles))
     else:
         print("No balls detected.")
 
@@ -71,7 +66,6 @@ def detect_egg(image, min_radius=45, max_radius=55):
 
 
 def safe_detect_balls(camera, final_points, dst_size, color):
-    print("Safe detecting balls")
     temp_len = 0
     circles = None
 
@@ -113,9 +107,6 @@ def detect_balls(image, min_radius=15, max_radius=25):
 
 
 def detect_obstacles(image):
-    # dst_size = (1200, 1800)  # width, height
-    # corners = find_corner_points_full(image, doVerbose=True)
-    # gen_warped_image = warp_perspective(image, corners, dst_size)
     red_image = temp_filter_for_red_wall(image)
     clean_image = clean_the_image(red_image)
     edge_image, lines = find_lines(clean_image, resolution=5, doVerbose=True)
@@ -139,8 +130,6 @@ def detect_obstacles(image):
     output_folder_path = 'images/outputObstacle/'
     re_image_path = output_folder_path + "re_image.jpg"
     cv2.imwrite(re_image_path, clean_image)
-    # print(f"Total intersections found: {len(intersections)}")
-    # print(f"midpoint: {midpoint}")
     return intersections, midpoint
 
 
@@ -282,10 +271,3 @@ class Shapes:  # TODO opløs Shapes klasse
                 start_point = (top_left[0] + i * ((bottom_right[0] - top_left[0]) // num_lines), top_left[1])
                 end_point = (top_left[0] + i * ((bottom_right[0] - top_left[0]) // num_lines), bottom_right[1])
                 cv2.line(image, start_point, end_point, (255, 255, 0), 2)  # Using yellow for visibility
-
-    # def draw_corners_debug(self, image_to_draw_on):
-    #     corners = find_corners(image_to_draw_on)
-    #     if corners is not None:
-    #         for corner in corners:
-    #             x, y = tuple(corner.ravel())
-    #             # cv2.circle(image_to_draw_on, (x, y), 5, (0, 255, 0), -1)  # Draw green circles at each corner
