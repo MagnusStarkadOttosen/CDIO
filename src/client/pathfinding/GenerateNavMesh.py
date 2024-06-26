@@ -83,12 +83,44 @@ def GenerateNavMesh(image, hsv_values):
 
 # Converts the coordinates from the image to the cell
 def coordinate_to_cell(x, y, grid_size):
+    """
+    Converts coordinates from the image to the corresponding cell in the navigation mesh.
+
+    Parameters
+    ----------
+    x : int
+        The x-coordinate.
+    y : int
+        The y-coordinate.
+    grid_size : int
+        The size of each cell in the grid.
+
+    Returns
+    -------
+    tuple
+        The cell coordinates (cell_x, cell_y).
+    """
     cell_x = x // grid_size
     cell_y = y // grid_size
     return cell_x, cell_y
 
 # Converts the list of cells from a star to a list of coordinates
 def cells_to_coordinates(cells, grid_size):
+    """
+    Converts a list of cells from the navigation mesh to coordinates.
+
+    Parameters
+    ----------
+    cells : list
+        The list of cell coordinates.
+    grid_size : int
+        The size of each cell in the grid.
+
+    Returns
+    -------
+    list
+        The list of coordinates corresponding to the cells.
+    """
     print("cells:", cells, "grid_size:", grid_size)
     coordinates = [(x*grid_size,y*grid_size) for x, y in cells]
     return coordinates
@@ -97,6 +129,23 @@ def heuristic(a, b):
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
 def astar(navmesh, start, goal):
+    """
+    Finds a path from start to goal using the A* algorithm.
+
+    Parameters
+    ----------
+    navmesh : numpy.ndarray
+        The navigation mesh.
+    start : tuple
+        The starting cell (x, y).
+    goal : tuple
+        The goal cell (x, y).
+
+    Returns
+    -------
+    list
+        A list of cells representing the path from start to goal, or None if no path is found.
+    """
     # Priority queue to store (cost, current_node)
     open_set = []
     heapq.heappush(open_set, (0, start))
@@ -164,6 +213,22 @@ def is_walkable(navmesh, start, end):
     return True
 
 def optimize_path(navmesh, path):
+    """
+    Optimizes the path by removing unnecessary waypoints.
+    Allowing the robot to travel in a straight line without starting and stopping
+
+    Parameters
+    ----------
+    navmesh : numpy.ndarray
+        The navigation mesh.
+    path : list
+        The initial path.
+
+    Returns
+    -------
+    list
+        The optimized path.
+    """
     if path is None:
         return path
 
@@ -181,6 +246,21 @@ def optimize_path(navmesh, path):
 
 # This find the nearest walkable cells using breath first
 def escape_dead_zone(navmesh, start):
+    """
+    Finds the nearest walkable cell using breadth-first search.
+
+    Parameters
+    ----------
+    navmesh : numpy.ndarray
+        The navigation mesh.
+    start : tuple
+        The starting cell (x, y).
+
+    Returns
+    -------
+    tuple
+        The coordinates of the nearest walkable cell.
+    """
     height, width = navmesh.shape
     visited = set()
     queue = deque([start])
