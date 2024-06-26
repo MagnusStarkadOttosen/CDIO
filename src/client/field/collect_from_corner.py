@@ -3,9 +3,8 @@ import math
 
 import numpy as np
 
-from src.client.field.navigate_to_target import *
 from src.client.pc_client import ClientPC
-
+from src.client.vision.camera import initialize_camera
 
 CORNERS = {
     "top_left": (0, 0),

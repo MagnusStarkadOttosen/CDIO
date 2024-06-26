@@ -1,9 +1,6 @@
-import numpy as np
-from src.client.field import navigate_to_target
-from src.client.field.collect_from_corner import get_pivot, check_corners, ball_is_in_corner, \
-    calculate_distance
+
+from src.client.field.collect_from_corner import get_pivot, check_corners, ball_is_in_corner
 from src.client.pathfinding.CalculateCommandList import rotate_vector_to_point
-from src.client.pc_client import ClientPC
 from src.mainloop import MainLoop
 
 
