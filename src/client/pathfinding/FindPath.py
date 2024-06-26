@@ -11,7 +11,23 @@ logging.basicConfig(filename='buffered_path.log', filemode='w',
 
 
 def find_path(navmesh, robot_pos, target_pos):
+    """
+    Finds an optimized path from the robot's position to the target position using A* algorithm.
 
+    Parameters
+    ----------
+    navmesh : numpy.ndarray
+        The navigation mesh representing the walkable and non-walkable areas.
+    robot_pos : tuple
+        The current position of the robot (x, y).
+    target_pos : tuple
+        The target position (x, y).
+
+    Returns
+    -------
+    list
+        A list of coordinates representing the path from the robot's position to the target position.
+    """
     robotCell = coordinate_to_cell(robot_pos[0], robot_pos[1], GRID_SIZE)
 
     targetCell = coordinate_to_cell(target_pos[0], target_pos[1], GRID_SIZE)
@@ -37,14 +53,10 @@ def find_path(navmesh, robot_pos, target_pos):
 
     return coord_path
 
-
-#
-# def cell_is_in_dead_zone(pos, navmesh):
-#     target_cell = coordinate_to_cell(pos[0], pos[1], GRID_SIZE)
-#     return navmesh[target_cell[1], target_cell[0]] == 0
-
-
 def pretty_print_navmesh(navmesh, path, robot_pos):
+    """
+    This prints the navmesh in a more readable way
+    """
     pos_cell = coordinate_to_cell(robot_pos[0], robot_pos[1], GRID_SIZE)
     navmesh_copy = navmesh.copy()
 

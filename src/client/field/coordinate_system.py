@@ -3,7 +3,6 @@ import cv2
 import numpy as np
 
 from src.client.vision.filters import *
-# from sklearn.cluster import KMeans
 
 def find_corners(masked_image):
     corners = cv2.goodFeaturesToTrack(cv2.cvtColor(masked_image, cv2.COLOR_BGR2GRAY), 4, 0.01, 10)
@@ -21,6 +20,23 @@ def map_to_coordinate_system(image, point, origin, scale):
 
 
 def warp_perspective(image, src_points, dst_size):
+    """
+    This takes 4 points on the original image and warpes the image so the 4 points becomes the new corners
+    
+    Parameters
+    ----------
+    image : numpy.ndarray
+        The image that need to be warped
+    src_points : numpy.ndarray
+        The 4 points we want to become the new corners
+    dst_size : tuple
+        The size (width, height) of the new warped image
+        
+    Returns
+    -------
+    numpy.ndarray
+        The warped image.
+    """
     height, width = dst_size
     
     pts_dst = np.array([[0, 0], [width, 0], [width, height], [0, height]], dtype="float32")
@@ -32,6 +48,23 @@ def warp_perspective(image, src_points, dst_size):
     return warped_image
 
 def get_transformed_center(image, src_points, dst_size):
+    """
+    Finds the center of the unwarped image and uses it to find the equivalent point on the warped image
+
+    Parameters
+    ----------
+    image : numpy.ndarray
+        The input image.
+    src_points : numpy.ndarray
+        The 4 source points for perspective transformation.
+    dst_size : tuple
+        The size (width, height) of the transformed image.
+
+    Returns
+    -------
+    numpy.ndarray
+        The coordinates of the transformed center.
+    """
     height, width = dst_size
     
     pts_dst = np.array([[0, 0], [width, 0], [width, height], [0, height]], dtype="float32")
@@ -68,7 +101,23 @@ def draw_grid(image, real_world_size, grid_spacing_cm):
 
 
 def find_lines(image, resolution=2, doVerbose=False):
-    
+    """
+    Finds lines in the given image using the Hough Line Transform.
+
+    Parameters
+    ----------
+    image : numpy.ndarray
+        The input image.
+    resolution : int, optional
+        The resolution parameter for the Hough Line Transform, default is 2.
+    doVerbose : bool, optional
+        Whether or not it prints all the lines, default is False.
+
+    Returns
+    -------
+    tuple
+        The image with lines drawn and the array of detected lines.
+    """
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     edges = cv2.Canny(gray, 50, 150, apertureSize=3)
     lines = cv2.HoughLinesP(edges, resolution, np.pi/180, 100, minLineLength=100, maxLineGap=150)
@@ -83,6 +132,21 @@ def find_lines(image, resolution=2, doVerbose=False):
     return image, lines
 
 def find_intersection(l1, l2):
+    """
+    Finds the intersection point of two lines.
+
+    Parameters
+    ----------
+    l1 : tuple
+        The coordinates of the first line (x1, y1, x2, y2).
+    l2 : tuple
+        The coordinates of the second line (x3, y3, x4, y4).
+
+    Returns
+    -------
+    tuple
+        The coordinates of the intersection point, or None if no intersection is found.
+    """
     x1, y1, x2, y2 = l1
     x3, y3, x4, y4 = l2
     if x1 == x2:
@@ -131,16 +195,27 @@ def calculate_slope(line):
 
 #This takes the image finds the corner points
 def find_corner_points_full(image, hsv_values, doVerbose=False):
+    """
+    Finds the corner points of the arena in the image by detecting lines and their intersections.
+
+    Parameters
+    ----------
+    image : numpy.ndarray
+        The input image.
+    hsv_values : list
+        The HSV values for filtering the image. (red for wall)
+    doVerbose : bool, optional
+        Whether or not to print images of all the steps, default is False.
+
+    Returns
+    -------
+    numpy.ndarray
+        An array containing the coordinates of the four corner points.
+    """
     #Filter for red wall
     red_image = filter_image(image, hsv_values)
-    #Clean up small defects
-    # clean_image = clean_the_image(red_image)
     #Find the lines on the image
     edge_image, lines = find_lines(red_image)
-    
-    
-    # lines = np.array(lines)
-    # lines = lines.reshape(-1, 4)
     
     intersection_points = []
     for i in range(len(lines)):
@@ -151,7 +226,6 @@ def find_corner_points_full(image, hsv_values, doVerbose=False):
                 intersection = find_intersection(lines[i][0], lines[j][0])
                 if intersection:
                     intersection_points.append(intersection)
-                    # print(f"Intersection point: {intersection}") 
                     cv2.circle(edge_image, intersection, radius=5, color=(255, 0, 0), thickness=-1) 
     
     height, width, _ = image.shape
@@ -175,7 +249,6 @@ def find_corner_points_full(image, hsv_values, doVerbose=False):
     closest_points = []
     for q in [2, 1, 4, 3]:
         if quadrants[q]:  # Check if the list is not empty
-            # closest_point = min(quadrants[q], key=lambda point: distance_between_points(point, (center_x, center_y)))
             closest_point = min(quadrants[q], key=lambda point: np.sqrt((point[0]-center_x) ** 2 + (point[1]-center_y) ** 2))
             closest_points.append(closest_point)
     
@@ -209,41 +282,6 @@ def printImagesFromWarping(images, final_points):
     gen_warped_image_path = output_folder_path + "gen_warped_image.jpg"
     cv2.imwrite(gen_warped_image_path, gen_warped_image)
     
-# def cluster_lines_into_4(image, lines):
-#     if lines is None or len(lines) == 0:
-#         print("No lines detected.")
-#         return
-#
-#     lines = lines.reshape(-1, 4)
-#
-#     angles = np.array([calculate_angle(line) for line in lines])
-#     midpoints = np.array([((x1 + x2) / 2, (y1 + y2) / 2) for x1, y1, x2, y2 in lines])
-#     # midpoints = np.array([(x1 + x2) / 2.0 for x1, y1, x2, y2 in lines]), np.array([(y1 + y2) / 2.0 for x1, y1, x2, y2 in lines])
-#     # midpoints = np.stack(midpoints, axis=1)
-#
-#     angles = np.unwrap(angles[:, np.newaxis], axis=0)
-#     features = np.hstack((midpoints, angles))
-#
-#     # kmeans = KMeans(n_clusters=4, random_state=42).fit(midpoints)
-#     kmeans = KMeans(n_clusters=4, random_state=42).fit(features)
-#     labels = kmeans.labels_
-#
-#     averaged_lines = []
-#     for i in range(4):
-#         cluster_lines = lines[labels == i]
-#
-#         avg_line = np.mean(cluster_lines, axis=0)
-#         averaged_lines.append(avg_line)
-#
-#     if averaged_lines is not None:
-#         for x1, y1, x2, y2 in averaged_lines:
-#             cv2.line(image, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
-#             print(f"Line from ({int(x1)}, {int(y1)}) to ({int(x2)}, {int(y2)})")
-#
-#     return image
-#     # for x1, y1, x2, y2 in averaged_lines:
-#     #     print(f"Line from ({int(x1)}, {int(y1)}) to ({int(x2)}, {int(y2)})")
-    
 def calculate_angle(line):
     x1, y1, x2, y2 = line
     return np.arctan2(y2 - y1, x2 - x1)
@@ -260,35 +298,23 @@ def calculate_line_features(lines):
         distances.append(distance)
     return np.array(angles), np.array(distances)
 
-# def cluster_lines(image, lines):
-#     angles, distances = calculate_line_features(lines.reshape(-1, 4))
-#     # Normalize angles to range [0, π] for undirected lines
-#     angles = np.mod(angles, np.pi)
-#     features = np.vstack((angles, distances)).T
-#
-#     # K-means clustering
-#     kmeans = KMeans(n_clusters=4, random_state=42).fit(features)
-#     labels = kmeans.labels_
-#
-#     # Prepare to average lines within each cluster
-#     averaged_lines = []
-#     for i in range(4):
-#         cluster_lines = lines[labels == i]
-#         # Average the coordinates of the lines in the cluster, if any
-#         if len(cluster_lines) > 0:
-#             avg_line = np.mean(cluster_lines.reshape(-1, 4), axis=0)
-#             averaged_lines.append(avg_line)
-#         else:
-#             print(f"No lines found for cluster {i}")
-#
-#     # Print the averaged lines
-#     for line in averaged_lines:
-#         x1, y1, x2, y2 = line.astype(int)
-#         cv2.line(image, (x1, y1), (x2, y2), (0, 255, 0), 2)
-#         print(f"Line from ({x1}, {y1}) to ({x2}, {y2})")
-#
-#     return image
-
 def are_points_close(point1, point2, tolerance = 5):
+    """
+    Checks if two points are close to each other within a given tolerance.
+
+    Parameters
+    ----------
+    point1 : tuple
+        The first point (x, y).
+    point2 : tuple
+        The second point (x, y).
+    tolerance : float, optional
+        The tolerance for the distance between the points, default is 5.
+
+    Returns
+    -------
+    bool
+        True if the points are within the specified tolerance, False otherwise.
+    """
     distance = math.sqrt((point2[0] - point1[0]) ** 2 + (point2[1] - point1[1]) ** 2)
     return distance <= tolerance

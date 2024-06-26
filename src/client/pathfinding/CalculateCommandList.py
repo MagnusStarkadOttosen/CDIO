@@ -1,6 +1,23 @@
 import math
 
 def rotate_vector_to_point(robot_pos, robot_direction, target):
+    """
+    Calculates the angle required to rotate a vector from the robot's current direction to a target point.
+
+    Parameters
+    ----------
+    robot_pos : tuple
+        The current position of the robot (x, y).
+    robot_direction : tuple
+        The current direction vector of the robot (dx, dy).
+    target : tuple
+        The target position (x, y).
+
+    Returns
+    -------
+    float
+        The angle in degrees required to rotate from the current direction to the target point.
+    """
     #Calculate the direction to target
     direction = (target[0] - robot_pos[0], target[1] - robot_pos[1])
 
@@ -28,10 +45,3 @@ def rotate_vector_to_point(robot_pos, robot_direction, target):
         angle_degrees *= -1
 
     return angle_degrees
-
-#test
-robot_pos = (158, 983)
-robot_direction = (0, -161)
-target_point = (900, 600)
-angle = rotate_vector_to_point(robot_pos, robot_direction, target_point)
-print(f"Rotate by {angle:.2f} degrees")

@@ -11,6 +11,24 @@ WALKABLE_INDEX = 2
 OBSTACLE_INDEX = 1
 
 def GenerateNavMesh(image, hsv_values):
+    """
+    Generates a navigation mesh from an image. The NavMesh is a grid of 25x25mm cells.
+    0 indicates the buffer around the walls
+    1 indicates the buffer around the obstacle
+    2 indicates the area the robot can move
+
+    Parameters
+    ----------
+    image : numpy.ndarray
+        The input image.
+    hsv_values : dict
+        Contains the HSV values for the mask (red for wall).
+
+    Returns
+    -------
+    numpy.ndarray
+        The generated navigation mesh.
+    """
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     height, width = gray.shape
 
@@ -18,23 +36,22 @@ def GenerateNavMesh(image, hsv_values):
     grid_size = GRID_SIZE
     buffer_size = 185
     buffer_edge = 150
-    rogue_pixel_threshold = 1000
 
-    # Find
+    # Mask everything but the red area
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     lower_bound = np.array([hsv_values['LowerH'], hsv_values['LowerS'], hsv_values['LowerV']])
     upper_bound = np.array([hsv_values['UpperH'], hsv_values['UpperS'], hsv_values['UpperV']])
     mask = cv2.inRange(hsv, lower_bound, upper_bound)
     inverted_mask = cv2.bitwise_not(mask)
 
-    # Set the edge pixels to white
+    # Set the edge pixels to white. This is to prevent the rogue red pixels from the edge of the image messing with the navmesh.
     edge_size = 20
     inverted_mask[:edge_size, :] = 255 # top wall
     inverted_mask[-edge_size:, :] = 255 # bottom wall
     inverted_mask[:, :edge_size] = 255 # left wall
     inverted_mask[:, -edge_size:] = 255 # right wall
 
-    # Remove rogue pixels
+    # Remove rogue pixels from orange ball spillover
     kernel_size = 15
     kernel = np.ones((kernel_size, kernel_size), np.uint8)
     closed_mask = cv2.morphologyEx(inverted_mask, cv2.MORPH_CLOSE, kernel)
@@ -42,7 +59,7 @@ def GenerateNavMesh(image, hsv_values):
     # Create an empty navmesh grid
     navmesh = np.zeros((height // grid_size, width // grid_size), dtype=np.uint8)
 
-    # Create a buffer around the black areas
+    # Create a buffer around the black areas by eroding the mask
     kernel = np.ones((buffer_size, buffer_size), np.uint8)
     buffered_mask = cv2.erode(closed_mask, kernel, iterations=2)
 
