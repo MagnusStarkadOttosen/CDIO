@@ -4,24 +4,18 @@ import time
 import cv2
 
 from src.CONSTANTS import GRID_SIZE
-# import logging
-#
-# logging.basicConfig(filename='safe_detect_balls.log', filemode='w',
-#                     format='%(asctime)s - %(message)s')
-
 
 from src.client.pathfinding.FindPath import find_path, pretty_print_navmesh
-from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, escape_dead_zone, coordinate_to_cell, \
-    cells_to_coordinates
+from src.client.pathfinding.GenerateNavMesh import GenerateNavMesh, coordinate_to_cell
 from src.client.field.collect_from_corner import ball_is_in_corner, check_corners, \
-    get_pivot, calculate_distance
+    get_pivot
 from src.client.field.coordinate_system import are_points_close, find_corner_points_full, warp_perspective
 from src.client.pathfinding.CalculateCommandList import rotate_vector_to_point
 from src.client.pc_client import ClientPC
-from src.client.utilities import log_balls, log_path
+from src.client.utilities import log_path
 from src.client.vision.AIBallDetection import detect_balls_with_model
 from src.client.vision.pathfinder import find_nearest_ball
-from src.client.vision.shape_detection import detect_balls, detect_obstacles, detect_robot, safe_detect_balls, \
+from src.client.vision.shape_detection import detect_obstacles, detect_robot, safe_detect_balls, \
     safe_detect_robot
 from src.client.hsvLoad import read_hsv_values
 
