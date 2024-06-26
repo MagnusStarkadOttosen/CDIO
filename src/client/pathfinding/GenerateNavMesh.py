@@ -190,17 +190,6 @@ def escape_dead_zone(navmesh, start):
         if (x, y) not in visited:
             visited.add((x, y))
             if 0 <= y < height and 0 <= x < width and navmesh[int(y), int(x)] == WALKABLE_INDEX:
-                # coords = cells_to_coordinates([(x, y)], GRID_SIZE)
-                # x, y = coords[0][0], coords[0][1]
-                # log_path(x)
-                # log_path(y)
-
-                # print(f"coords: {coords}")
-                # print(f"x and y in dead zone: {x}, {y}")
-                # if x == 6 and y == 6:
-                #     print(f"x == 6 and y == 6")
-                    # while True:
-                    #     continue
                 return x, y
 
             neighbors = [

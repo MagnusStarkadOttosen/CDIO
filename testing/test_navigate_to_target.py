@@ -1,10 +1,7 @@
 import os
 import sys
-import cv2
-from src.client.field.coordinate_system import are_points_close, find_corner_points_full, warp_perspective
+from src.client.field.coordinate_system import warp_perspective
 from src.client.pathfinding.CalculateCommandList import rotate_vector_to_point
-from src.client.pc_client import ClientPC
-from src.client.search_targetpoint.a_star_search import find_path
 from src.client.vision.filters import filter_image_orange
 from src.client.vision.shape_detection import detect_balls, detect_robot
 from src.mainloop import MainLoop
